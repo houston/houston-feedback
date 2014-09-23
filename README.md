@@ -1,6 +1,6 @@
 # Houston::Feedback
 
-TODO: Summary of Houston Feedback.
+A module for Houston for collecting customer feedback.
 
 
 ## Installation
