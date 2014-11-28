@@ -2,8 +2,23 @@ require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
 
+module Houston
+  def self.config
+    @config ||= DummyConfiguration.new
+  end
+  
+  class DummyConfiguration
+    def module(*args)
+      Struct.new(:config).new
+    end
+    
+    def add_navigation_renderer(*args)
+    end
+  end
+end
+
 Bundler.require(*Rails.groups)
-require "feedback"
+require "houston/feedback"
 
 module Dummy
   class Application < Rails::Application
@@ -41,13 +56,7 @@ module Dummy
     # Use SQL instead of Active Record's schema dumper when creating the database.
     # This is necessary if your schema can't be completely dumped by the schema dumper,
     # like if you have constraints or database-specific column types
-    # config.active_record.schema_format = :sql
-
-    # Enforce whitelist mode for mass assignment.
-    # This will create an empty whitelist of attributes available for mass-assignment for all models
-    # in your app. As such, your models will need to explicitly whitelist or blacklist accessible
-    # parameters by using an attr_accessible or attr_protected declaration.
-    config.active_record.whitelist_attributes = true
+    config.active_record.schema_format = :sql
 
     # Enable the asset pipeline
     config.assets.enabled = true

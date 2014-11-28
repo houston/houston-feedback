@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
 
-  mount Feedback::Engine => "/feedback"
+  mount Houston::Feedback::Engine => "/feedback"
+
 end
