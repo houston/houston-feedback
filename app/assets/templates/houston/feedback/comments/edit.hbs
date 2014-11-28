@@ -1,0 +1,28 @@
+<div id="comment_{{id}}" class="feedback-comment feedback-edit-comment" data-id="{{id}}">
+  <a href="#" class="feedback-comment-close"><i class="fa fa-times-circle" /></a>
+  
+  {{{avatar reporter/email 24 reporter/name}}}
+  
+  {{#if customer}}
+    <h3 class="feedback-customer">{{customer}}</h3>
+  {{else}}
+    <h3 class="feedback-customer unknown">{{reporter/name}}</h3>
+  {{/if}}
+  
+  <div class="feedback-metadata">
+    <span class="feedback-reporter">{{reporter/name}}</span>
+    <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>
+  </div>
+  
+  <div class="feedback-tags">
+    <div class="feedback-tag-list">
+      {{#each tags}}<span class="feedback-tag">
+        {{this}}
+        <a class="feedback-remove-tag"><i class="fa fa-close"></i></a>
+      </span>{{/each}}
+    </div>
+    <input type="text" class="feedback-new-tag" placeholder="New Tag" />
+  </div>
+  
+  <div class="feedback-text markdown">{{{markdown text}}}</div>
+</div>

@@ -1,0 +1,17 @@
+<div class="feedback-comment feedback-edit-comment feedback-edit-multiple">
+  <a href="#" class="feedback-comment-close"><i class="fa fa-times-circle" /></a>
+  
+  <h3>{{count}} selected comments</h3>
+  
+  <div class="feedback-tags">
+    <div class="feedback-tag-list">
+      {{#each tags}}
+        <span class="feedback-tag" style="background: rgba(170, 170, 170, {{percent}})">
+          {{name}}
+          <a class="feedback-remove-tag"><i class="fa fa-close"></i></a>
+        </span>
+      {{/each}}
+    </div>
+    <input type="text" class="feedback-new-tag" placeholder="New Tag" />
+  </div>
+</div>
