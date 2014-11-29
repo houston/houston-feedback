@@ -5,6 +5,15 @@
   
   <%= render partial: "projects/keyboard_shortcuts" %>
   
+  <%= link_to project_feedback_path(params.pick(:q).merge(format: :xlsx)), id: "excel_export_button", class: "project-banner-btn" do %>
+    <i class="fa fa-file-excel-o"></i>
+    
+    <span>
+      Export<br />
+      to Excel
+    </span>
+  <% end %>
+  
   <%= link_to "#", id: "new_feedback_button", class: "project-banner-btn" do %>
     <i class="fa fa-comment-o"></i>
     
@@ -46,11 +55,11 @@
 <% content_for :javascripts do -%>
   <script type="text/javascript">
     $(function() {
-      var comments = new Houston.Feedback.Comments(<%=raw @comments.to_json %>, {parse: true});
+      var comments = <%=raw Houston::Feedback::CommentPresenter.new(@comments).to_json %>;
       window.commentsView = new Houston.Feedback.CommentsView({
         el: document.getElementById('feedback'),
         infiniteScroll: true,
-        comments: comments,
+        comments: new Houston.Feedback.Comments(comments, {parse: true}),
         project: <%=raw @project.slug.to_json %>
       });
       commentsView.render();

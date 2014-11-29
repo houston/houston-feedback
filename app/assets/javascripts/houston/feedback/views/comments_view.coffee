@@ -139,7 +139,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
     e.preventDefault() if e
     search = $('#search_feedback').serialize()
     url = window.location.pathname + '?' + search
+    xlsxHref = window.location.pathname + '.xlsx?' + search
     history.pushState({}, '', url)
+    $('#excel_export_button').attr('href', xlsxHref)
     start = new Date()
     $.getJSON url, (comments)=>
       @selectNone()

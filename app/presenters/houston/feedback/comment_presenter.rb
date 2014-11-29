@@ -3,7 +3,7 @@ module Houston
     class CommentPresenter
       
       def initialize(comments)
-        @comments = OneOrMany.new(comments)
+        @comments = OneOrMany.new(comments || [])
       end
       
       def as_json(*args)

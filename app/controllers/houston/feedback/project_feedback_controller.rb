@@ -3,7 +3,7 @@ require "csv"
 module Houston
   module Feedback
     class ProjectFeedbackController < ApplicationController
-      attr_reader :project
+      attr_reader :project, :comments
       
       layout "houston/feedback/application"
       before_filter :find_project
@@ -23,15 +23,23 @@ module Houston
       ].freeze
       
       def index
-        @comments = CommentPresenter.new(
-          Comment \
-            .for_project(project)
-            .includes(:user)
-            .search(params[:q])) if params[:q]
+        @comments = Comment \
+          .for_project(project)
+          .includes(:user)
+          .search(params[:q]) if params[:q]
         
         respond_to do |format|
-          format.json { render json: @comments }
+          format.json do
+            render json: CommentPresenter.new(comments)
+          end
           format.html
+          format.xlsx do
+            @comments ||= Comment.for_project(project).includes(:user)
+            send_data CommentExcelPresenter.new(project, params[:q], comments),
+              type: :xlsx,
+              filename: "Comments.xlsx",
+              disposition: "attachment"
+          end
         end
       end
       
