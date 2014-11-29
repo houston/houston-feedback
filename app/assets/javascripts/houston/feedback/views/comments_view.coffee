@@ -11,6 +11,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderEditMultiple: HandlebarsTemplates['houston/feedback/comments/edit_multiple']
   renderSearchReport: HandlebarsTemplates['houston/feedback/comments/report']
   renderImportModal: HandlebarsTemplates['houston/feedback/comments/import']
+  renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/comments/delete_imported']
+  renderNewCommentModal: HandlebarsTemplates['houston/feedback/comments/new']
  
   events:
     'submit #search_feedback': 'search'
@@ -36,6 +38,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
     
     $('#feedback_csv_upload_target').on 'upload:complete', (e, headers)=>
       @promptToImportCsv(headers)
+    
+    $('#new_feedback_button').click =>
+      @newFeedback()
     
     if @options.infiniteScroll
       new InfiniteScroll
@@ -225,8 +230,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
         console.log 'error', arguments
 
   promptToImportCsv: (data)->
-    html = @renderImportModal(data)
-    $modal = $(html).modal()
+    $modal = $(@renderImportModal(data)).modal()
     $modal.on 'hidden', -> $(@).remove()
     $modal.find('#import_button').click =>
       $modal.find('button').prop('disabled', true)
@@ -245,23 +249,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     ids = @selectedIds()
     imports = _.uniq(@comments.get(id).get('import') for id in ids)
     if imports.length is 1 and imports[0]
-      html = """
-      <div class="modal hide">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h3>Delete all imported comments?</h3>
-        </div>
-        <div class="modal-body">
-          <p>It looks like these comments were imported together.</p>
-          <p>Do you want to delete all of them?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" id="delete_selected">Delete the selected comments</button>
-          <button type="button" class="btn btn-danger" id="delete_imported">Delete all the comments imported with them</button>
-        </div>
-      </div>
-      """
-      $modal = $(html).modal()
+      $modal = $(@renderDeleteImportedModal()).modal()
       $modal.on 'hidden', -> $(@).remove()
       $modal.find('#delete_selected').click =>
         $modal.modal('hide')
@@ -279,3 +267,51 @@ class Houston.Feedback.CommentsView extends Backbone.View
         @search()
       .error ->
         console.log 'error', arguments
+
+  newFeedback: (e)->
+    e.preventDefault() if e
+    $modal = $(@renderNewCommentModal()).modal()
+    $modal.on 'hidden', -> $(@).remove()
+    
+    $modal.find('#new_feedback_customer').focus()
+    
+    $newTag = $modal.find('.feedback-new-tag')
+    
+    addTags = =>
+      tags = $newTag.val().split(/[,;]/).map (tag)->
+        tag.compact().toLowerCase().replace(/\s+/, '-')
+      $tags = $modal.find('.feedback-tag-list')
+      for tag in tags
+        $tags.append """
+          <span class="feedback-tag feedback-tag-new">
+            #{tag}
+            <input type="hidden" name="tags[]" value="#{tag}" />
+            <a class="feedback-remove-tag"><i class="fa fa-close"></i></a>
+          </span>
+        """
+      $newTag.val('')
+    
+    submit = =>
+      addTags()
+      params = $modal.find('form').serialize()
+      $.post window.location.pathname, params
+        .success =>
+          $modal.modal('hide')
+          alertify.success "Comment created"
+          @search()
+        .error ->
+          console.log 'error', arguments
+    
+    $newTag.keydown (e)->
+      if e.keyCode is KEY.RETURN
+        if e.metaKey or e.ctrlKey
+          submit()
+        else
+          e.preventDefault()
+          addTags()
+    
+    $modal.on 'click', '.feedback-remove-tag', (e)->
+      $(e.target).closest('.feedback-tag-new').remove()
+      $modal.find('.feedback-new-tag').focus()
+    
+    $modal.find('#create_button').click => submit()

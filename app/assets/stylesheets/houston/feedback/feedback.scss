@@ -117,40 +117,41 @@
     .feedback-reporter::after { content: ' • '; }
     .feedback-reporter, .feedback-created { vertical-align: bottom; }
     
-    .feedback-tags {
-      background: #f0f0f0;
-      margin: 0.5em -0.5em;
-      padding: 0.5em;
-      border-radius: 3px;
-      
-      input {
-        margin: 0.5em 0 0 0;
-      }
-    }
   }
+}
+
+.feedback-tags {
+  background: #f0f0f0;
+  margin: 0.5em -0.5em;
+  padding: 0.5em;
+  border-radius: 3px;
   
-  .feedback-tag {
-    display: inline-block;
-    padding: 2px 4px;
-    font-size: 11.844px;
-    line-height: 14px;
-    color: #ffffff;
-    white-space: nowrap;
-    vertical-align: baseline;
-    background-color: #aaa;
-    border-radius: 3px;
-    margin-right: 0.33em;
+  input {
+    margin: 0.5em 0 0 0;
+  }
+}
+
+.feedback-tag {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 11.844px;
+  line-height: 14px;
+  color: #ffffff;
+  white-space: nowrap;
+  vertical-align: baseline;
+  background-color: #aaa;
+  border-radius: 3px;
+  margin-right: 0.33em;
+  
+  a.feedback-remove-tag {
+    width: 14px;
+    text-align: center;
+    margin: -2px -2px -2px 0;
+    padding: 2px;
+    cursor: pointer;
+    color: white;
     
-    a.feedback-remove-tag {
-      width: 14px;
-      text-align: center;
-      margin: -2px -2px -2px 0;
-      padding: 2px;
-      cursor: pointer;
-      color: white;
-      
-      &:hover { color: #005580; }
-    }
+    &:hover { color: #005580; }
   }
 }
 
@@ -208,4 +209,21 @@
     color: #aaa;
     font-size: 0.88em;
   }
+}
+
+#new_feedback_modal {
+  input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    height: 30px;
+  }
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .feedback-tags {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  form { margin-bottom: 0; }
 }

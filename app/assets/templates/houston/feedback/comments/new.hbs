@@ -1,0 +1,25 @@
+<div id="new_feedback_modal" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>New Comment</h3>
+  </div>
+  <div class="modal-body">
+    <form>
+      <label for="new_feedback_customer">Customer</label>
+      <input type="text" id="new_feedback_customer" name="customer" />
+      
+      <label for="new_feedback_text">Text</label>
+      <textarea id="new_feedback_text" name="text"></textarea>
+      
+      <label for="new_feedback_tags">Tags</label>
+      <div class="feedback-tags">
+        <div class="feedback-tag-list"></div>
+        <input type="text" id="new_feedback_tags" class="feedback-new-tag" placeholder="New Tag" />
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button type="button" id="create_button" class="btn btn-primary">Submit</button>
+  </div>
+</div>

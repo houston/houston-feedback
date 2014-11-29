@@ -23,8 +23,8 @@ module Houston
       ].freeze
       
       def index
-        @comments = Houston::Feedback::CommentPresenter.new(
-          Houston::Feedback::Comment \
+        @comments = CommentPresenter.new(
+          Comment \
             .for_project(project)
             .includes(:user)
             .search(params[:q])) if params[:q]
@@ -32,6 +32,17 @@ module Houston
         respond_to do |format|
           format.json { render json: @comments }
           format.html
+        end
+      end
+      
+      def create
+        comment = Comment.new(params.pick(:customer, :text, :tags))
+        comment.project = project
+        comment.user = current_user
+        if comment.save
+          render json: CommentPresenter.new(comment)
+        else
+          render json: comment.errors, status: :unprocessable_entity
         end
       end
       
@@ -66,7 +77,7 @@ module Houston
           customer = row.values_at(*customer_fields).reject(&:blank?).join(", ")
           row.values_at(*feedback_fields).each do |feedback|
             next if feedback.blank?
-            comment = Houston::Feedback::Comment.new(
+            comment = Comment.new(
               import: import,
               project: project,
               user: current_user,
@@ -78,11 +89,11 @@ module Houston
         end
         
         Houston.benchmark("[feedback:csv] import #{comments.count} comments") do
-          Houston::Feedback::Comment.import comments
+          Comment.import comments
         end
         
         Houston.benchmark("[feedback:csv] index comments") do
-          Houston::Feedback::Comment.for_project(project).reindex!
+          Comment.for_project(project).reindex!
         end
         
         render json: {count: comments.count}
