@@ -8,10 +8,11 @@ class CreateFeedbackComments < ActiveRecord::Migration
       t.text :plain_text, null: false
       t.string :customer, null: false, default: ""
       t.text :tags, null: false, default: ""
+      t.string :import
       
       t.tsvector :search_vector
       
-      t.integer :ticket_id, null: false
+      t.integer :ticket_id
       
       t.timestamps
     end

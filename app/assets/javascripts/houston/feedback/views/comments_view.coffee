@@ -10,6 +10,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderEditComment: HandlebarsTemplates['houston/feedback/comments/edit']
   renderEditMultiple: HandlebarsTemplates['houston/feedback/comments/edit_multiple']
   renderSearchReport: HandlebarsTemplates['houston/feedback/comments/report']
+  renderImportModal: HandlebarsTemplates['houston/feedback/comments/import']
  
   events:
     'submit #search_feedback': 'search'
@@ -20,10 +21,21 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .feedback-comment-close': 'selectNone'
     'click .feedback-remove-tag': 'removeTag'
     'keydown .feedback-new-tag': 'keydownNewTag'
+    'click .btn-delete': 'deleteComments'
   
   initialize: ->
     @$results = @$el.find('#results')
     @comments = @options.comments
+    
+    $('#import_csv_field').change (e)->
+      $(e.target).closest('form').submit()
+      
+      # clear the field so that if we select the same
+      # file again, we get another 'change' event.
+      $(e.target).val('').attr('type', 'text').attr('type', 'file')
+    
+    $('#feedback_csv_upload_target').on 'upload:complete', (e, headers)=>
+      @promptToImportCsv(headers)
     
     if @options.infiniteScroll
       new InfiniteScroll
@@ -119,7 +131,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   search: (e)->
     return unless history.pushState
 
-    e.preventDefault()
+    e.preventDefault() if e
     search = $('#search_feedback').serialize()
     url = window.location.pathname + '?' + search
     history.pushState({}, '', url)
@@ -209,5 +221,61 @@ class Houston.Feedback.CommentsView extends Backbone.View
       .success =>
         @comments.get(id).addTags(tags) for id in ids
         @editSelected()
+      .error ->
+        console.log 'error', arguments
+
+  promptToImportCsv: (data)->
+    html = @renderImportModal(data)
+    $modal = $(html).modal()
+    $modal.on 'hidden', -> $(@).remove()
+    $modal.find('#import_button').click =>
+      $modal.find('button').prop('disabled', true)
+      params = $modal.find('form').serialize()
+      $.post "#{window.location.pathname}/import", params
+        .success (response)=>
+          $modal.modal('hide')
+          alertify.success "#{response.count} comments imported"
+          @search()
+        .error ->
+          console.log 'error', arguments
+          $modal.find('button').prop('disabled', false)
+
+  deleteComments: (e)->
+    e.preventDefault()
+    ids = @selectedIds()
+    imports = _.uniq(@comments.get(id).get('import') for id in ids)
+    if imports.length is 1 and imports[0]
+      html = """
+      <div class="modal hide">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h3>Delete all imported comments?</h3>
+        </div>
+        <div class="modal-body">
+          <p>It looks like these comments were imported together.</p>
+          <p>Do you want to delete all of them?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" id="delete_selected">Delete the selected comments</button>
+          <button type="button" class="btn btn-danger" id="delete_imported">Delete all the comments imported with them</button>
+        </div>
+      </div>
+      """
+      $modal = $(html).modal()
+      $modal.on 'hidden', -> $(@).remove()
+      $modal.find('#delete_selected').click =>
+        $modal.modal('hide')
+        @_deleteComments(comment_ids: ids)
+      $modal.find('#delete_imported').click =>
+        $modal.modal('hide')
+        @_deleteComments(import: imports[0])
+    else
+      @_deleteComments(comment_ids: ids)
+
+  _deleteComments: (params)->
+    $.destroy '/feedback/comments', params
+      .success (response)=>
+        alertify.success "#{response.count} comments deleted"
+        @search()
       .error ->
         console.log 'error', arguments

@@ -1,0 +1,13 @@
+<html>
+<head>
+  <script type="text/javascript">
+    if(top && top.App && top.App.uploadComplete) {
+      window.onload = function() {
+        top.App.uploadComplete('#<%= @target %>', <%= raw @data.to_json %>);
+      };
+    }
+  </script>
+</head>
+<body>
+</body>
+</html>

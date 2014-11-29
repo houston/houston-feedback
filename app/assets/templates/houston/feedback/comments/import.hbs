@@ -1,0 +1,41 @@
+<div id="feedback_csv_import_modal" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Import {{filename}}</h3>
+  </div>
+  <div class="modal-body">
+    <div class="instructions row-fluid">
+      <div class="span6"><div class="csv-fields">Select the fields that identify the customer</div></div>
+      <div class="span6"><div class="csv-fields">Select the fields that contain feedback to import</div></div>
+    </div>
+    <form class="row-fluid">
+      <div class="span6">
+        <div class="csv-fields">
+          {{#each headings}}
+            <label for="customer_field_{{index}}" class="csv-field">
+              <input type="checkbox" id="customer_field_{{index}}" name="customer_fields[]" value="{{index}}" />
+              {{text}}
+              <span class="example">(e.g. {{example}})</span>
+            </label>
+          {{/each}}
+        </div>
+      </div>
+      
+      <div class="span6">
+        <div class="csv-fields">
+          {{#each headings}}
+            <label for="feedback_field_{{index}}" class="csv-field">
+              <input type="checkbox" id="feedback_field_{{index}}" name="feedback_fields[]" value="{{index}}" />
+              {{text}}
+              <span class="example">(e.g. {{example}})</span>
+            </label>
+          {{/each}}
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button type="button" id="import_button" class="btn btn-primary">Import</button>
+  </div>
+</div>

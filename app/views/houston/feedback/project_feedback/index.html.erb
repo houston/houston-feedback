@@ -2,7 +2,22 @@
 <h1 class="project-banner <%= @project.color %> space-below" data-project-slug="<%= @project.slug %>" data-project-color="<%= @project.color %>">
   <small>comments for</small>
   <%= @project.name %>
+  
   <%= render partial: "projects/keyboard_shortcuts" %>
+  
+  <iframe id="feedback_csv_upload_target" name="feedback_csv_upload_target" class="upload-target" src=""></iframe>
+  <%= form_tag upload_project_feedback_path(@project), multipart: true, target: "feedback_csv_upload_target", class: "project-banner-btn" do -%>
+    <label for="import_csv_field">
+      <input type="hidden" name="target" value="feedback_csv_upload_target" />
+      <input type="file" id="import_csv_field" name="file" accept=".csv" />
+      <i class="fa fa-upload"></i>
+
+      <span>
+        Import<br />
+        CSV
+      </span>
+    </label>
+  <% end -%>
 </h1>
 <% end %>
 

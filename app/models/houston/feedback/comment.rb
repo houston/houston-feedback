@@ -36,6 +36,14 @@ module Houston
             .select("feedback_comments.*", excerpt.as("excerpt"), rank.as("rank"))
             .order("rank DESC")
         end
+        
+        def reindex!
+          update_all <<-SQL
+            search_vector = setweight(to_tsvector('english', tags), 'A') || 
+                            setweight(to_tsvector('english', plain_text), 'B') ||
+                            setweight(to_tsvector('english', customer), 'B')
+          SQL
+        end
       end
       
       def tags=(array)
@@ -46,12 +54,12 @@ module Houston
         super.to_s.split("\n")
       end
       
-    private
-      
       def update_plain_text
         md = Redcarpet::Markdown.new(Redcarpet::Render::StripDown, space_after_headers: true)
         self.plain_text = md.render(text)
       end
+      
+    private
       
       # http://www.postgresql.org/docs/9.1/static/textsearch-controls.html#TEXTSEARCH-HEADLINE
       def self.ts_headline(column, query, options={})
@@ -66,17 +74,8 @@ module Houston
       end
       
       def update_search_vector
-        execute <<-SQL
-          UPDATE #{table_name}
-          SET search_vector = setweight(to_tsvector('english', tags), 'A') || 
-                              setweight(to_tsvector('english', plain_text), 'B') ||
-                              setweight(to_tsvector('english', customer), 'B')
-          WHERE id=#{id}
-        SQL
+        self.class.where(id: id).reindex!
       end
-      
-      delegate :table_name, to: "self.class"
-      delegate :execute, to: "self.class.connection"
       
     end
   end

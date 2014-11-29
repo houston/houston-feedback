@@ -19,6 +19,7 @@ module Houston
       def comment_to_json(comment)
         { id: comment.id,
           createdAt: comment.created_at,
+          import: comment.import,
           reporter: present_reporter(comment.user),
           customer: comment.customer,
           text: comment.text,
