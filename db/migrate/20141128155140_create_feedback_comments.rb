@@ -69,11 +69,11 @@ class CreateFeedbackComments < ActiveRecord::Migration
 private
   
   def goldmine_notes(number)
-    # response = Faraday.get "http://goldmineweb/DisplayCase.aspx?CaseNumber=#{number}"
-    # page = Nokogiri::HTML(response.body)
-    # goldmine_notes = page.css("[name=\"txtDescription\"]").first.text
-    @goldmine ||= JSON.load(File.read(File.expand_path("~/Desktop/Tickets->Feedback/goldmine_notes.json")))
-    @goldmine[number.to_i.to_s]
+    response = Faraday.get "http://goldmineweb/DisplayCase.aspx?CaseNumber=#{number}"
+    page = Nokogiri::HTML(response.body)
+    page.css("[name=\"txtDescription\"]").first.text
+    # @goldmine ||= JSON.load(File.read(File.expand_path("~/Desktop/Tickets->Feedback/goldmine_notes.json")))
+    # @goldmine[number.to_i.to_s]
   end
   
   def ticket_to_feedback_text2(ticket, goldmine_notes)
