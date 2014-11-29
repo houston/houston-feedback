@@ -107,6 +107,10 @@ module Houston
         render json: {count: comments.count}
       end
       
+      def from_email
+        Rails.logger.warn params.inspect
+      end
+      
     private
       
       def find_project
