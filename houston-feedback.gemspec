@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = Houston::Feedback::VERSION
   s.authors     = ["Bob Lail"]
   s.email       = ["bob.lailfamily@gmail.com"]
-  s.homepage    = "https://github.com/concordia-publishing-house/houston-alerts"
+  s.homepage    = "https://github.com/concordia-publishing-house/houston-feedback"
   s.summary     = "A module for Houston for collecting customer feedback."
   s.description = "A module for Houston for collecting customer feedback."
 
