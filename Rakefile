@@ -26,7 +26,7 @@ require 'rake/testtask'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.libs << 'test'
-  t.pattern = 'test/**/*_test.rb'
+  t.test_files = Dir['test/**/*_test.rb'].reject { |path| path.include?('dummy') }
   t.verbose = false
 end
 

@@ -12,3 +12,7 @@ gemspec
 
 # To use debugger
 # gem 'debugger'
+
+# Load Houston's gems
+ENV["HOUSTON_CONFIG"] = File.expand_path("../config/config.rb", __FILE__)
+eval_gemfile "test/dummy/Gemfile"
