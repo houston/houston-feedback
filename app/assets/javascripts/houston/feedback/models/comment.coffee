@@ -7,6 +7,14 @@ class Houston.Feedback.Comment extends Backbone.Model
   removeTags: (tags)->
     @set 'tags', _.difference(@get('tags'), tags).sort(), silent: true
   
+  isUnread: ->
+    !@get 'read'
+  
+  markAsRead: (success)->
+    $.post("#{@url()}/read").success =>
+      @set 'read', true
+      success()
+  
   
 class Houston.Feedback.Comments extends Backbone.Collection
   model: Houston.Feedback.Comment

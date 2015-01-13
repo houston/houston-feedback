@@ -24,6 +24,7 @@ module Houston
           customer: comment.customer,
           text: comment.text,
           excerpt: comment[:excerpt],
+          read: comment[:read],
           rank: comment[:rank],
           tags: comment.tags }
       end

@@ -8,6 +8,8 @@ Houston::Feedback::Engine.routes.draw do
   
   delete "comments", to: "comments#destroy"
   
+  post "comments/:id/read", to: "comments#mark_read"
+  
   delete "comments/tags", to: "tags#remove"
   post "comments/tags", to: "tags#add"
   

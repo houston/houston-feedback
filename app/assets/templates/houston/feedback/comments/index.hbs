@@ -1,5 +1,5 @@
 {{#each comments}}
-<div id="comment_{{id}}" tabindex="0" class="feedback-comment feedback-search-result" data-id="{{id}}" data-rank="{{rank}}">
+<div id="comment_{{id}}" tabindex="0" class="feedback-comment feedback-search-result {{#if read}}feedback-comment-read{{else}}feedback-comment-unread{{/if}}" data-id="{{id}}" data-rank="{{rank}}">
   <div class="feedback-snippet">
     {{#if customer}}
       <span class="feedback-customer">{{customer}}</span>

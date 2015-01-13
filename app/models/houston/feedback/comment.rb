@@ -11,9 +11,18 @@ module Houston
       belongs_to :project
       belongs_to :user
       
+      has_many :read_receipts, class_name: "Houston::Feedback::CommentReadReceipt"
+      
       class << self
         def for_project(project)
           where(project_id: project.id)
+        end
+        
+        def with_read_by(user)
+          joins(<<-SQL).select("feedback_comments.*", '(read_receipts.user_id IS NOT NULL) "read"')
+            LEFT OUTER JOIN feedback_comments_read_receipts \"read_receipts\"
+            ON read_receipts.comment_id=feedback_comments.id AND read_receipts.user_id=#{user.id}
+          SQL
         end
         
         # http://blog.lostpropertyhq.com/postgres-full-text-search-is-good-enough/
@@ -57,6 +66,12 @@ module Houston
       def update_plain_text
         md = Redcarpet::Markdown.new(Redcarpet::Render::StripDown, space_after_headers: true)
         self.plain_text = md.render(text)
+      end
+      
+      def read_by!(user)
+        read_receipts.create!(user_id: user.id)
+      rescue ActiveRecord::RecordNotUnique
+        # race condition, OK
       end
       
     private

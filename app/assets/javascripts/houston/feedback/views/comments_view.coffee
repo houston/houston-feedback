@@ -173,6 +173,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
       @editNothing()
 
   editComment: (comment)->
+    if @timeoutId
+      window.clearTimeout(@timeoutId)
+      @timeoutId = null
+
+    if comment.isUnread()
+      @timeoutId = window.setTimeout _.bind(@markAsRead, @), 1500, comment
+
     $('#feedback_edit').html @renderEditComment(comment.toJSON())
     @focusEditor()
 
@@ -317,3 +324,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
       $modal.find('.feedback-new-tag').focus()
     
     $modal.find('#create_button').click => submit()
+
+  markAsRead: (comment)->
+    comment.markAsRead ->
+      $(".feedback-comment[data-id=\"#{comment.get('id')}\"]")
+        .removeClass('feedback-comment-unread')
+        .addClass('feedback-comment-read')

@@ -26,6 +26,7 @@ module Houston
         @comments = Comment \
           .for_project(project)
           .includes(:user)
+          .with_read_by(current_user)
           .search(params[:q]) if params[:q]
         
         respond_to do |format|

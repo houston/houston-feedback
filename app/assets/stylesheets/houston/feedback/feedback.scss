@@ -36,6 +36,10 @@
   .feedback-comment {
     position: relative;
     
+    &.feedback-comment-unread {
+      font-weight: 500;
+    }
+    
     .feedback-metadata {
       font-size: 0.88em;
       color: #888;
