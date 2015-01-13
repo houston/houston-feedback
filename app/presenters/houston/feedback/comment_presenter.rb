@@ -23,7 +23,7 @@ module Houston
           reporter: present_reporter(comment.user),
           customer: comment.customer,
           text: comment.text,
-          excerpt: comment[:excerpt],
+          excerpt: comment.excerpt,
           read: comment[:read],
           rank: comment[:rank],
           tags: comment.tags }

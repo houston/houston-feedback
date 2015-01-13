@@ -26,11 +26,11 @@ module Houston
         end
         
         # http://blog.lostpropertyhq.com/postgres-full-text-search-is-good-enough/
-        def search(query)
+        def search(query_string)
           config = PgSearch::Configuration.new({against: "plain_text"}, self)
           normalizer = PgSearch::Normalizer.new(config)
           options = { dictionary: "english", tsvector_column: "search_vector" }
-          query = PgSearch::Features::TSearch.new(query, options, config.columns, self, normalizer)
+          query = PgSearch::Features::TSearch.new(query_string, options, config.columns, self, normalizer)
           
           excerpt = ts_headline(:plain_text, query,
             start_sel: "<em>",
@@ -41,9 +41,12 @@ module Houston
             max_fragments: 2)
           rank = query.rank
           rank.extend Arel::AliasPredication
-          where(query.conditions)
+          
+          results = all
+          results = results.where(query.conditions)
             .select("feedback_comments.*", excerpt.as("excerpt"), rank.as("rank"))
-            .order("rank DESC")
+            .order("rank DESC") unless query_string.blank?
+          results
         end
         
         def reindex!
@@ -66,6 +69,10 @@ module Houston
       def update_plain_text
         md = Redcarpet::Markdown.new(Redcarpet::Render::StripDown, space_after_headers: true)
         self.plain_text = md.render(text)
+      end
+      
+      def excerpt
+        self[:excerpt] || text[0..140]
       end
       
       def read_by!(user)

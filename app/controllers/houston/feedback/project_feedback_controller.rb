@@ -27,7 +27,7 @@ module Houston
           .for_project(project)
           .includes(:user)
           .with_read_by(current_user)
-          .search(params[:q]) if params[:q]
+          .search(params.fetch(:q, ""))
         
         respond_to do |format|
           format.json do
