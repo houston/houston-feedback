@@ -1,7 +1,7 @@
 module Houston
   module Feedback
-    class CommentReadReceipt < ActiveRecord::Base
-      self.table_name = "feedback_comments_read_receipts"
+    class CommentUserFlags < ActiveRecord::Base
+      self.table_name = "feedback_comments_user_flags"
       
       belongs_to :comment, class_name: "Houston::Feedback::Comment"
       belongs_to :user
