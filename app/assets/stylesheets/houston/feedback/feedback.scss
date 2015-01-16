@@ -72,6 +72,13 @@
     .avatar {
       margin-right: 0.25em;
       vertical-align: top;
+      
+      &.avatar-empty {
+        background: rgba(0,0,0,0.1);
+        height: 16px;
+        content: '';
+        display: block;
+      }
     }
     
     .feedback-text { clear: both; }
