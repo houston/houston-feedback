@@ -27,6 +27,11 @@ module Houston
         
         # http://blog.lostpropertyhq.com/postgres-full-text-search-is-good-enough/
         def search(query_string)
+          tags = []
+          query_string = query_string
+            .gsub(/\#([a-z\-0-9]+)/) { |arg| tags << $1; "" }
+            .strip
+          
           config = PgSearch::Configuration.new({against: "plain_text"}, self)
           normalizer = PgSearch::Normalizer.new(config)
           options = { dictionary: "english", tsvector_column: "search_vector" }
@@ -42,7 +47,8 @@ module Houston
           rank = query.rank
           rank.extend Arel::AliasPredication
           
-          results = all
+          results = tags.inject(all) { |results, tag|
+            results.where(["tags ~ ?", "(?n)^#{tag}$"]) } # (?n) specified the newline-sensitive option
           results = results.where(query.conditions)
             .select("feedback_comments.*", excerpt.as("excerpt"), rank.as("rank"))
             .order("rank DESC") unless query_string.blank?
