@@ -257,6 +257,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     ids = @selectedIds()
     $.post '/feedback/comments/tags', comment_ids: ids, tags: tags
       .success =>
+        @tags = _.uniq @tags.concat(tags)
         @comments.get(id).addTags(tags) for id in ids
         @editSelected()
       .error ->
