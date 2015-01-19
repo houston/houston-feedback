@@ -133,6 +133,12 @@
     .btn-save,
     .feedback-text.edit { display: none; }
     
+    .feedback-text {
+      height: 18em;
+      margin-bottom: 10px;
+    }
+    .feedback-text.markdown { overflow-y: auto; }
+    
     &.edit-text {
       .feedback-text.markdown { display: none; }
       .btn-save {
@@ -143,7 +149,6 @@
         display: block;
         width: 100%;
         box-sizing: border-box;
-        min-height: 15em;
       }
     }
   }
@@ -255,4 +260,9 @@
     margin-bottom: 0;
   }
   form { margin-bottom: 0; }
+}
+
+#feedback_edit.affix {
+  right: 0.69060773480663%;
+  top: 56px;
 }

@@ -166,6 +166,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
       results: @comments.length
       searchTime: @searchTime
 
+    $('#feedback_edit').affix(offset: {top: 148})
+
     @focusSearch()
 
   focusSearch: ->
