@@ -6,6 +6,7 @@ module Houston
       
       
       def destroy
+        authorize! :destroy, Comment
         count = comments.length
         comments.delete_all
         render json: {count: count}
@@ -13,6 +14,7 @@ module Houston
       
       
       def update
+        authorize! :update, Comment
         comment = Comment.find(params[:id])
         comment.text = params[:text]
         if comment.save
