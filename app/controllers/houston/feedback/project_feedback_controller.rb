@@ -37,7 +37,6 @@ module Houston
             @tags = Comment.for_project(project).tags
           end
           format.xlsx do
-            @comments ||= Comment.for_project(project).includes(:user)
             send_data CommentExcelPresenter.new(project, params[:q], comments),
               type: :xlsx,
               filename: "Comments.xlsx",
