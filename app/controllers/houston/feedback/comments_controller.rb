@@ -12,6 +12,17 @@ module Houston
       end
       
       
+      def update
+        comment = Comment.find(params[:id])
+        comment.text = params[:text]
+        if comment.save
+          render json: Houston::Feedback::CommentPresenter.new(comment)
+        else
+          render json: comment.errors, status: :unprocessable_entity
+        end
+      end
+      
+      
       def mark_read
         comment = Comment.find params[:id]
         comment.read_by! current_user

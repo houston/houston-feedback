@@ -24,6 +24,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .feedback-remove-tag': 'removeTag'
     'keydown .feedback-new-tag': 'keydownNewTag'
     'click .btn-delete': 'deleteComments'
+    'click .btn-edit': 'editCommentText'
+    'click .btn-save': 'saveCommentText'
   
   initialize: ->
     @$results = @$el.find('#results')
@@ -105,6 +107,11 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   selectedIds: ->
     $(el).attr('data-id') for el in @$selection()
+
+  selectedId: ->
+    ids = @selectedIds()
+    throw "Expected only one comment to be selected, but there are #{ids.length}" unless ids.length is 1
+    ids[0]
 
   selectPrev: (mode)->
     $prev = @$selection().first().prev('.feedback-search-result')
@@ -296,6 +303,29 @@ class Houston.Feedback.CommentsView extends Backbone.View
       .success (response)=>
         alertify.success "#{response.count} comments deleted"
         @search()
+      .error ->
+        console.log 'error', arguments
+
+  editCommentText: (e)->
+    e.preventDefault() if e
+    if $('.feedback-edit-comment').hasClass('edit-text')
+      $('.feedback-edit-comment').removeClass('edit-text')
+      $('.btn-edit').text('Edit')
+    else
+      $('.feedback-edit-comment').addClass('edit-text')
+      $('.btn-edit').text('Cancel')
+
+  saveCommentText: (e)->
+    e.preventDefault() if e
+    
+    text = $('.feedback-text.edit').val()
+    comment = @comments.get @selectedId()
+    comment.save(text: text)
+      .success =>
+        @editSelected()
+        alertify.success "Comment updated"
+        $('.feedback-edit-comment').removeClass('edit-text')
+        $('.btn-edit').text('Edit')
       .error ->
         console.log 'error', arguments
 
