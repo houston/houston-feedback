@@ -265,7 +265,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   parseTags: (text)->
     tags = _.map text.split(/[,;]/), (tag)->
-      tag.compact().toLowerCase().replace(/\W+/g, '-')
+      tag.compact().toLowerCase().replace(/[^\w\?]+/g, '-')
     _.reject tags, (tag)-> !tag
 
   promptToImportCsv: (data)->
