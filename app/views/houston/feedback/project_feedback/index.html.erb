@@ -59,6 +59,7 @@
       window.commentsView = new Houston.Feedback.CommentsView({
         el: document.getElementById('feedback'),
         infiniteScroll: true,
+        tags: <%=raw @tags.to_json %>,
         comments: new Houston.Feedback.Comments(comments, {parse: true}),
         project: <%=raw @project.slug.to_json %>
       });

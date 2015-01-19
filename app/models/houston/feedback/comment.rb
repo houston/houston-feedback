@@ -70,6 +70,10 @@ module Houston
                             setweight(to_tsvector('english', customer), 'B')
           SQL
         end
+        
+        def tags
+          pluck("distinct regexp_split_to_table(tags, '\\n')").reject(&:blank?)
+        end
       end
       
       def tags=(array)

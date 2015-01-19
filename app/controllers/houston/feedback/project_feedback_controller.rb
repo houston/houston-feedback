@@ -33,7 +33,9 @@ module Houston
           format.json do
             render json: CommentPresenter.new(comments)
           end
-          format.html
+          format.html do
+            @tags = Comment.for_project(project).tags
+          end
           format.xlsx do
             @comments ||= Comment.for_project(project).includes(:user)
             send_data CommentExcelPresenter.new(project, params[:q], comments),
