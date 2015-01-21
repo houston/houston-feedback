@@ -214,24 +214,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $('#feedback_edit').html('')
 
   focusEditor: ->
-    extractor = (query)->
-      result = /([^,]+)$/.exec(query)
-      if result and result[1] then result[1].trim() else ''
-
-    $('#feedback_edit').find('input')
-      .focus()
-      .attr('autocomplete', 'off')
-      .typeahead
-        source: @tags
-        updater: (item)->
-          @$element.val().replace(/[^,]*$/,' ') + item + ', '
-        matcher: (item)->
-          tquery = extractor(@query)
-          return false unless tquery
-          ~item.toLowerCase().indexOf(tquery.toLowerCase())
-        highlighter: (item)->
-          query = extractor(@query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
-          item.replace /(#{query})/ig, ($1, match)-> "<strong>#{match}</strong>"
+    $('#feedback_edit').find('input').autocompleteTags(@tags).focus()
 
   removeTag: (e)->
     e.preventDefault()
