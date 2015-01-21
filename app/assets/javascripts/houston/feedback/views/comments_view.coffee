@@ -321,6 +321,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $modal.on 'hidden', -> $(@).remove()
     
     $modal.find('#new_feedback_customer').focus()
+    $modal.find('#new_feedback_tags').autocompleteTags(@tags)
     
     $newTag = $modal.find('.feedback-new-tag')
     
