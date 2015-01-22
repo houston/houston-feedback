@@ -235,6 +235,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
       e.preventDefault()
       e.stopImmediatePropagation()
       @addTag()
+    if e.keyCode in [KEY.DOWN, KEY.UP]
+      @addTag()
 
   addTag: ->
     $input = $('.feedback-new-tag')
