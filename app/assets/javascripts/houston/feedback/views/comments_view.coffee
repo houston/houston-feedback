@@ -20,6 +20,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'mousedown .feedback-search-result': 'resultClicked'
     'mouseup .feedback-search-result': 'resultReleased'
     'keydown': 'keydown'
+    'keydown #q': 'keydownSearch'
     'click .feedback-comment-close': 'selectNone'
     'click .feedback-remove-tag': 'removeTag'
     'keydown .feedback-new-tag': 'keydownNewTag'
@@ -141,6 +142,11 @@ class Houston.Feedback.CommentsView extends Backbone.View
       when KEY.UP then @selectPrev(@mode(e))
       when KEY.DOWN then @selectNext(@mode(e))
       when KEY.ESC then @focusSearch()
+
+  keydownSearch: (e)->
+    if e.keyCode is KEY.DOWN
+      e.stopImmediatePropagation()
+      @select @$el.find('.feedback-search-result:first'), 'new'
 
   search: (e)->
     return unless history.pushState
