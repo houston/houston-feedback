@@ -26,6 +26,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .btn-delete': 'deleteComments'
     'click .btn-edit': 'editCommentText'
     'click .btn-save': 'saveCommentText'
+    'keydown .feedback-text': 'keydownCommentText'
   
   initialize: ->
     @$results = @$el.find('#results')
@@ -316,6 +317,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
         $('.btn-edit').text('Edit')
       .error ->
         console.log 'error', arguments
+
+  keydownCommentText: (e)->
+    # Don't select another comment or jump to the search bar
+    e.stopImmediatePropagation()
 
   newFeedback: (e)->
     e.preventDefault() if e
