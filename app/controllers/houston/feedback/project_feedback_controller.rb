@@ -23,11 +23,12 @@ module Houston
       ].freeze
       
       def index
+        @q = params.fetch(:q, "-#no -#addressed -#invalid")
         @comments = Comment \
           .for_project(project)
           .includes(:user)
           .with_flags_for(current_user)
-          .search(params.fetch(:q, ""))
+          .search(@q)
         
         respond_to do |format|
           format.json do
