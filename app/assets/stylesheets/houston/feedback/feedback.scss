@@ -266,3 +266,31 @@
   right: 0.69060773480663%;
   top: 56px;
 }
+
+.feedback-tag-cloud {
+  margin: 0.33em 0 1.66em 0;
+  
+  li { display: inline-block; }
+  
+  a.feedback-tag {
+    color: white;
+    padding-right: 0;
+    
+    &:hover, &:active {
+      text-decoration: none;
+      background: #0088cc;
+    }
+  }
+  
+  .feedback-tag-count {
+    background: rgba(255,255,255,0.3);
+    display: inline-block;
+    padding: 2px 6px;
+    margin: -2px 0 -2px -2px;
+    border-radius: 1em;
+    text-align: center;
+    font-size: 0.85em;
+    position: relative;
+    left: 4px;
+  }
+}

@@ -1,0 +1,10 @@
+<ol class="feedback-tag-cloud">
+  {{#tags}}
+    <li>
+      <a class="feedback-tag" href="{{tagUrl tag}}" tabindex="-1">
+        <span class="feedback-tag-name">{{tag}}</span>
+        <span class="feedback-tag-count">{{count}}</span>
+      </a>
+    </li>
+  {{/tags}}
+</ol>

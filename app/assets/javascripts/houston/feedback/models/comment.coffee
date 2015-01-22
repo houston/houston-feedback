@@ -18,3 +18,10 @@ class Houston.Feedback.Comment extends Backbone.Model
   
 class Houston.Feedback.Comments extends Backbone.Collection
   model: Houston.Feedback.Comment
+
+  countTags: ->
+    countByTag = {}
+    for comment in @models
+      for tag in comment.get('tags')
+        countByTag[tag] = (countByTag[tag] ? 0) + 1
+    _.sortBy ({tag: tag, count: count} for tag, count of countByTag), (n)-> -n.count

@@ -13,6 +13,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderImportModal: HandlebarsTemplates['houston/feedback/comments/import']
   renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/comments/delete_imported']
   renderNewCommentModal: HandlebarsTemplates['houston/feedback/comments/new']
+  renderTagCloud: HandlebarsTemplates['houston/feedback/comments/tags']
  
   events:
     'submit #search_feedback': 'search'
@@ -172,6 +173,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @$el.find('#search_report').html @renderSearchReport
       results: @comments.length
       searchTime: @searchTime
+
+    $('#tags_report').html @renderTagCloud
+      tags: @comments.countTags()
 
     $('#feedback_edit').affix(offset: {top: 148})
 
