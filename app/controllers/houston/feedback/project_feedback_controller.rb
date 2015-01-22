@@ -51,6 +51,7 @@ module Houston
         comment.project = project
         comment.user = current_user
         if comment.save
+          comment.read_by! current_user
           render json: CommentPresenter.new(comment)
         else
           render json: comment.errors, status: :unprocessable_entity
