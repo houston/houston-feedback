@@ -6,6 +6,8 @@ module Houston
       
       
       def add
+        authorize! :tag, Comment
+        
         comments.find_each do |comment|
           comment.tags = comment.tags | tags
           comment.save
@@ -15,6 +17,8 @@ module Houston
       
       
       def remove
+        authorize! :tag, Comment
+        
         comments.find_each do |comment|
           comment.tags = comment.tags - tags
           comment.save

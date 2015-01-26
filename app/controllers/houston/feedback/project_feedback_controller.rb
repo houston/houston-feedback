@@ -23,6 +23,8 @@ module Houston
       ].freeze
       
       def index
+        authorize! :read, Comment
+        
         @q = params.fetch(:q, "-#no -#addressed -#invalid")
         @comments = Comment \
           .for_project(project)
@@ -50,6 +52,9 @@ module Houston
         comment = Comment.new(params.pick(:customer, :text, :tags))
         comment.project = project
         comment.user = current_user
+        
+        authorize! :create, comment
+        
         if comment.save
           comment.read_by! current_user
           render json: CommentPresenter.new(comment)
@@ -59,6 +64,8 @@ module Houston
       end
       
       def upload_csv
+        authorize! :create, Comment
+        
         @target = params[:target]
         session[:csv_path] = params[:file].tempfile.path
         
@@ -78,6 +85,8 @@ module Houston
       end
       
       def import
+        authorize! :create, Comment
+        
         customer_fields = params.fetch(:customer_fields, []).map(&:to_i)
         feedback_fields = params.fetch(:feedback_fields, []).map(&:to_i)
         
