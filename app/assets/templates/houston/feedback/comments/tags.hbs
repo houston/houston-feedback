@@ -1,10 +1,19 @@
-<ol class="feedback-tag-cloud">
-  {{#tags}}
-    <li>
-      <a class="feedback-tag" href="{{tagUrl tag}}" tabindex="-1">
-        <span class="feedback-tag-name">{{tag}}</span>
-        <span class="feedback-tag-count">{{count}}</span>
-      </a>
-    </li>
-  {{/tags}}
-</ol>
+<div class="feedback-tag-cloud">
+  {{#topTags}}
+    <a class="feedback-tag" href="{{tagUrl tag}}" tabindex="-1">
+      <span class="feedback-tag-name">{{tag}}</span>
+      <span class="feedback-tag-count">{{count}}</span>
+    </a>
+  {{/topTags}}
+  {{#if extraTags}}
+    <span id="extra_tags" class="extra-tags collapsed">
+      {{#extraTags}}
+        <a class="feedback-tag" href="{{tagUrl tag}}" tabindex="-1">
+          <span class="feedback-tag-name">{{tag}}</span>
+          <span class="feedback-tag-count">{{count}}</span>
+        </a>
+      {{/extraTags}}
+    </span>
+    <a id="toggle_extra_tags_link" href="#extra_tags" class="toggle-tag-visibility" data-mode="collapsed"></a>
+  {{/if}}
+</div>

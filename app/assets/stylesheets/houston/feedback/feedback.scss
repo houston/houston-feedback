@@ -282,6 +282,18 @@
     }
   }
   
+  .toggle-tag-visibility {
+    color: rgb(194, 194, 194);
+    text-decoration: none;
+    
+    &::before { content: 'more »'; }
+    &:hover { color: #005580; }
+    
+    &.show-all-tags {
+      &::before { content: '« less'; }
+    }
+  }
+  
   .feedback-tag-count {
     background: rgba(255,255,255,0.3);
     display: inline-block;

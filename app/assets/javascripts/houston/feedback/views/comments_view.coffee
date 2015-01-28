@@ -29,6 +29,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .btn-edit': 'editCommentText'
     'click .btn-save': 'saveCommentText'
     'keydown .feedback-text': 'keydownCommentText'
+    'click #toggle_extra_tags_link': 'toggleExtraTags'
   
   initialize: ->
     @$results = @$el.find('#results')
@@ -174,8 +175,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
       results: @comments.length
       searchTime: @searchTime
 
+    tags = @comments.countTags()
     $('#tags_report').html @renderTagCloud
-      tags: @comments.countTags()
+      topTags: tags.slice(0, 5)
+      extraTags: tags.slice(5)
 
     $('#feedback_edit').affix(offset: {top: 148})
 
@@ -380,3 +383,11 @@ class Houston.Feedback.CommentsView extends Backbone.View
       $(".feedback-comment[data-id=\"#{comment.get('id')}\"]")
         .removeClass('feedback-comment-unread')
         .addClass('feedback-comment-read')
+
+
+
+  toggleExtraTags: (e)->
+    e.preventDefault() if e
+    $a = $(e.target)
+    $a.toggleClass('show-all-tags')
+    $('#extra_tags').toggleClass 'collapsed', !$a.hasClass('show-all-tags')
