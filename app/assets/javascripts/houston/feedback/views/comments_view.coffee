@@ -251,7 +251,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   addTag: ->
     $input = $('.feedback-new-tag')
-    tags = @parseTags($input.val())
+    tags = $input.selectedTags()
     ids = @selectedIds()
     $.post '/feedback/comments/tags', comment_ids: ids, tags: tags
       .success =>
@@ -260,11 +260,6 @@ class Houston.Feedback.CommentsView extends Backbone.View
         @editSelected()
       .error ->
         console.log 'error', arguments
-
-  parseTags: (text)->
-    tags = _.map text.split(/[,;]/), (tag)->
-      tag.compact().toLowerCase().replace(/[^\w\?]+/g, '-')
-    _.reject tags, (tag)-> !tag
 
   promptToImportCsv: (data)->
     $modal = $(@renderImportModal(data)).modal()
@@ -343,7 +338,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $newTag = $modal.find('.feedback-new-tag')
     
     addTags = =>
-      tags = @parseTags($newTag.val())
+      tags = $newTag.selectedTags()
       $tags = $modal.find('.feedback-tag-list')
       for tag in tags
         $tags.append """

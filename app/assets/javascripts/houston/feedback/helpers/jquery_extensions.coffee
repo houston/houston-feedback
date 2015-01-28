@@ -24,4 +24,10 @@ $.fn.extend
         highlighter: (item)->
           query = extractor(@query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
           item.replace /(#{query})/ig, ($1, match)-> "<strong>#{match}</strong>"
-    
+
+  selectedTags: ->
+    text = @.val()
+    tags = _.map text.split(/[,;]/), (tag)->
+      tag.compact().toLowerCase().replace(/[^\w\?]+/g, '-')
+    _.reject tags, (tag)-> !tag
+
