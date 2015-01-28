@@ -1,19 +1,5 @@
 {{#each comments}}
-<div id="comment_{{id}}" tabindex="0" class="feedback-comment feedback-search-result {{#if read}}feedback-comment-read{{else}}feedback-comment-unread{{/if}}" data-id="{{id}}" data-rank="{{rank}}">
-  <div class="feedback-snippet">
-    {{#if customer}}
-      <span class="feedback-customer">{{customer}}</span>
-    {{else}}
-      <span class="feedback-customer unknown">{{reporter/name}}</span>
-    {{/if}}
-    <div class="feedback-metadata">
-      <span class="feedback-reporter">{{{avatar reporter/email 16 reporter/name}}}</span>
-      <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>
-    </div>
-    <div class="feedback-text">{{{excerpt}}}</div>
+  <div id="comment_{{id}}" tabindex="0" class="feedback-comment feedback-search-result {{#if read}}feedback-comment-read{{else}}feedback-comment-unread{{/if}}" data-id="{{id}}" data-rank="{{rank}}">
+    {{{renderComment this}}}
   </div>
-  <div class="feedback-tag-list">
-    {{#each tags}}<span class="feedback-tag">{{this}}</span>{{/each}}
-  </div>
-</div>
 {{/each}}

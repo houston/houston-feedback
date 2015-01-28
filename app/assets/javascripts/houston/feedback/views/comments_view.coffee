@@ -7,6 +7,7 @@ KEY =
 
 class Houston.Feedback.CommentsView extends Backbone.View
   template: HandlebarsTemplates['houston/feedback/comments/index']
+  renderComment: HandlebarsTemplates['houston/feedback/comments/show']
   renderEditComment: HandlebarsTemplates['houston/feedback/comments/edit']
   renderEditMultiple: HandlebarsTemplates['houston/feedback/comments/edit_multiple']
   renderSearchReport: HandlebarsTemplates['houston/feedback/comments/report']
@@ -260,7 +261,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $.post '/feedback/comments/tags', comment_ids: ids, tags: tags
       .success =>
         @tags = _.uniq @tags.concat(tags)
-        @comments.get(id).addTags(tags) for id in ids
+        for id in ids
+          comment = @comments.get(id)
+          comment.addTags(tags)
+          @redrawComment comment
         @editSelected()
       .error ->
         console.log 'error', arguments
@@ -320,12 +324,16 @@ class Houston.Feedback.CommentsView extends Backbone.View
     comment = @comments.get @selectedId()
     comment.save(text: text)
       .success =>
+        @redrawComment comment
         @editSelected()
         alertify.success "Comment updated"
         $('.feedback-edit-comment').removeClass('edit-text')
         $('.btn-edit').text('Edit')
       .error ->
         console.log 'error', arguments
+
+  redrawComment: (comment)->
+    $("#comment_#{comment.id}").html @renderComment(comment.toJSON())
 
   keydownCommentText: (e)->
     # Don't select another comment or jump to the search bar
