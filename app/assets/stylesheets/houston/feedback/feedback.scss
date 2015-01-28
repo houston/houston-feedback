@@ -131,7 +131,8 @@
     .btn-edit, .btn-save, .btn-read { float: right; }
     
     .btn-save,
-    .feedback-text.edit { display: none; }
+    .feedback-text.edit, 
+    .feedback-customer-edit { display: none; }
     
     .feedback-text {
       height: 18em;
@@ -140,6 +141,12 @@
     .feedback-text.markdown { overflow-y: auto; }
     
     &.edit-text {
+      .feedback-customer { display: none; }
+      .feedback-customer-edit {
+        display: block;
+        input { margin: 0; }
+      }
+      
       .feedback-text.markdown { display: none; }
       .btn-save {
         display: inline-block;

@@ -14,9 +14,11 @@ module Houston
       
       
       def update
-        authorize! :update, Comment
         comment = Comment.find(params[:id])
+        authorize! :update, comment
+        
         comment.text = params[:text]
+        comment.customer = params[:customer]
         if comment.save
           render json: Houston::Feedback::CommentPresenter.new(comment)
         else
