@@ -32,6 +32,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'keydown .feedback-text': 'keydownCommentText'
     'click #toggle_extra_tags_link': 'toggleExtraTags'
     'click .feedback-tag': 'clickTag'
+    'click .btn-read': 'toggleRead'
   
   initialize: ->
     @$results = @$el.find('#results')
@@ -389,9 +390,16 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   markAsRead: (comment)->
     comment.markAsRead ->
-      $(".feedback-comment[data-id=\"#{comment.get('id')}\"]")
+      $(".feedback-search-result.feedback-comment[data-id=\"#{comment.get('id')}\"]")
         .removeClass('feedback-comment-unread')
         .addClass('feedback-comment-read')
+      $('.feedback-comment.feedback-edit-comment .btn-read').addClass('active')
+
+  markAsUnread: (comment)->
+    comment.markAsUnread ->
+      $(".feedback-search-result.feedback-comment[data-id=\"#{comment.get('id')}\"]")
+        .addClass('feedback-comment-unread')
+        .removeClass('feedback-comment-read')
 
 
 
@@ -415,3 +423,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
   getParameterByName: (params, name)->
     match = RegExp("[?&]#{name}=([^&]*)").exec(params)
     decodeURIComponent(match[1].replace(/\+/g, ' ')) if match
+
+
+
+  toggleRead: (e)->
+    comment = @selectedComments[0]
+    if !$(e.target).hasClass('active')
+      @markAsRead(comment)
+    else
+      @markAsUnread(comment)
+

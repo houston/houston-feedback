@@ -128,7 +128,7 @@
     .feedback-reporter::after { content: ' • '; }
     .feedback-reporter, .feedback-created { vertical-align: bottom; }
     
-    .btn-edit, .btn-save { float: right; }
+    .btn-edit, .btn-save, .btn-read { float: right; }
     
     .btn-save,
     .feedback-text.edit { display: none; }

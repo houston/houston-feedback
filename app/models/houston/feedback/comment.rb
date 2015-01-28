@@ -94,9 +94,9 @@ module Houston
         self[:excerpt] || text[0..140]
       end
       
-      def read_by!(user)
+      def read_by!(user, read=true)
         flags = user_flags.first_or_create(user_id: user.id)
-        flags.read = true
+        flags.read = read
         flags.save!
       rescue ActiveRecord::RecordNotUnique
         # race condition, OK

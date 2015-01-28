@@ -32,6 +32,13 @@ module Houston
       end
       
       
+      def mark_unread
+        comment = Comment.find params[:id]
+        comment.read_by! current_user, false
+        head :ok
+      end
+      
+      
     private
       
       def find_comments

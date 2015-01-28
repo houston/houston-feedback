@@ -15,6 +15,11 @@ class Houston.Feedback.Comment extends Backbone.Model
       @set 'read', true
       success()
   
+  markAsUnread: (success)->
+    $.post("#{@url()}/unread").success =>
+      @set 'read', false
+      success()
+  
   
 class Houston.Feedback.Comments extends Backbone.Collection
   model: Houston.Feedback.Comment
