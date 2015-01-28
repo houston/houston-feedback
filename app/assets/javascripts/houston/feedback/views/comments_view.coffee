@@ -30,6 +30,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .btn-save': 'saveCommentText'
     'keydown .feedback-text': 'keydownCommentText'
     'click #toggle_extra_tags_link': 'toggleExtraTags'
+    'click .feedback-tag': 'clickTag'
   
   initialize: ->
     @$results = @$el.find('#results')
@@ -391,3 +392,18 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $a = $(e.target)
     $a.toggleClass('show-all-tags')
     $('#extra_tags').toggleClass 'collapsed', !$a.hasClass('show-all-tags')
+
+  clickTag: (e)->
+    e.preventDefault() if e
+    $a = $(e.target).closest('a')
+    tag = @getQuery $a.attr('href')
+    $('#q').val tag
+    @search()
+  
+  getQuery: (params)->
+    @getParameterByName(params, 'q')
+  
+  # http://james.padolsey.com/javascript/bujs-1-getparameterbyname/
+  getParameterByName: (params, name)->
+    match = RegExp("[?&]#{name}=([^&]*)").exec(params)
+    decodeURIComponent(match[1].replace(/\+/g, ' ')) if match
