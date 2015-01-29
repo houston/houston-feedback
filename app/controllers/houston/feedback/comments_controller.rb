@@ -19,6 +19,8 @@ module Houston
         
         comment.text = params[:text]
         comment.customer = params[:customer]
+        comment.updated_by = current_user
+        
         if comment.save
           render json: Houston::Feedback::CommentPresenter.new(comment)
         else

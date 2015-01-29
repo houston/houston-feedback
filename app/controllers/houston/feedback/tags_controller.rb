@@ -10,6 +10,7 @@ module Houston
         
         comments.find_each do |comment|
           comment.tags = comment.tags | tags
+          comment.updated_by = current_user
           comment.save
         end
         head :ok
@@ -21,6 +22,7 @@ module Houston
         
         comments.find_each do |comment|
           comment.tags = comment.tags - tags
+          comment.updated_by = current_user
           comment.save
         end
         head :ok

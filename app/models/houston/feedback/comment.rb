@@ -13,6 +13,8 @@ module Houston
       
       has_many :user_flags, class_name: "Houston::Feedback::CommentUserFlags"
       
+      versioned only: [:customer, :text, :tags]
+      
       class << self
         def for_project(project)
           where(project_id: project.id)
