@@ -1,5 +1,5 @@
 namespace :feedback do
-  PROJECTS = %w{ledger members unite confb dr epic-auth houston lsb-editor lsb3 musicmate oic}.freeze
+  PROJECTS = %w{ledger members unite bible101 bsb confb discourse dr epic-auth houston lsb-editor lsb3 oic pastoral_care pray_now}.freeze
   
   desc "Erases all feedback"
   task :erase => :environment do
@@ -69,8 +69,6 @@ namespace :feedback do
     response = Faraday.get "http://goldmineweb/DisplayCase.aspx?CaseNumber=#{number}"
     page = Nokogiri::HTML(response.body)
     page.css("[name=\"txtDescription\"]").first.text
-    # @goldmine ||= JSON.load(File.read(File.expand_path("~/Desktop/Tickets->Feedback/goldmine_notes.json")))
-    # @goldmine[number.to_i.to_s]
   end
 
   def ticket_to_feedback_text2(ticket, goldmine_notes)
