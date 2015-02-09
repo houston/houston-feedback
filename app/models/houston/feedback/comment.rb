@@ -97,7 +97,7 @@ module Houston
       end
       
       def read_by!(user, read=true)
-        flags = user_flags.first_or_create(user_id: user.id)
+        flags = user_flags.where(user_id: user.id).first_or_create
         flags.read = read
         flags.save!
       rescue ActiveRecord::RecordNotUnique
