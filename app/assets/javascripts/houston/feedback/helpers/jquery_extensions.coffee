@@ -9,14 +9,14 @@ $.fn.extend
   autocompleteTags: (tags)->
     extractor = (query)->
       result = /([^,]+)$/.exec(query)
-      if result and result[1] then result[1].trim() else ''
+      if result and result[1] then result[1].trim().replace(/^#/, '') else ''
 
     $(@)
       .attr('autocomplete', 'off')
       .typeahead
         source: tags
         updater: (item)->
-          @$element.val().replace(/[^,]*$/,' ') + item + ', '
+          @$element.val().replace(/[^,]*$/, ' ').trimLeft() + item + ', '
         matcher: (item)->
           tquery = extractor(@query)
           return false unless tquery
@@ -28,6 +28,6 @@ $.fn.extend
   selectedTags: ->
     text = @.val()
     tags = _.map text.split(/[,;]/), (tag)->
-      tag.compact().toLowerCase().replace(/[^\w\?]+/g, '-')
+      tag.compact().toLowerCase().replace(/^#/, '').replace(/[^\w\?]+/g, '-')
     _.reject tags, (tag)-> !tag
 
