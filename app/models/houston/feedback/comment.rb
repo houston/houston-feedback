@@ -34,8 +34,8 @@ module Houston
           flags = []
           query_string = query_string
             .gsub(/\/(read|unread|untagged)/) { |arg| flags << $1; "" }
-            .gsub(/\-\#([a-z\-\?0-9]+)/) { |arg| not_tags << $1; "" }
-            .gsub(/\#([a-z\-\?0-9]+)/) { |arg| tags << $1; "" }
+            .gsub(/\-\#([a-z\-\?0-9\|]+)\b/) { |arg| not_tags << $1; "" }
+            .gsub(/\#([a-z\-\?0-9\|]+)\b/) { |arg| tags << $1; "" }
             .strip
           
           config = PgSearch::Configuration.new({against: "plain_text"}, self)
