@@ -74,8 +74,11 @@ module Houston
           SQL
         end
         
-        def tags
-          pluck("distinct regexp_split_to_table(tags, '\\n')").reject(&:blank?)
+        def tags_by_project
+          tags_by_project = Hash.new { |hash, key| hash[key] = [] }
+          joins(:project)
+            .pluck("distinct projects.slug, regexp_split_to_table(tags, '\\n')")
+            .each_with_object(tags_by_project) { |(project, tag), hash| hash[project].push(tag) }
         end
       end
       

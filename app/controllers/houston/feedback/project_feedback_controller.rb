@@ -28,7 +28,7 @@ module Houston
         @q = params.fetch(:q, "-#no -#addressed -#invalid")
         @comments = Comment \
           .for_project(project)
-          .includes(:user)
+          .includes(:user, :project)
           .with_flags_for(current_user)
           .search(@q)
         
@@ -37,7 +37,7 @@ module Houston
             render json: CommentPresenter.new(comments)
           end
           format.html do
-            @tags = Comment.for_project(project).tags
+            @tags_by_project = Comment.for_project(project).tags_by_project
           end
           format.xlsx do
             send_data CommentExcelPresenter.new(project, params[:q], comments),

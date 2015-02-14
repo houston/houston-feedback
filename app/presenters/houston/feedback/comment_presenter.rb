@@ -20,6 +20,7 @@ module Houston
         { id: comment.id,
           createdAt: comment.created_at,
           import: comment.import,
+          project: present_project(comment.project),
           reporter: present_reporter(comment.user),
           customer: comment.customer,
           text: comment.text,
@@ -27,6 +28,11 @@ module Houston
           read: comment[:read],
           rank: comment[:rank],
           tags: comment.tags }
+      end
+      
+      def present_project(project)
+        { slug: project.slug,
+          color: project.color }
       end
       
       def present_reporter(user)
