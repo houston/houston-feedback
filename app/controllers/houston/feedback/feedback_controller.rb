@@ -16,7 +16,7 @@ module Houston
         
         respond_to do |format|
           format.json do
-            render json: CommentPresenter.new(comments)
+            render json: CommentPresenter.new(current_ability, comments)
           end
           format.html do
             @tags_by_project = Comment.tags_by_project

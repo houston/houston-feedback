@@ -1,8 +1,12 @@
 module Houston
   module Feedback
     class CommentPresenter
+      attr_reader :ability
       
-      def initialize(comments)
+      delegate :can?, to: :ability
+      
+      def initialize(ability, comments)
+        @ability = ability
         @comments = OneOrMany.new(comments || [])
       end
       
@@ -25,6 +29,9 @@ module Houston
           customer: comment.customer,
           text: comment.text,
           excerpt: comment.excerpt,
+          permissions: {
+            update: can?(:update, comment),
+            destroy: can?(:destroy, comment) },
           read: comment[:read],
           rank: comment[:rank],
           tags: comment.tags }

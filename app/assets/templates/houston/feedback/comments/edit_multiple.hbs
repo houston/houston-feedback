@@ -15,5 +15,7 @@
     <input type="text" class="feedback-new-tag" placeholder="New Tag" />
   </div>
   
+  {{#if permissions/destroy}}
   <button class="btn btn-delete btn-small btn-danger">Delete</button>
+  {{/if}}
 </div>

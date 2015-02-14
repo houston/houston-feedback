@@ -159,13 +159,6 @@
       }
     }
   }
-  
-  &.no-destroy {
-    .btn-delete { display: none; }
-  }
-  &.no-update {
-    .btn-edit  { display: none; }
-  }
 }
 
 .feedback-tags {

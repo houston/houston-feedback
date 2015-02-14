@@ -34,7 +34,7 @@ module Houston
         
         respond_to do |format|
           format.json do
-            render json: CommentPresenter.new(comments)
+            render json: CommentPresenter.new(current_ability, comments)
           end
           format.html do
             @tags_by_project = Comment.for_project(project).tags_by_project
@@ -57,7 +57,7 @@ module Houston
         
         if comment.save
           comment.read_by! current_user
-          render json: CommentPresenter.new(comment)
+          render json: CommentPresenter.new(current_ability, comment)
         else
           render json: comment.errors, status: :unprocessable_entity
         end

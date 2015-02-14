@@ -22,7 +22,7 @@ module Houston
         comment.updated_by = current_user
         
         if comment.save
-          render json: Houston::Feedback::CommentPresenter.new(comment)
+          render json: Houston::Feedback::CommentPresenter.new(current_ability, comment)
         else
           render json: comment.errors, status: :unprocessable_entity
         end

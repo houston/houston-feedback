@@ -28,8 +28,12 @@
   <div class="feedback-text markdown">{{{markdown text}}}</div>
   <textarea class="feedback-text edit">{{text}}</textarea>
   
+  {{#if permissions/destroy}}
   <button class="btn btn-delete btn-small btn-danger">Delete</button>
+  {{/if}}
+  {{#if permissions/update}}
   <button class="btn btn-save btn-small btn-primary">Save</button>
   <button class="btn btn-edit btn-small btn-default">Edit</button>
+  {{/if}}
   <button class="btn btn-read btn-small btn-default {{#if read}}active{{/if}}" data-toggle="button">Read</button>
 </div>

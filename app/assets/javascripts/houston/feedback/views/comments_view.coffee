@@ -214,6 +214,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
   editMultiple: (comments)->
     context = 
       count: comments.length
+      permissions:
+        destroy: _.all comments, (comment)-> comment.get('permissions').destroy
       tags: []
     
     tags = (comment.get('tags') for comment in comments).flatten()
