@@ -206,7 +206,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
       @timeoutId = null
 
     if comment.isUnread()
-      @timeoutId = window.setTimeout _.bind(@markAsRead, @), 1500, comment
+      @timeoutId = window.setTimeout =>
+        @markAsRead comment, ->
+          $('.feedback-comment.feedback-edit-comment .btn-read').addClass('active')
+      , 1500
 
     $('#feedback_edit').html @renderEditComment(comment.toJSON())
     @focusEditor()
@@ -217,6 +220,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       permissions:
         destroy: _.all comments, (comment)-> comment.get('permissions').destroy
       tags: []
+      read: _.all comments, (comment)-> comment.get('read')
     
     tags = (comment.get('tags') for comment in comments).flatten()
     for tag, array of tags.groupBy()
@@ -401,18 +405,19 @@ class Houston.Feedback.CommentsView extends Backbone.View
     
     $modal.find('#create_button').click => submit()
 
-  markAsRead: (comment)->
+  markAsRead: (comment, callback)->
     comment.markAsRead ->
       $(".feedback-search-result.feedback-comment[data-id=\"#{comment.get('id')}\"]")
         .removeClass('feedback-comment-unread')
         .addClass('feedback-comment-read')
-      $('.feedback-comment.feedback-edit-comment .btn-read').addClass('active')
+      callback() if callback
 
-  markAsUnread: (comment)->
+  markAsUnread: (comment, callback)->
     comment.markAsUnread ->
       $(".feedback-search-result.feedback-comment[data-id=\"#{comment.get('id')}\"]")
         .addClass('feedback-comment-unread')
         .removeClass('feedback-comment-read')
+      callback() if callback
 
 
 
@@ -440,9 +445,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
 
   toggleRead: (e)->
-    comment = @selectedComments[0]
     if !$(e.target).hasClass('active')
-      @markAsRead(comment)
+      for comment in @selectedComments
+        @markAsRead(comment)
     else
-      @markAsUnread(comment)
+      for comment in @selectedComments
+        @markAsUnread(comment)
 
