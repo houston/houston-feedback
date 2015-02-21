@@ -26,7 +26,9 @@
   </div>
   
   <div class="feedback-text markdown">{{{markdown text}}}</div>
-  <textarea class="feedback-text edit">{{text}}</textarea>
+  <div class="feedback-text edit uploader">
+    <textarea>{{text}}</textarea>
+  </div>
   
   {{#if permissions/destroy}}
   <button class="btn btn-delete btn-small btn-danger">Delete</button>

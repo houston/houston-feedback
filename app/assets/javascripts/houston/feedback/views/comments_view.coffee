@@ -29,7 +29,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .btn-delete': 'deleteComments'
     'click .btn-edit': 'editCommentText'
     'click .btn-save': 'saveCommentText'
-    'keydown .feedback-text': 'keydownCommentText'
+    'keydown .feedback-text textarea': 'keydownCommentText'
     'click #toggle_extra_tags_link': 'toggleExtraTags'
     'click .feedback-tag': 'clickTag'
     'click .btn-read': 'toggleRead'
@@ -212,6 +212,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       , 1500
 
     $('#feedback_edit').html @renderEditComment(comment.toJSON())
+    $('#feedback_edit .uploader').supportImages()
     @focusEditor()
 
   editMultiple: (comments)->
@@ -337,7 +338,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   saveCommentText: (e)->
     e.preventDefault() if e
     
-    text = $('.feedback-text.edit').val()
+    text = $('.feedback-text.edit textarea').val()
     customer = $('.feedback-customer-edit > input').val()
     comment = @comments.get @selectedId()
     comment.save(text: text, customer: customer)
@@ -366,6 +367,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $modal.find('#new_feedback_tags').autocompleteTags(@tagsByProject[@projectSlug])
     
     $newTag = $modal.find('.feedback-new-tag')
+    $modal.find('.uploader').supportImages()
     
     addTags = =>
       tags = $newTag.selectedTags()

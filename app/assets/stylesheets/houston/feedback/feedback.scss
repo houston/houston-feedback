@@ -134,11 +134,16 @@
     .feedback-text.edit, 
     .feedback-customer-edit { display: none; }
     
-    .feedback-text {
+    .feedback-text textarea {
+      height: 18em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .feedback-text.markdown { 
+      overflow-y: auto;
       height: 18em;
       margin-bottom: 10px;
     }
-    .feedback-text.markdown { overflow-y: auto; }
     
     &.edit-text {
       .feedback-customer { display: none; }
@@ -152,11 +157,7 @@
         display: inline-block;
         margin-left: 0.5em;
       }
-      .feedback-text.edit {
-        display: block;
-        width: 100%;
-        box-sizing: border-box;
-      }
+      .feedback-text.edit { display: block; }
     }
   }
 }
