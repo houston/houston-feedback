@@ -37,8 +37,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   initialize: ->
     @$results = @$el.find('#results')
     @comments = @options.comments
-    @tagsByProject = @options.tagsByProject
-    @projectSlug = @options.project
+    @tags = @options.tags
     
     $('#import_csv_field').change (e)->
       $(e.target).closest('form').submit()
@@ -239,11 +238,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $('#feedback_edit').html('')
 
   focusEditor: ->
-    projects = _.uniq(_.map @selectedComments, (comment)-> comment.get('project').slug)
-    tags = []
-    for project in projects
-      tags = tags.concat (@tagsByProject[project] || [])
-    $('#feedback_edit').find('input').autocompleteTags(tags).focus()
+    $('#feedback_edit').find('input').autocompleteTags(@tags).focus()
 
   removeTag: (e)->
     e.preventDefault()
@@ -270,18 +265,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
   addTag: ->
     $input = $('.feedback-new-tag')
     tags = $input.selectedTags()
-    return if tags.length is 0
-    
     ids = @selectedIds()
     $.post '/feedback/comments/tags', comment_ids: ids, tags: tags
       .success =>
+        @tags = _.uniq @tags.concat(tags)
         for id in ids
           comment = @comments.get(id)
           comment.addTags(tags)
-          
-          project = comment.get('project').slug
-          @tagsByProject[project] = _.uniq @tagsByProject[project].concat(tags)
-          
           @redrawComment comment
         @editSelected()
       .error ->
@@ -364,7 +354,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $modal.on 'hidden', -> $(@).remove()
     
     $modal.find('#new_feedback_customer').focus()
-    $modal.find('#new_feedback_tags').autocompleteTags(@tagsByProject[@projectSlug])
+    $modal.find('#new_feedback_tags').autocompleteTags(@tags)
     
     $newTag = $modal.find('.feedback-new-tag')
     $modal.find('.uploader').supportImages()
