@@ -1,0 +1,23 @@
+<div class="feedback-digest">
+  <% @comments.each do |comment| %>
+    <div class="feedback-comment">
+      <%= avatar_for comment.user %>
+      
+      <% if comment.customer %>
+        <h3 class="feedback-customer unknown"><%= comment.customer %></h3>
+      <% else %>
+        <h3 class="feedback-customer unknown"><%= comment.user.name %></h3>
+      <% end %>
+      <div class="feedback-metadata">
+        <span class="feedback-reporter"><%= comment.user.name %></span>
+        <span class="feedback-created date"><%= comment.created_at.strftime("%b %-e, %Y") %></span>
+      </div>
+      <div class="feedback-text markdown">
+        <%= mdown comment.text %>
+      </div>
+      <div class="feedback-tag-list">
+        <span class="feedback-project"><b class="label <%= comment.project.color %>"><%= comment.project.slug %></b></span><% comment.tags.each do |tag| %><span class="feedback-tag"><%= tag %></span><% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

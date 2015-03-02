@@ -27,6 +27,14 @@ module Houston
           SQL
         end
         
+        def unread_by(user)
+          with_flags_for(user).where("flags.read IS FALSE OR flags.read IS NULL")
+        end
+        
+        def since(time)
+          where arel_table[:created_at].gteq(time)
+        end
+        
         # http://blog.lostpropertyhq.com/postgres-full-text-search-is-good-enough/
         def search(query_string)
           tags = []
