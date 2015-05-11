@@ -42,8 +42,8 @@ module Houston
           flags = []
           query_string = query_string
             .gsub(/\/(read|unread|untagged)/) { |arg| flags << $1; "" }
-            .gsub(/\-\#([a-z\-\?0-9\|]+)\b/) { |arg| not_tags << $1; "" }
-            .gsub(/\#([a-z\-\?0-9\|]+)\b/) { |arg| tags << $1; "" }
+            .gsub(/\-\#([a-z\-\?0-9\|]+)/) { |arg| not_tags << $1; "" }
+            .gsub(/\#([a-z\-\?0-9\|]+)/) { |arg| tags << $1; "" }
             .strip
           
           config = PgSearch::Configuration.new({against: "plain_text"}, self)
@@ -62,9 +62,9 @@ module Houston
           rank.extend Arel::AliasPredication
           
           results = tags.inject(all) { |results, tag|
-            results.where(["tags ~ ?", "(?n)^#{tag.gsub("?", "\\?")}$"]) } # (?n) specified the newline-sensitive option
+            results.where(["tags ~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
           results = not_tags.inject(results) { |results, tag|
-            results.where(["tags !~ ?", "(?n)^#{tag.gsub("?", "\\?")}$"]) } # (?n) specified the newline-sensitive option
+            results.where(["tags !~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
           results = results.where("flags.read IS TRUE") if flags.member? "read"
           results = results.where("flags.read IS FALSE OR flags.read IS NULL") if flags.member? "unread"
           results = results.where("tags='' OR tags='converted'") if flags.member? "untagged"
