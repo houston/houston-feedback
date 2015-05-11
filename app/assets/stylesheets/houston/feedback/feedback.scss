@@ -284,8 +284,17 @@
 }
 
 #feedback_edit.affix {
-  right: 0.69060773480663%;
-  top: 56px;
+  top: 90px;
+  right: 20px;
+  bottom: 52px;
+  padding-left: 20px;
+
+  .feedback-comment { 
+    height: 100%;
+  }
+  .feedback-text.markdown {
+    height: 60%; // Hack -> we should do this with JS to make it the height of the window minus other feedback controls
+  }
 }
 
 .feedback-tag-cloud {
