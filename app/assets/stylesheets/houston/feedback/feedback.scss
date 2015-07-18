@@ -115,6 +115,10 @@
     line-height: 1em;
     margin: 0;
     height: 1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 2em;
   }
   
   .avatar {
