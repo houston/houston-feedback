@@ -48,7 +48,9 @@ module Houston
         
         respond_to do |format|
           format.json do
-            render json: CommentPresenter.new(current_ability, comments)
+            hashes = CommentPresenter.new(current_ability, comments).as_json
+            json = Houston.benchmark("Encode JSON") { MultiJson.dump(hashes) }
+            render json: json
           end
           format.html do
             @tags = Comment.for_project(project).tags
