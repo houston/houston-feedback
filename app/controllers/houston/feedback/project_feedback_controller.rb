@@ -22,6 +22,12 @@ module Houston
         "Latitude"
       ].freeze
       
+      COMMON_SURVEY_RESPONSES_TO_IGNORE = [
+        "",
+        "Yes",
+        "No"
+      ].freeze
+      
       def index
         authorize! :read, Comment
         
@@ -73,7 +79,7 @@ module Houston
         headings = []
         csv.shift.each_with_index do |heading, i|
           next if COMMON_SURVEY_FIELDS_TO_IGNORE.member?(heading)
-          next if csv.all? { |row| row[i].blank? }
+          next if csv.all? { |row| COMMON_SURVEY_RESPONSES_TO_IGNORE.member?(row[i]) }
           example = csv.lazy.map { |row| row[i] }.find { |value| !value.blank? }
           headings.push(text: heading, index: i, example: example)
         end
