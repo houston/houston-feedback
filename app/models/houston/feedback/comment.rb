@@ -40,10 +40,21 @@ module Houston
           tags = []
           not_tags = []
           flags = []
+          reporter_id = nil
+          created_at = nil
           query_string = query_string
             .gsub(/\/(read|unread|untagged)/) { |arg| flags << $1; "" }
             .gsub(/\-\#([a-z\-\?0-9\|]+)/) { |arg| not_tags << $1; "" }
             .gsub(/\#([a-z\-\?0-9\|]+)/) { |arg| tags << $1; "" }
+            .gsub(/by:([A-Za-z0-9]+)/) { |arg|
+              reporter_id = User.where(["lower(concat(first_name, last_name)) = ?", $1])
+                .limit(1).pluck(:id)[0] || reporter_id
+              "" }
+            .gsub(/added:(\d{8})(?:[-–—](\d{8}))?/) { |arg|
+              min = Date.strptime($1, "%Y%m%d").beginning_of_day
+              max = Date.strptime($2 || $1, "%Y%m%d").end_of_day
+              created_at = min..max
+              "" }
             .strip
           
           config = PgSearch::Configuration.new({against: "plain_text"}, self)
@@ -68,6 +79,8 @@ module Houston
           results = results.where("flags.read IS TRUE") if flags.member? "read"
           results = results.where("flags.read IS FALSE OR flags.read IS NULL") if flags.member? "unread"
           results = results.where("tags='' OR tags='converted'") if flags.member? "untagged"
+          results = results.where(user_id: reporter_id) if reporter_id
+          results = results.where(created_at: created_at) if created_at
           results = results.where(query.conditions)
             .select("feedback_comments.*", excerpt.as("excerpt"), rank.as("rank"))
             .order("rank DESC") unless query_string.blank?
