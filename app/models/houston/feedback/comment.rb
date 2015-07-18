@@ -118,7 +118,11 @@ module Houston
       end
       
       def excerpt
-        self[:excerpt] || text[0..140]
+        self[:excerpt] || begin
+          lines = text.lines.map(&:strip).reject(&:blank?)
+          lines.shift if lines[0].starts_with?("#####")
+          lines.join[0..140]
+        end
       end
       
       def read_by!(user, read=true)
