@@ -7,9 +7,9 @@ module Houston
       
       def destroy
         authorize! :destroy, Comment
-        count = comments.length
+        ids = comments.pluck(:id)
         comments.delete_all
-        render json: {count: count}
+        render json: {ids: ids}
       end
       
       

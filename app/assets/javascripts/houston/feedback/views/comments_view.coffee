@@ -169,6 +169,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
       @searchTime = (new Date() - start)
       @render()
 
+  
+
   render: ->
     @offset = 0
     html = @template(comments: (comment.toJSON() for comment in @comments.slice(0, 50)))
@@ -311,8 +313,17 @@ class Houston.Feedback.CommentsView extends Backbone.View
   _deleteComments: (params)->
     $.destroy '/feedback/comments', params
       .success (response)=>
-        alertify.success "#{response.count} comments deleted"
-        @search()
+        @selectNext()
+
+        ids = response.ids
+        alertify.success "#{ids.length} comments deleted"
+
+        selectors = []
+        for id in ids
+          @comments.remove(id)
+          selectors.push "#comment_#{id}"
+
+        $(selectors.join(",")).remove()
       .error ->
         console.log 'error', arguments
 
