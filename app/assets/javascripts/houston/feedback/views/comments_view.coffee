@@ -1,4 +1,5 @@
 KEY =
+  DELETE: 8
   TAB: 9
   RETURN: 13
   ESC: 27
@@ -105,7 +106,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
         $el.addClass('selected')
         $el.focus() unless $el.is(':focus')
     
-    @selectedComments = (@comments.get(id) for id in @selectedIds())
+    @selectedComments = _.compact(@comments.get(id) for id in @selectedIds())
     @$el.toggleClass 'feedback-selected', @selectedComments.length > 0
     @editSelected()
 
@@ -147,6 +148,12 @@ class Houston.Feedback.CommentsView extends Backbone.View
       when KEY.UP then @selectPrev(@mode(e))
       when KEY.DOWN then @selectNext(@mode(e))
       when KEY.ESC then @focusSearch()
+      when KEY.DELETE
+        return unless e.metaKey
+        return unless _.all @selectedComments, (comment)=> comment.get('permissions').destroy
+        e.preventDefault()
+        ids = (comment.id for comment in @selectedComments)
+        @_deleteComments(comment_ids: ids)
 
   keydownSearch: (e)->
     if e.keyCode is KEY.DOWN
