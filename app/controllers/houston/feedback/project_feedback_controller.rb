@@ -89,6 +89,7 @@ module Houston
         
         customer_fields = params.fetch(:customer_fields, []).map(&:to_i)
         feedback_fields = params.fetch(:feedback_fields, []).map(&:to_i)
+        tags = params.fetch(:tags, [])
         
         import = SecureRandom.hex(16) # generates a 32-character string, naturally
         csv = CSV.open(session[:csv_path]).to_a
@@ -103,7 +104,8 @@ module Houston
               project: project,
               user: current_user,
               customer: customer,
-              text: feedback)
+              text: feedback,
+              tags: tags)
             comment.update_plain_text # because the import command won't
             comments.push(comment)
           end

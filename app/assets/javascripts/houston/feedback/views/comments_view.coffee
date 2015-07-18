@@ -282,13 +282,21 @@ class Houston.Feedback.CommentsView extends Backbone.View
   promptToImportCsv: (data)->
     $modal = $(@renderImportModal(data)).modal()
     $modal.on 'hidden', -> $(@).remove()
+
+    addTags = @activateTagControls($modal)
+
     $modal.find('#import_button').click =>
+      addTags()
+
       $modal.find('button').prop('disabled', true)
-      params = $modal.find('form').serialize()
+      params = $modal.find('form').serializeObject()
       $.post "#{window.location.pathname}/import", params
         .success (response)=>
           $modal.modal('hide')
           alertify.success "#{response.count} comments imported"
+          tags = params["tags[]"]
+          tags = [tags] unless _.isArray(tags)
+          $("#q").val _(tags).map((tag)-> "##{tag}").join(" ") if tags
           @search()
         .error ->
           console.log 'error', arguments
@@ -365,23 +373,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $modal.on 'hidden', -> $(@).remove()
     
     $modal.find('#new_feedback_customer').focus()
-    $modal.find('#new_feedback_tags').autocompleteTags(@tags)
-    
-    $newTag = $modal.find('.feedback-new-tag')
     $modal.find('.uploader').supportImages()
     
-    addTags = =>
-      tags = $newTag.selectedTags()
-      $tags = $modal.find('.feedback-tag-list')
-      for tag in tags
-        $tags.append """
-          <span class="feedback-tag feedback-tag-new">
-            #{tag}
-            <input type="hidden" name="tags[]" value="#{tag}" />
-            <a class="feedback-remove-tag"><i class="fa fa-close"></i></a>
-          </span>
-        """
-      $newTag.val('')
+    addTags = @activateTagControls($modal)
     
     submit = =>
       addTags()
@@ -394,19 +388,42 @@ class Houston.Feedback.CommentsView extends Backbone.View
         .error ->
           console.log 'error', arguments
     
-    $newTag.keydown (e)->
+    $modal.find('.feedback-new-tag').keydown (e)->
       if e.keyCode is KEY.RETURN
         if e.metaKey or e.ctrlKey
           submit()
-        else
-          e.preventDefault()
-          addTags()
-    
-    $modal.on 'click', '.feedback-remove-tag', (e)->
-      $(e.target).closest('.feedback-tag-new').remove()
-      $modal.find('.feedback-new-tag').focus()
     
     $modal.find('#create_button').click => submit()
+
+  activateTagControls: ($el)->
+    $el.find('#new_feedback_tags').autocompleteTags(@tags)
+    $newTag = $el.find('.feedback-new-tag')
+
+    addTags = =>
+      tags = $newTag.selectedTags()
+      $tags = $el.find('.feedback-tag-list')
+      for tag in tags
+        $tags.append """
+          <span class="feedback-tag feedback-tag-new">
+            #{tag}
+            <input type="hidden" name="tags[]" value="#{tag}" />
+            <a class="feedback-remove-tag"><i class="fa fa-close"></i></a>
+          </span>
+        """
+      $newTag.val('')
+
+    $newTag.keydown (e)->
+      if e.keyCode is KEY.RETURN
+        unless e.metaKey or e.ctrlKey
+          e.preventDefault()
+          addTags()
+
+    $el.on 'click', '.feedback-remove-tag', (e)->
+      $(e.target).closest('.feedback-tag-new').remove()
+      $el.find('.feedback-new-tag').focus()
+
+    addTags
+
 
   markAsRead: (comment, callback)->
     comment.markAsRead ->

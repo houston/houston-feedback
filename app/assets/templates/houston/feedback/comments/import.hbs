@@ -3,12 +3,12 @@
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     <h3>Import {{filename}}</h3>
   </div>
-  <div class="modal-body">
+  <form class="modal-body">
     <div class="instructions row-fluid">
       <div class="span6"><div class="csv-fields">Select the fields that identify the customer</div></div>
-      <div class="span6"><div class="csv-fields">Select the fields that contain feedback to import</div></div>
+      <div class="span6"><div class="csv-fields">Select the fields that contain comments</div></div>
     </div>
-    <form class="row-fluid">
+    <div class="row-fluid scrollable-container">
       <div class="span6">
         <div class="csv-fields">
           {{#each headings}}
@@ -32,8 +32,15 @@
           {{/each}}
         </div>
       </div>
-    </form>
-  </div>
+    </div>
+
+    <div class="padded">
+      <div class="feedback-tags">
+        <div class="feedback-tag-list"></div>
+        <input type="text" id="new_feedback_tags" class="feedback-new-tag" placeholder="New Tag" />
+      </div>
+    </div>
+  </form>
   <div class="modal-footer">
     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
     <button type="button" id="import_button" class="btn btn-primary">Import</button>
