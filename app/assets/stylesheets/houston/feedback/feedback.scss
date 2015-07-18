@@ -114,11 +114,19 @@
     font-weight: 400;
     line-height: 1em;
     margin: 0;
+    height: 1em;
   }
   
   .avatar {
     float: left;
     margin: 0.25em 0.5em 0 0;
+
+    &.avatar-empty {
+      background: rgba(0,0,0,0.1);
+      height: 24px;
+      content: '';
+      display: block;
+    }
   }
   
   .feedback-reporter::after { content: ' • '; }
@@ -334,5 +342,21 @@
     font-size: 0.85em;
     position: relative;
     left: 4px;
+  }
+}
+
+.feedback-comment.feedback-edit-comment {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+
+  .feedback-text { flex-grow: 100; }
+
+  &.edit-text .feedback-text.edit {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+
+    textarea { flex-grow: 100; }
   }
 }

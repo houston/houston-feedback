@@ -1,18 +1,20 @@
 <div id="comment_{{id}}" class="feedback-comment feedback-edit-comment" data-id="{{id}}">
-  <a href="#" class="feedback-comment-close"><i class="fa fa-times" /></a>
+  <div class="feedback-header">
+    <a href="#" class="feedback-comment-close"><i class="fa fa-times" /></a>
   
-  {{{avatar reporter/email 24 reporter/name}}}
+    {{{avatar reporter/email 24 reporter/name}}}
   
-  {{#if customer}}
-    <h3 class="feedback-customer">{{customer}}</h3>
-  {{else}}
-    <h3 class="feedback-customer unknown">{{reporter/name}}</h3>
-  {{/if}}
-  <h3 class="feedback-customer-edit"><input type="text" value="{{customer}}" /></h3>
+    {{#if customer}}
+      <h3 class="feedback-customer">{{customer}}</h3>
+    {{else}}
+      <h3 class="feedback-customer unknown">{{reporter/name}}</h3>
+    {{/if}}
+    <h3 class="feedback-customer-edit"><input type="text" value="{{customer}}" /></h3>
   
-  <div class="feedback-metadata">
-    <span class="feedback-reporter">{{reporter/name}}</span>
-    <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>
+    <div class="feedback-metadata">
+      <span class="feedback-reporter">{{reporter/name}}</span>
+      <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>
+    </div>
   </div>
   
   <div class="feedback-tags">
@@ -30,12 +32,14 @@
     <textarea>{{text}}</textarea>
   </div>
   
-  {{#if permissions/destroy}}
-  <button class="btn btn-delete btn-small btn-danger">Delete</button>
-  {{/if}}
-  {{#if permissions/update}}
-  <button class="btn btn-save btn-small btn-primary">Save</button>
-  <button class="btn btn-edit btn-small btn-default">Edit</button>
-  {{/if}}
-  <button class="btn btn-read btn-small btn-default {{#if read}}active{{/if}}" data-toggle="button">Read</button>
+  <div class="feedback-commands">
+    {{#if permissions/destroy}}
+    <button class="btn btn-delete btn-small btn-danger">Delete</button>
+    {{/if}}
+    {{#if permissions/update}}
+    <button class="btn btn-save btn-small btn-primary">Save</button>
+    <button class="btn btn-edit btn-small btn-default">Edit</button>
+    {{/if}}
+    <button class="btn btn-read btn-small btn-default {{#if read}}active{{/if}}" data-toggle="button">Read</button>
+  </div>
 </div>
