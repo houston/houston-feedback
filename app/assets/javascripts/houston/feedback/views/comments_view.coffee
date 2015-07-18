@@ -323,7 +323,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   _deleteComments: (params)->
     $.destroy '/feedback/comments', params
       .success (response)=>
-        @selectNext()
+        @selectNext() or @selectPrev() or @selectNone()
 
         ids = response.ids
         alertify.success "#{ids.length} comments deleted"
