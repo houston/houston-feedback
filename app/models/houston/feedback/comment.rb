@@ -83,7 +83,11 @@ module Houston
         end
         
         def tags
-          pluck("distinct regexp_split_to_table(tags, '\\n')").reject(&:blank?)
+          pluck("regexp_split_to_table(tags, '\\n')")
+            .reject(&:blank?)
+            .each_with_object(Hash.new(0)) { |tag, counter| counter[tag] += 1 }
+            .sort_by { |tag, count| -count }
+            .map { |tag, _| tag }
         end
       end
       
