@@ -290,6 +290,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $modal = $(@renderImportModal(data)).modal()
     $modal.on 'hidden', -> $(@).remove()
 
+    for heading in data.headings
+      if heading.text in data.customerFields
+        $("#customer_field_#{heading.index}").prop "checked", true
+
     addTags = @activateTagControls($modal)
 
     $modal.find('#import_button').click =>

@@ -94,6 +94,7 @@ module Houston
         
         @data = {
           headings: headings,
+          customerFields: session.fetch(:import_customer_fields, []),
           filename: params[:file].original_filename }
         render layout: false
       end
@@ -109,6 +110,8 @@ module Houston
         csv = CSV.open(session[:csv_path]).to_a
         comments = []
         headings = csv.shift
+        session[:import_customer_fields] = headings.values_at(*customer_fields)
+        
         csv.each do |row|
           customer = row.values_at(*customer_fields).map { |val| val.to_s.strip }.reject(&:blank?).join(", ")
           next if customer.blank?
