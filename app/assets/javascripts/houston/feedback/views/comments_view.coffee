@@ -31,7 +31,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .btn-save': 'saveCommentText'
     'keydown .feedback-text textarea': 'keydownCommentText'
     'click #toggle_extra_tags_link': 'toggleExtraTags'
-    'click .feedback-tag': 'clickTag'
+    'click .feedback-tag-cloud > .feedback-tag': 'clickTag'
     'click .btn-read': 'toggleRead'
   
   initialize: ->
