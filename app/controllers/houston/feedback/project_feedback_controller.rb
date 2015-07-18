@@ -25,7 +25,15 @@ module Houston
       COMMON_SURVEY_RESPONSES_TO_IGNORE = [
         "",
         "Yes",
-        "No"
+        "No",
+        "Very dissatisfied",
+        "Somewhat dissatisfied",
+        "Somewhat satisfied",
+        "Very satisfied",
+        "Very unlikely",
+        "Somewhat unlikely",
+        "Somewhat likely",
+        "Very likely"
       ].freeze
       
       def index
@@ -79,7 +87,7 @@ module Houston
         headings = []
         csv.shift.each_with_index do |heading, i|
           next if COMMON_SURVEY_FIELDS_TO_IGNORE.member?(heading)
-          next if csv.all? { |row| COMMON_SURVEY_RESPONSES_TO_IGNORE.member?(row[i]) }
+          next if csv.all? { |row| COMMON_SURVEY_RESPONSES_TO_IGNORE.member?(row[i].to_s.strip) }
           example = csv.lazy.map { |row| row[i] }.find { |value| !value.blank? }
           headings.push(text: heading, index: i, example: example)
         end
@@ -106,7 +114,7 @@ module Houston
           next if customer.blank?
           
           feedback_fields.each do |i|
-            feedback, question = row[i], headings[i]
+            feedback, question = row[i].to_s.strip, headings[i]
             next if feedback.blank?
             
             feedback = "###### #{question}\n#{feedback}" unless question.blank?
