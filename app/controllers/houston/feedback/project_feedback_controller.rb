@@ -94,11 +94,14 @@ module Houston
         import = SecureRandom.hex(16) # generates a 32-character string, naturally
         csv = CSV.open(session[:csv_path]).to_a
         comments = []
-        csv.shift
+        headings = csv.shift
         csv.each do |row|
           customer = row.values_at(*customer_fields).reject(&:blank?).join(", ")
-          row.values_at(*feedback_fields).each do |feedback|
+          feedback_fields.each do |i|
+            feedback, question = row[i], headings[i]
             next if feedback.blank?
+            
+            feedback = "###### #{question}\n#{feedback}" unless question.blank?
             comment = Comment.new(
               import: import,
               project: project,
