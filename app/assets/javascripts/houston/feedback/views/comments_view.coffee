@@ -295,8 +295,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
           $modal.modal('hide')
           alertify.success "#{response.count} comments imported"
           tags = params["tags[]"]
-          tags = [tags] unless _.isArray(tags)
-          $("#q").val _(tags).map((tag)-> "##{tag}").join(" ") if tags
+          if tags
+            tags = [tags] unless _.isArray(tags)
+            tags = _.uniq(tags)
+            $("#q").val _.map(tags, (tag)-> "##{tag}").join(" ")
           @search()
         .error ->
           console.log 'error', arguments

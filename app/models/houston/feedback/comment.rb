@@ -88,7 +88,7 @@ module Houston
       end
       
       def tags=(array)
-        super Array(array).sort.join("\n")
+        super Array(array).uniq.sort.join("\n")
       end
       
       def tags
