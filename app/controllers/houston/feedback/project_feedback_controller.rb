@@ -110,7 +110,7 @@ module Houston
         comments = []
         headings = csv.shift
         csv.each do |row|
-          customer = row.values_at(*customer_fields).map(&:strip).reject(&:blank?).join(", ")
+          customer = row.values_at(*customer_fields).map { |val| val.to_s.strip }.reject(&:blank?).join(", ")
           next if customer.blank?
           
           feedback_fields.each do |i|
