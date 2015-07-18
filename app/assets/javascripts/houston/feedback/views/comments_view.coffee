@@ -219,7 +219,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
           $('.feedback-comment.feedback-edit-comment .btn-read').addClass('active')
       , 1500
 
-    $('#feedback_edit').html @renderEditComment(comment.toJSON())
+    context = comment.toJSON()
+    context.index = $('.feedback-comment.selected').index()
+    context.total = @comments.length
+    $('#feedback_edit').html @renderEditComment(context)
     $('#feedback_edit .uploader').supportImages()
     @focusEditor()
 

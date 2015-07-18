@@ -148,7 +148,13 @@
     &:hover { color: #005580; }
   }
   
-  .btn-edit, .btn-save, .btn-read { float: right; }
+  .feedback-comment-index, .btn-edit, .btn-save, .btn-read { float: right; }
+  .feedback-comment-index {
+    padding-right: 1em;
+    display: inline-block;
+    height: 26px;
+    line-height: 26px;
+  }
   
   .btn-save,
   .feedback-text.edit, 
