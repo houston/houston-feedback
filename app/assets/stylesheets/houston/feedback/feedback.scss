@@ -148,7 +148,10 @@
     &:hover { color: #005580; }
   }
   
-  .feedback-comment-index, .btn-edit, .btn-save, .btn-read { float: right; }
+  .feedback-comment-index, .btn-edit, .btn-save, .btn-read, .btn-copy {
+    float: right;
+    margin-left: 3px;
+  }
   .feedback-comment-index {
     padding-right: 1em;
     display: inline-block;

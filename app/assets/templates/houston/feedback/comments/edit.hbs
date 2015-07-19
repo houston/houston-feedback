@@ -41,6 +41,9 @@
     <button class="btn btn-edit btn-small btn-default">Edit</button>
     {{/if}}
     <button class="btn btn-read btn-small btn-default {{#if read}}active{{/if}}" data-toggle="button">Read</button>
+    {{#if canCopy}}
+    <button class="btn btn-copy btn-small btn-default">Copy</button>
+    {{/if}}
     
     <span class="feedback-comment-index">
       <b>{{index}}</b> of <b>{{total}}</b>

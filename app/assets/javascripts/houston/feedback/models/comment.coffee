@@ -20,6 +20,24 @@ class Houston.Feedback.Comment extends Backbone.Model
       @set 'read', false
       success()
   
+  text: ->
+    lines = @get("text").lines()
+    lines = for line in lines
+      line.trim()
+        .replace /^#+\s*(.*)$/mg, "*$1*"
+        .replace /^>\s*/mg, ""
+    lines.push "    — #{@get("customer") || @get("reporter")?.name}"
+    lines.map((line)-> "> #{line}").join("\n")
+      .replace /> \n> \n/mg, "> \n"
+      .replace /^(> \*.*\*\n)> \n(?!> \*)/mg, "$1"
+  
+  html: ->
+    lines = @get("text").lines()
+    lines.push "    — #{@get("customer") || @get("reporter")?.name}"
+    text = lines.map((line)-> "> #{line}").join("\n")
+    App.mdown(text)
+  
+  
   
 class Houston.Feedback.Comments extends Backbone.Collection
   model: Houston.Feedback.Comment

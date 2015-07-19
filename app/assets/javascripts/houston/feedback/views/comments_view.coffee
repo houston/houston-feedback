@@ -34,11 +34,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click #toggle_extra_tags_link': 'toggleExtraTags'
     'click .feedback-tag-cloud > .feedback-tag': 'clickTag'
     'click .btn-read': 'toggleRead'
+    'click .btn-copy': 'copy'
   
   initialize: ->
     @$results = @$el.find('#results')
     @comments = @options.comments
     @tags = @options.tags
+    @canCopy = ('clipboardData' in _.keys(ClipboardEvent.prototype))
     
     $('#import_csv_field').change (e)->
       $(e.target).closest('form').submit()
@@ -222,6 +224,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     context = comment.toJSON()
     context.index = $('.feedback-comment.selected').index()
     context.total = @comments.length
+    context.canCopy = @canCopy
     $('#feedback_edit').html @renderEditComment(context)
     $('#feedback_edit .uploader').supportImages()
     @focusEditor()
@@ -488,3 +491,19 @@ class Houston.Feedback.CommentsView extends Backbone.View
       for comment in @selectedComments
         @markAsUnread(comment)
 
+
+
+  copy: (e)->
+    e.preventDefault()
+    
+    # I only show the *Copy* button when there's one
+    # selected comment right now, so make that assumption.
+    comment = @selectedComments[0]
+    
+    $(document).one "copy", (e)=>
+      e = e.originalEvent || e
+      e.clipboardData.setData "text/plain", comment.text()
+      e.clipboardData.setData "text/html", comment.html()
+      e.preventDefault()
+    
+    document.execCommand "copy"
