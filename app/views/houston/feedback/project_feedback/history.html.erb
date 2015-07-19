@@ -21,15 +21,18 @@
          next
        end
 
-       date = change.created_at.to_date %>
-    <tr>
-      <td class="feedback-change-date date"><%= format_date_with_year(date) unless last_date == date %></td>
-      <td class="feedback-change-time"><%= change.created_at.strftime("%l:%M %p") %></td>
-      <td class="feedback-change-user"><%= change.user_id ? avatar_for(change.user) : change.user %></td>
-      <td class="feedback-change-description"><%= describe_changes(grouped_changes) %></td>
-      <td class="feedback-change-comment"><%= change.versioned_id %></td>
-    </tr>
-    <% grouped_changes = []
-       last_date = date %>
+       date = change.created_at.to_date
+       textual_changes = textual_changes(grouped_changes) %>
+    <% if textual_changes.any? %>
+      <tr>
+        <td class="feedback-change-date date"><%= format_date_with_year(date) unless last_date == date %></td>
+        <td class="feedback-change-time"><%= change.created_at.strftime("%l:%M %p") %></td>
+        <td class="feedback-change-user"><%= change.user_id ? avatar_for(change.user) : change.user %></td>
+        <td class="feedback-change-description"><%= textual_changes.join("; ").html_safe %></td>
+        <td class="feedback-change-comment"><%= change.versioned_id %></td>
+      </tr>
+      <% last_date = date %>
+    <% end %>
+    <% grouped_changes = [] %>
   <% end %>
 </table>
