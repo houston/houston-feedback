@@ -1,0 +1,35 @@
+<% content_for :title do %>
+<h1 class="project-banner <%= @project.color %> space-below" data-project-slug="<%= @project.slug %>" data-project-color="<%= @project.color %>">
+  <small>comments for</small>
+  <%= @project.name %>
+  
+  <%= render partial: "projects/keyboard_shortcuts" %>
+</h1>
+<% end %>
+
+<table class="table table-striped feedback-changes">
+  <% grouped_changes = []%>
+  <% last_date = nil %>
+  <% (0...@changes.length).each do |i| %>
+    <% change = @changes[i]
+       grouped_changes.push(change)
+
+       next_change = @changes[i + 1]
+       if next_change &&
+         next_change.versioned_id == change.versioned_id &&
+         next_change.user == change.user
+         next
+       end
+
+       date = change.created_at.to_date %>
+    <tr>
+      <td class="feedback-change-date date"><%= format_date_with_year(date) unless last_date == date %></td>
+      <td class="feedback-change-time"><%= change.created_at.strftime("%l:%M %p") %></td>
+      <td class="feedback-change-user"><%= change.user_id ? avatar_for(change.user) : change.user %></td>
+      <td class="feedback-change-description"><%= describe_changes(grouped_changes) %></td>
+      <td class="feedback-change-comment"><%= change.versioned_id %></td>
+    </tr>
+    <% grouped_changes = []
+       last_date = date %>
+  <% end %>
+</table>

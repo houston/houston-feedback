@@ -1,0 +1,20 @@
+.feedback-changes {
+  .feedback-change-date,
+  .feedback-change-time {
+    white-space: nowrap;
+  }
+
+  .feedback-change-date {
+    font-size: 0.8em;
+  }
+
+  .feedback-change-user {
+    min-width: 24px;
+  }
+
+  .feedback-change-description {
+    width: 99%;
+
+    .feedback-tag { margin-right: 0; }
+  }
+}

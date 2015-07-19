@@ -146,6 +146,15 @@ module Houston
         render json: {count: comments.count}
       end
       
+      def history
+        @title = "Feedback History"
+        authorize! :read, VestalVersions::Version
+        @changes = VestalVersions::Version
+          .where(versioned_type: "Houston::Feedback::Comment")
+          .order(created_at: :desc)
+          .includes(:user)
+      end
+      
       def from_email
         Rails.logger.warn params.inspect
       end
