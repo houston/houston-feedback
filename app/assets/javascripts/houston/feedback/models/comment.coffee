@@ -22,6 +22,9 @@ class Houston.Feedback.Comment extends Backbone.Model
   
   text: ->
     lines = @get("text").lines()
+    
+    # Replace H_ tags with bold text of the same font size
+    # and get rid of inner quotes.
     lines = for line in lines
       line.trim()
         .replace /^#+\s*(.*)$/mg, "*$1*"
@@ -33,9 +36,23 @@ class Houston.Feedback.Comment extends Backbone.Model
   
   html: ->
     lines = @get("text").lines()
-    lines.push "    — #{@get("customer") || @get("reporter")?.name}"
-    text = lines.map((line)-> "> #{line}").join("\n")
-    App.mdown(text)
+
+    # Replace H_ tags with bold text of the same font size
+    # and get rid of inner quotes.
+    lines = for line in lines
+      line.trim()
+        .replace /^#+\s*(.*)$/mg, "**$1**\n"
+        .replace /^>\s*/mg, ""
+
+    """
+    <p style="margin: 0; padding: 0;">&nbsp;</p>
+    <div style="font-family: 'Helvetica Neue', roboto, Helvetica, Arial, sans-serif; padding: 1em;">
+      <h3 style="font-weight: normal; font-size: 1.25em; line-height: 1em; padding: 0; margin: 0;">#{@get("customer") || @get("reporter")?.name}</h3>
+      <div style="font-size: 0.92em; line-height: 1em; padding: 0; margin: 0; color: #888;">#{@get("reporter")?.name} • #{Handlebars.helpers.formatDateWithYear2 @get("createdAt")}</div>
+      <div style="border-left: 5px solid #ddd; padding-left: 0.66em; margin: 0;">#{App.mdown(lines.join("\n"))}</div>
+    </div>
+    <p style="margin: 0; padding: 0;">&nbsp;</p>
+    """
   
   
   
