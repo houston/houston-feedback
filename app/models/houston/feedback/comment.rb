@@ -43,16 +43,25 @@ module Houston
           reporter_id = nil
           created_at = nil
           query_string = query_string
-            .gsub(/\/(read|unread|untagged)/) { |arg| flags << $1; "" }
-            .gsub(/\-\#([a-z\-\?0-9\|]+)/) { |arg| not_tags << $1; "" }
-            .gsub(/\#([a-z\-\?0-9\|]+)/) { |arg| tags << $1; "" }
-            .gsub(/by:([A-Za-z0-9]+)/) { |arg|
+            .gsub(/\/(read|unread|untagged)/) { flags << $1; "" }
+            .gsub(/\-\#([a-z\-\?0-9\|]+)/) { not_tags << $1; "" }
+            .gsub(/\#([a-z\-\?0-9\|]+)/) { tags << $1; "" }
+            .gsub(/by:([A-Za-z0-9]+)/) {
               reporter_id = User.where(["lower(concat(first_name, last_name)) = ?", $1])
                 .limit(1).pluck(:id)[0] || reporter_id
               "" }
-            .gsub(/added:(\d{8})(?:[-–—](\d{8}))?/) { |arg|
-              min = Date.strptime($1, "%Y%m%d").beginning_of_day
-              max = Date.strptime($2 || $1, "%Y%m%d").end_of_day
+            .gsub(/added:(\d{8}?)\.\.(\d{8}?)/) {
+              min, max = $1, $2
+              min = "20000101" if min.blank?
+              max = "20991231" if max.blank?
+              min = Date.strptime(min, "%Y%m%d").beginning_of_day
+              max = Date.strptime(max, "%Y%m%d").end_of_day
+              created_at = min..max
+              "" }
+            .gsub(/added:(\d{8})/) {
+              date = Date.strptime($1, "%Y%m%d")
+              min = date.beginning_of_day
+              max = date.end_of_day
               created_at = min..max
               "" }
             .strip
