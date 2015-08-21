@@ -129,7 +129,7 @@ module Houston
       def excerpt
         self[:excerpt] || begin
           lines = text.lines.map(&:strip).reject(&:blank?)
-          lines.shift if lines[0].starts_with?("#####")
+          lines.shift if lines.any? && lines[0].starts_with?("#####")
           lines.join[0..140]
         end
       end
