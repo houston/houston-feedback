@@ -2,7 +2,7 @@ Houston.config.add_user_option "feedback.digest" do
   name "Feedback"
   html do |f|
     <<-HTML
-    <p class="notifications-instructions">
+    <p class="instructions">
       for projects I follow, send me a digest of new feedback:
     </p>
     
