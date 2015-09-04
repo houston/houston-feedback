@@ -222,7 +222,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       , 1500
 
     context = comment.toJSON()
-    context.index = $('.feedback-comment.selected').index()
+    context.index = $('.feedback-comment.selected').index() + 1
     context.total = @comments.length
     context.canCopy = @canCopy
     $('#feedback_edit').html @renderEditComment(context)
