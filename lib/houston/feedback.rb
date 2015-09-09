@@ -4,10 +4,12 @@ require "houston/feedback/configuration"
 module Houston
   module Feedback
     extend self
-    
-    attr_reader :config
-    
+
+    def config(&block)
+      @configuration ||= Feedback::Configuration.new
+      @configuration.instance_eval(&block) if block_given?
+      @configuration
+    end
+
   end
-  
-  Feedback.instance_variable_set :@config, Feedback::Configuration.new
 end
