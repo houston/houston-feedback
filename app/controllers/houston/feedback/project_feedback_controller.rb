@@ -4,10 +4,10 @@ module Houston
   module Feedback
     class ProjectFeedbackController < ApplicationController
       attr_reader :project, :comments
-      
+
       layout "houston/feedback/application"
       before_filter :find_project
-      
+
       COMMON_SURVEY_FIELDS_TO_IGNORE = [
         "Time Started",
         "Date Submitted",
@@ -21,7 +21,7 @@ module Houston
         "Longitude",
         "Latitude"
       ].freeze
-      
+
       COMMON_SURVEY_RESPONSES_TO_IGNORE = [
         "",
         "Yes",
@@ -35,17 +35,17 @@ module Houston
         "Somewhat likely",
         "Very likely"
       ].freeze
-      
+
       def index
         authorize! :read, Comment
-        
+
         @q = params.fetch(:q, "-#no -#addressed -#invalid")
         @comments = Comment \
           .for_project(project)
           .includes(:user)
           .with_flags_for(current_user)
           .search(@q)
-        
+
         respond_to do |format|
           format.json do
             hashes = CommentPresenter.new(current_ability, comments).as_json
@@ -63,14 +63,14 @@ module Houston
           end
         end
       end
-      
+
       def create
         comment = Comment.new(params.pick(:customer, :text, :tags))
         comment.project = project
         comment.user = current_user
-        
+
         authorize! :create, comment
-        
+
         if comment.save
           comment.read_by! current_user
           render json: CommentPresenter.new(current_ability, comment)
@@ -78,13 +78,13 @@ module Houston
           render json: comment.errors, status: :unprocessable_entity
         end
       end
-      
+
       def upload_csv
         authorize! :create, Comment
-        
+
         @target = params[:target]
         session[:csv_path] = params[:file].tempfile.path
-        
+
         csv = CSV.open(session[:csv_path]).to_a
         headings = []
         csv.shift.each_with_index do |heading, i|
@@ -93,35 +93,35 @@ module Houston
           example = csv.lazy.map { |row| row[i] }.find { |value| !value.blank? }
           headings.push(text: heading, index: i, example: example)
         end
-        
+
         @data = {
           headings: headings,
           customerFields: session.fetch(:import_customer_fields, []),
           filename: params[:file].original_filename }
         render layout: false
       end
-      
+
       def import
         authorize! :create, Comment
-        
+
         customer_fields = params.fetch(:customer_fields, []).map(&:to_i)
         feedback_fields = params.fetch(:feedback_fields, []).map(&:to_i)
         tags = params.fetch(:tags, [])
-        
+
         import = SecureRandom.hex(16) # generates a 32-character string, naturally
         csv = CSV.open(session[:csv_path]).to_a
         comments = []
         headings = csv.shift
         session[:import_customer_fields] = headings.values_at(*customer_fields)
-        
+
         csv.each do |row|
           customer = row.values_at(*customer_fields).map { |val| val.to_s.strip }.reject(&:blank?).join(", ")
           next if customer.blank?
-          
+
           feedback_fields.each do |i|
             feedback, question = row[i].to_s.strip, headings[i]
             next if feedback.blank?
-            
+
             feedback = "###### #{question}\n#{feedback}" unless question.blank?
             comment = Comment.new(
               import: import,
@@ -134,18 +134,18 @@ module Houston
             comments.push(comment)
           end
         end
-        
+
         Houston.benchmark("[feedback:csv] import #{comments.count} comments") do
           Comment.import comments
         end
-        
+
         Houston.benchmark("[feedback:csv] index comments") do
           Comment.for_project(project).reindex!
         end
-        
+
         render json: {count: comments.count}
       end
-      
+
       def history
         @title = "Feedback History"
         authorize! :read, VestalVersions::Version
@@ -154,17 +154,17 @@ module Houston
           .order(created_at: :desc)
           .includes(:user)
       end
-      
+
       def from_email
         Rails.logger.warn params.inspect
       end
-      
+
     private
-      
+
       def find_project
         @project = Project.find_by_slug! params[:slug]
       end
-      
+
     end
   end
 end

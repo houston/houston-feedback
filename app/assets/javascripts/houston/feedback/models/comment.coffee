@@ -1,28 +1,28 @@
 class Houston.Feedback.Comment extends Backbone.Model
   urlRoot: '/feedback/comments'
-  
+
   addTags: (tags)->
     @set 'tags', _.union(@get('tags'), tags).sort(), silent: true
-    
+
   removeTags: (tags)->
     @set 'tags', _.difference(@get('tags'), tags).sort(), silent: true
-  
+
   isUnread: ->
     !@get 'read'
-  
+
   markAsRead: (success)->
     $.post("#{@url()}/read").success =>
       @set 'read', true
       success()
-  
+
   markAsUnread: (success)->
     $.post("#{@url()}/unread").success =>
       @set 'read', false
       success()
-  
+
   text: ->
     lines = @get("text").lines()
-    
+
     # Replace H_ tags with bold text of the same font size
     # and get rid of inner quotes.
     lines = for line in lines
@@ -33,7 +33,7 @@ class Houston.Feedback.Comment extends Backbone.Model
     lines.map((line)-> "> #{line}").join("\n")
       .replace /> \n> \n/mg, "> \n"
       .replace /^(> \*.*\*\n)> \n(?!> \*)/mg, "$1"
-  
+
   html: ->
     lines = @get("text").lines()
 
@@ -53,9 +53,9 @@ class Houston.Feedback.Comment extends Backbone.Model
     </div>
     <p style="margin: 0; padding: 0;">&nbsp;</p>
     """
-  
-  
-  
+
+
+
 class Houston.Feedback.Comments extends Backbone.Collection
   model: Houston.Feedback.Comment
 

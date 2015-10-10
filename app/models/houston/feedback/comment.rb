@@ -4,37 +4,37 @@ module Houston
   module Feedback
     class Comment < ActiveRecord::Base
       self.table_name = "feedback_comments"
-      
+
       before_save :update_plain_text, :if => :text_changed?
       after_save :update_search_vector, :if => :search_vector_should_change?
-      
+
       belongs_to :project
       belongs_to :user
-      
+
       has_many :user_flags, class_name: "Houston::Feedback::CommentUserFlags"
-      
+
       versioned only: [:customer, :text, :tags]
-      
+
       class << self
         def for_project(project)
           where(project_id: project.id)
         end
-        
+
         def with_flags_for(user)
           joins(<<-SQL).select("feedback_comments.*", "flags.read")
             LEFT OUTER JOIN feedback_comments_user_flags \"flags\"
             ON flags.comment_id=feedback_comments.id AND flags.user_id=#{user.id}
           SQL
         end
-        
+
         def unread_by(user)
           with_flags_for(user).where("flags.read IS FALSE OR flags.read IS NULL")
         end
-        
+
         def since(time)
           where arel_table[:created_at].gteq(time)
         end
-        
+
         # http://blog.lostpropertyhq.com/postgres-full-text-search-is-good-enough/
         def search(query_string)
           tags = []
@@ -65,12 +65,12 @@ module Houston
               created_at = min..max
               "" }
             .strip
-          
+
           config = PgSearch::Configuration.new({against: "plain_text"}, self)
           normalizer = PgSearch::Normalizer.new(config)
           options = { dictionary: "english", tsvector_column: "search_vector" }
           query = PgSearch::Features::TSearch.new(query_string, options, config.columns, self, normalizer)
-          
+
           excerpt = ts_headline(:plain_text, query,
             start_sel: "<em>",
             stop_sel: "</em>",
@@ -80,7 +80,7 @@ module Houston
             max_fragments: 2)
           rank = query.rank
           rank.extend Arel::AliasPredication
-          
+
           results = tags.inject(all) { |results, tag|
             results.where(["tags ~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
           results = not_tags.inject(results) { |results, tag|
@@ -95,15 +95,15 @@ module Houston
             .order("rank DESC") unless query_string.blank?
           results
         end
-        
+
         def reindex!
           update_all <<-SQL
-            search_vector = setweight(to_tsvector('english', tags), 'A') || 
+            search_vector = setweight(to_tsvector('english', tags), 'A') ||
                             setweight(to_tsvector('english', plain_text), 'B') ||
                             setweight(to_tsvector('english', customer), 'B')
           SQL
         end
-        
+
         def tags
           pluck("regexp_split_to_table(tags, '\\n')")
             .reject(&:blank?)
@@ -112,20 +112,20 @@ module Houston
             .map { |tag, _| tag }
         end
       end
-      
+
       def tags=(array)
         super Array(array).uniq.sort.join("\n")
       end
-      
+
       def tags
         super.to_s.split("\n")
       end
-      
+
       def update_plain_text
         md = Redcarpet::Markdown.new(Redcarpet::Render::StripDown, space_after_headers: true)
         self.plain_text = md.render(text)
       end
-      
+
       def excerpt
         self[:excerpt] || begin
           lines = text.lines.map(&:strip).reject(&:blank?)
@@ -133,7 +133,7 @@ module Houston
           lines.join[0..140]
         end
       end
-      
+
       def read_by!(user, read=true)
         flags = user_flags.where(user_id: user.id).first_or_create
         flags.read = read
@@ -141,9 +141,9 @@ module Houston
       rescue ActiveRecord::RecordNotUnique
         # race condition, OK
       end
-      
+
     private
-      
+
       # http://www.postgresql.org/docs/9.1/static/textsearch-controls.html#TEXTSEARCH-HEADLINE
       def self.ts_headline(column, query, options={})
         column = arel_table[column] if column.is_a?(Symbol)
@@ -151,15 +151,15 @@ module Houston
         tsquery = Arel.sql(query.send(:tsquery))
         Arel::Nodes::NamedFunction.new("ts_headline", [column, tsquery, options])
       end
-      
+
       def search_vector_should_change?
         (changed & %w{tags plain_text customer}).any?
       end
-      
+
       def update_search_vector
         self.class.where(id: id).reindex!
       end
-      
+
     end
   end
 end

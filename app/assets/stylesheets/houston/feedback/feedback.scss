@@ -4,7 +4,7 @@
 
 #search_feedback {
   margin: 0;
-  
+
   input[type="search"] {
     margin: 0;
     width: 100%;
@@ -34,11 +34,11 @@
 
 .feedback-comment {
   position: relative;
-  
+
   &.feedback-comment-unread {
     font-weight: 500;
   }
-  
+
   .feedback-metadata {
     font-size: 0.88em;
     color: #888;
@@ -52,26 +52,26 @@
     border-radius: 3px;
     overflow: hidden;
   }
-  
+
   &.selected .feedback-snippet { background: rgba(128, 212, 255, 0.2); }
   &:focus { outline: 0; }
-  
+
   .feedback-customer {
     font-size: 0.88em;
     font-weight: bold;
   }
-  
+
   .feedback-metadata {
     font-size: 0.88em;
     color: #888;
     display: block;
     float: right;
   }
-  
+
   .avatar {
     margin-right: 0.25em;
     vertical-align: top;
-    
+
     &.avatar-empty {
       background: rgba(0,0,0,0.1);
       height: 16px;
@@ -79,17 +79,17 @@
       display: block;
     }
   }
-  
+
   .feedback-text { clear: both; }
   .feedback-text em {
     font-style: normal;
     display: inline-block;
     background: rgba(255, 255, 0, 0.12);
   }
-  
+
   .feedback-reporter { display: block; float: left; }
   .feedback-created { display: block; float: right; }
-  
+
   .feedback-tag-list {
     position: absolute;
     left: 100%;
@@ -120,7 +120,7 @@
     text-overflow: ellipsis;
     padding-right: 2em;
   }
-  
+
   .avatar {
     float: left;
     margin: 0.25em 0.5em 0 0;
@@ -132,7 +132,7 @@
       display: block;
     }
   }
-  
+
   .feedback-reporter::after { content: ' • '; }
   .feedback-reporter, .feedback-created { vertical-align: bottom; }
 }
@@ -144,10 +144,10 @@
     right: 0;
     font-size: 20px;
     color: #e4e4e4;
-    
+
     &:hover { color: #005580; }
   }
-  
+
   .feedback-comment-index, .btn-edit, .btn-save, .btn-read, .btn-copy {
     float: right;
     margin-left: 3px;
@@ -158,29 +158,29 @@
     height: 26px;
     line-height: 26px;
   }
-  
+
   .btn-save,
-  .feedback-text.edit, 
+  .feedback-text.edit,
   .feedback-customer-edit { display: none; }
-  
+
   .feedback-text textarea {
     height: 18em;
     width: 100%;
     box-sizing: border-box;
   }
-  .feedback-text.markdown { 
+  .feedback-text.markdown {
     overflow-y: auto;
     height: 18em;
     margin-bottom: 10px;
   }
-  
+
   &.edit-text {
     .feedback-customer { display: none; }
     .feedback-customer-edit {
       display: block;
       input { margin: 0; }
     }
-    
+
     .feedback-text.markdown { display: none; }
     .btn-save {
       display: inline-block;
@@ -195,7 +195,7 @@
   margin: 0.5em -0.5em;
   padding: 0.5em;
   border-radius: 3px;
-  
+
   input {
     margin: 0.5em 0 0 0;
   }
@@ -218,7 +218,7 @@
   background-color: #aaa;
   border-radius: 3px;
   margin-right: 0.33em;
-  
+
   a.feedback-remove-tag {
     width: 14px;
     text-align: center;
@@ -226,25 +226,25 @@
     padding: 2px;
     cursor: pointer;
     color: white;
-    
+
     &:hover { color: #005580; }
   }
 }
 
 #feedback_csv_import_modal {
   width: 640px;
-  
+
   .modal-body {
     padding: 0;
     max-height: none;
     overflow: visible;
   }
-  
+
   .span6 {
     border-right: 1px solid transparent;
     padding-right: 1.06382978723404%;
   }
-  
+
   .span6 + .span6 {
     margin-left: 0;
     padding-left: 1.06382978723404%;
@@ -252,44 +252,44 @@
     border-right: none;
     padding-right: 0;
   }
-  
+
   .instructions {
     padding: 0 30px 0 15px; // room for the scrollbar
     box-sizing: border-box;
-    
+
     background-color: #f5f5f5;
     border-bottom: 1px solid #ddd;
-    
+
     .span6 {
       padding-top: 15px;
       padding-bottom: 5px;
     }
-    
+
     .span6 + .span6 {
       border-left-color: #e8e8e8;
     }
-    
+
     .csv-fields {
       padding: 0 8px 6px;
       white-space: nowrap;
     }
   }
-  
+
   .scrollable-container {
     max-height: 300px;
     overflow-y: scroll;
 
     .csv-fields { padding: 8px 15px; }
   }
-  
+
   .padded {
     border-top: 1px solid #ddd;
     background-color: #f5f5f5;
     padding: 8px 15px;
   }
-  
+
   .feedback-tags { background: transparent; }
-  
+
   .csv-field .example {
     display: block;
     color: #aaa;
@@ -320,7 +320,7 @@
   bottom: 52px;
   padding-left: 20px;
 
-  .feedback-comment { 
+  .feedback-comment {
     height: 100%;
   }
   .feedback-text.markdown {
@@ -330,31 +330,31 @@
 
 .feedback-tag-cloud {
   margin: 0.33em 0 1.66em 0;
-  
+
   li { display: inline-block; }
-  
+
   a.feedback-tag {
     color: white;
     padding-right: 0;
-    
+
     &:hover, &:active {
       text-decoration: none;
       background: #0088cc;
     }
   }
-  
+
   .toggle-tag-visibility {
     color: rgb(194, 194, 194);
     text-decoration: none;
-    
+
     &::before { content: 'more »'; }
     &:hover { color: #005580; }
-    
+
     &.show-all-tags {
       &::before { content: '« less'; }
     }
   }
-  
+
   .feedback-tag-count {
     background: rgba(255,255,255,0.3);
     display: inline-block;

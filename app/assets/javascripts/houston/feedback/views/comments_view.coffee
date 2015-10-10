@@ -16,7 +16,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/comments/delete_imported']
   renderNewCommentModal: HandlebarsTemplates['houston/feedback/comments/new']
   renderTagCloud: HandlebarsTemplates['houston/feedback/comments/tags']
- 
+
   events:
     'submit #search_feedback': 'search'
     'focus .feedback-search-result': 'resultFocused'
@@ -35,26 +35,26 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .feedback-tag-cloud > .feedback-tag': 'clickTag'
     'click .btn-read': 'toggleRead'
     'click .btn-copy': 'copy'
-  
+
   initialize: ->
     @$results = @$el.find('#results')
     @comments = @options.comments
     @tags = @options.tags
     @canCopy = ('clipboardData' in _.keys(ClipboardEvent.prototype))
-    
+
     $('#import_csv_field').change (e)->
       $(e.target).closest('form').submit()
-      
+
       # clear the field so that if we select the same
       # file again, we get another 'change' event.
       $(e.target).val('').attr('type', 'text').attr('type', 'file')
-    
+
     $('#feedback_csv_upload_target').on 'upload:complete', (e, headers)=>
       @promptToImportCsv(headers)
-    
+
     $('#new_feedback_button').click =>
       @newFeedback()
-    
+
     if @options.infiniteScroll
       new InfiniteScroll
         load: ($what)=>
@@ -63,51 +63,51 @@ class Houston.Feedback.CommentsView extends Backbone.View
           promise.resolve @template
             comments: (comment.toJSON() for comment in @comments.slice(@offset, @offset + 50))
           promise
-  
-  
-  
+
+
+
   resultFocused: (e)->
     $('.feedback-search-result.anchor').removeClass('anchor')
     $result = $(e.target)
     $result.addClass('anchor')
-    
+
     return if @resultIsBeingClicked
-    
+
     @select e.target, 'new' unless $result.is('.selected')
-  
+
   resultClicked: (e)->
     @resultIsBeingClicked = true
     @select e.target, @mode(e)
-  
+
   resultReleased: (e)->
     @resultIsBeingClicked = false
     @focusEditor()
-  
+
   mode: (e)->
     return 'toggle' if e.metaKey or e.ctrlKey
     return 'lasso' if e.shiftKey
     'new'
-  
+
   select: (comment, mode)->
     $el = @$comment(comment)
-    
+
     $anchor = $('.feedback-search-result.anchor')
     mode = 'new' if mode is 'lasso' and $anchor.length is 0
-    
+
     switch mode
       when 'toggle'
         $el.toggleClass('selected')
         $el.focus() if $el.hasClass('selected') and !$el.is(':focus')
-        
+
       when 'lasso'
         $range = @$results.children().between($anchor, $el)
         $range.addClass('selected')
-        
+
       else
         @$selection().removeClass('selected')
         $el.addClass('selected')
         $el.focus() unless $el.is(':focus')
-    
+
     @selectedComments = _.compact(@comments.get(id) for id in @selectedIds())
     @$el.toggleClass 'feedback-selected', @selectedComments.length > 0
     @editSelected()
@@ -178,7 +178,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       @searchTime = (new Date() - start)
       @render()
 
-  
+
 
   render: ->
     @offset = 0
@@ -230,13 +230,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @focusEditor()
 
   editMultiple: (comments)->
-    context = 
+    context =
       count: comments.length
       permissions:
         destroy: _.all comments, (comment)-> comment.get('permissions').destroy
       tags: []
       read: _.all comments, (comment)-> comment.get('read')
-    
+
     tags = (comment.get('tags') for comment in comments).flatten()
     for tag, array of tags.groupBy()
       tag.count = array.length
@@ -245,7 +245,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       context.tags.push
         name: tag
         percent: percent
-    
+
     $('#feedback_edit').html @renderEditMultiple(context)
     @focusEditor()
 
@@ -365,7 +365,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   saveCommentText: (e)->
     e.preventDefault() if e
-    
+
     text = $('.feedback-text.edit textarea').val()
     customer = $('.feedback-customer-edit > input').val()
     comment = @comments.get @selectedId()
@@ -390,12 +390,12 @@ class Houston.Feedback.CommentsView extends Backbone.View
     e.preventDefault() if e
     $modal = $(@renderNewCommentModal()).modal()
     $modal.on 'hidden', -> $(@).remove()
-    
+
     $modal.find('#new_feedback_customer').focus()
     $modal.find('.uploader').supportImages()
-    
+
     addTags = @activateTagControls($modal)
-    
+
     submit = =>
       addTags()
       params = $modal.find('form').serialize()
@@ -406,12 +406,12 @@ class Houston.Feedback.CommentsView extends Backbone.View
           @search()
         .error ->
           console.log 'error', arguments
-    
+
     $modal.find('.feedback-new-tag').keydown (e)->
       if e.keyCode is KEY.RETURN
         if e.metaKey or e.ctrlKey
           submit()
-    
+
     $modal.find('#create_button').click => submit()
 
   activateTagControls: ($el)->
@@ -472,10 +472,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
     tag = @getQuery $a.attr('href')
     $('#q').val tag
     @search()
-  
+
   getQuery: (params)->
     @getParameterByName(params, 'q')
-  
+
   # http://james.padolsey.com/javascript/bujs-1-getparameterbyname/
   getParameterByName: (params, name)->
     match = RegExp("[?&]#{name}=([^&]*)").exec(params)
@@ -495,15 +495,15 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   copy: (e)->
     e.preventDefault()
-    
+
     # I only show the *Copy* button when there's one
     # selected comment right now, so make that assumption.
     comment = @selectedComments[0]
-    
+
     $(document).one "copy", (e)=>
       e = e.originalEvent || e
       e.clipboardData.setData "text/plain", comment.text()
       e.clipboardData.setData "text/html", comment.html()
       e.preventDefault()
-    
+
     document.execCommand "copy"

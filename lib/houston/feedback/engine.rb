@@ -2,7 +2,7 @@ module Houston
   module Feedback
     class Engine < ::Rails::Engine
       isolate_namespace Houston::Feedback
-      
+
       # Enabling assets precompiling under rails 3.1
       if Rails.version >= '3.1'
         initializer :assets do |config|
@@ -11,7 +11,7 @@ module Houston
             houston/feedback/application.css )
         end
       end
-      
+
       # Include the Engine's migrations with the Application
       # http://pivotallabs.com/leave-your-migrations-in-your-rails-engines/
       initializer :append_migrations do |app|
@@ -21,7 +21,7 @@ module Houston
           end
         end
       end
-      
+
     end
   end
 end

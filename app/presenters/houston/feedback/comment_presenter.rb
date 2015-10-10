@@ -2,14 +2,14 @@ module Houston
   module Feedback
     class CommentPresenter
       attr_reader :ability
-      
+
       delegate :can?, to: :ability
-      
+
       def initialize(ability, comments)
         @ability = ability
         @comments = OneOrMany.new(comments || [])
       end
-      
+
       def as_json(*args)
         comments = @comments
         comments = Houston.benchmark "[#{self.class.name.underscore}] Load objects" do
@@ -19,7 +19,7 @@ module Houston
           comments.map(&method(:comment_to_json))
         end
       end
-      
+
       def comment_to_json(comment)
         { id: comment.id,
           createdAt: comment.created_at,
@@ -35,14 +35,14 @@ module Houston
           rank: comment[:rank],
           tags: comment.tags }
       end
-      
+
       def present_reporter(user)
         { id: user.id,
           name: user.name,
           firstName: user.first_name,
           email: user.email } if user
       end
-      
+
     end
   end
 end
