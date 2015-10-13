@@ -87,7 +87,7 @@ module Houston
 
         csv = CSV.open(session[:csv_path]).to_a
         headings = []
-        csv.shift.each_with_index do |heading, i|
+        Array(csv.shift).each_with_index do |heading, i|
           next if COMMON_SURVEY_FIELDS_TO_IGNORE.member?(heading)
           next if csv.all? { |row| COMMON_SURVEY_RESPONSES_TO_IGNORE.member?(row[i].to_s.strip) }
           example = csv.lazy.map { |row| row[i] }.find { |value| !value.blank? }
