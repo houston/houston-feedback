@@ -39,7 +39,7 @@ module Houston
       def index
         authorize! :read, Comment
 
-        @q = params.fetch(:q, "-#no -#addressed -#invalid")
+        @q = params.fetch(:q, "-#no -#addressed -#invalid ")
         @comments = Comment \
           .for_project(project)
           .includes(:user)

@@ -41,9 +41,32 @@
 
 <div id="feedback" class="row-fluid">
   <div class="feedback-search callout callout-slim callout-banner">
-    <form id="search_feedback">
+    <form id="search_feedback" <%= "class=unperformed" if params[:q].blank? %>>
       <%= search_field_tag "q", @q, autocomplete: "off" %>
+      <a id="feedback_search_reset"><i class="fa fa-times"></i></a>
     </form>
+    <div id="search_instructions" <%= "class=collapsed" unless params[:q].blank? %>>
+      <h3>Searching for Feedback</h3>
+      <dl class="feedback-search-examples">
+        <dt><%= example "redirect" %></dt>
+        <dd>finds comments with the word <b>redirect</b></dd>
+
+        <dt><%= example "#export -#addressed" %></dt>
+        <dd>finds comments with the tag <b>export</b> but not the tag <b>addressed</b></dd>
+
+        <dt><%= example "import by:rodkyles" %></dt>
+        <dd>finds comments with the word <b>import</b> entered by <b>Rod Kyles</b></dd>
+
+        <dt><%= example "added:20150101 #invalid|no" %></dt>
+        <dd>finds comments added on <b>Jan 1, 2015</b> tagged either <b>invalid</b> or <b>no</b></dd>
+
+        <dt><%= example "added:20150101..20150530 /read" %></dt>
+        <dd>finds comments added between <b>Jan 1, 2015</b> and <b>May 30, 2015</b> that I've read</dd>
+
+        <dt><%= example "added:#{3.weeks.ago.strftime("%Y%m%d")}.. /unread" %></dt>
+        <dd>finds comments added in the last 3 weeks that I haven't read</dd>
+      </dl>
+    </div>
   </div>
   
   <p id="search_report" class="feedback-search-report"></p>

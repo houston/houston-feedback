@@ -18,7 +18,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderTagCloud: HandlebarsTemplates['houston/feedback/comments/tags']
 
   events:
-    'submit #search_feedback': 'search'
+    'submit #search_feedback': 'submitSearch'
+    'click #feedback_search_reset': 'resetSearch'
     'focus .feedback-search-result': 'resultFocused'
     'mousedown .feedback-search-result': 'resultClicked'
     'mouseup .feedback-search-result': 'resultReleased'
@@ -33,6 +34,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'keydown .feedback-text textarea': 'keydownCommentText'
     'click #toggle_extra_tags_link': 'toggleExtraTags'
     'click .feedback-tag-cloud > .feedback-tag': 'clickTag'
+    'click .feedback-search-example': 'clickExample'
     'click .btn-read': 'toggleRead'
     'click .btn-copy': 'copy'
 
@@ -162,8 +164,20 @@ class Houston.Feedback.CommentsView extends Backbone.View
       e.stopImmediatePropagation()
       @select @$el.find('.feedback-search-result:first'), 'new'
 
+  submitSearch: (e)->
+    $('#search_instructions').addClass('collapsed')
+    @search(e)
+
+  resetSearch: (e)->
+    $('#q').val "-#no -#addressed -#invalid "
+    $('#search_instructions').removeClass('collapsed')
+    @search(e)
+    $('#search_feedback').addClass('unperformed')
+
   search: (e)->
     return unless history.pushState
+
+    $('#search_feedback').removeClass('unperformed')
 
     e.preventDefault() if e
     search = $('#search_feedback').serialize()
@@ -472,6 +486,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
     tag = @getQuery $a.attr('href')
     q = $('#q').val()
     q = if q.length then "#{q} #{tag}" else tag
+    $('#q').val q
+    $('#search_instructions').addClass('collapsed')
+    @search()
+
+  clickExample: (e)->
+    e.preventDefault() if e
+    q = @getQuery $(e.target).attr('href')
     $('#q').val q
     @search()
 
