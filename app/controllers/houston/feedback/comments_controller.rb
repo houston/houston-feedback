@@ -2,13 +2,21 @@ module Houston
   module Feedback
     class CommentsController < ApplicationController
       attr_reader :comments
-      before_filter :find_comments, only: :destroy
+      before_filter :find_comments, only: [:destroy, :move]
 
 
       def destroy
         authorize! :destroy, Comment
         ids = comments.pluck(:id)
         comments.delete_all
+        render json: {ids: ids}
+      end
+
+
+      def move
+        authorize! :update, Comment
+        ids = comments.pluck(:id)
+        comments.update_all(project_id: params[:project_id])
         render json: {ids: ids}
       end
 

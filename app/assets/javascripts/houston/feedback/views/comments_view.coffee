@@ -14,6 +14,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderSearchReport: HandlebarsTemplates['houston/feedback/comments/report']
   renderImportModal: HandlebarsTemplates['houston/feedback/comments/import']
   renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/comments/delete_imported']
+  renderChangeProjectModal: HandlebarsTemplates['houston/feedback/comments/change_project']
   renderNewCommentModal: HandlebarsTemplates['houston/feedback/comments/new']
   renderTagCloud: HandlebarsTemplates['houston/feedback/comments/tags']
 
@@ -29,6 +30,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .feedback-remove-tag': 'removeTag'
     'keydown .feedback-new-tag': 'keydownNewTag'
     'click .btn-delete': 'deleteComments'
+    'click .btn-move': 'moveComments'
     'click .btn-edit': 'editCommentText'
     'click .btn-save': 'saveCommentText'
     'keydown .feedback-text textarea': 'keydownCommentText'
@@ -42,6 +44,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @$results = @$el.find('#results')
     @comments = @options.comments
     @tags = @options.tags
+    @projects = @options.projects
     @canCopy = ('clipboardData' in _.keys(ClipboardEvent.prototype))
 
     $('#import_csv_field').change (e)->
@@ -248,6 +251,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       count: comments.length
       permissions:
         destroy: _.all comments, (comment)-> comment.get('permissions').destroy
+        update: _.all comments, (comment)-> comment.get('permissions').update
       tags: []
       read: _.all comments, (comment)-> comment.get('read')
 
@@ -335,6 +339,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
           console.log 'error', arguments
           $modal.find('button').prop('disabled', false)
 
+
+
   deleteComments: (e)->
     e.preventDefault()
     ids = @selectedIds()
@@ -367,6 +373,38 @@ class Houston.Feedback.CommentsView extends Backbone.View
         $(selectors.join(",")).remove()
       .error ->
         console.log 'error', arguments
+
+
+
+  moveComments: (e)->
+    e.preventDefault()
+    ids = @selectedIds()
+    html = @renderChangeProjectModal(projects: @projects)
+    $modal = $(html).modal()
+    $modal.on 'hidden', -> $(@).remove()
+    $modal.find('#move_comments_button').click =>
+      newProjectId = $modal.find('#comments_new_project').val()
+      $modal.modal('hide')
+      @_moveComments(comment_ids: ids, project_id: newProjectId)
+
+  _moveComments: (params)->
+    $.post '/feedback/comments/move', params
+      .success (response)=>
+        @selectNext() or @selectPrev() or @selectNone()
+
+        ids = response.ids
+        alertify.success "#{ids.length} comments moved"
+
+        selectors = []
+        for id in ids
+          @comments.remove(id)
+          selectors.push "#comment_#{id}"
+
+        $(selectors.join(",")).remove()
+      .error ->
+        console.log 'error', arguments
+
+
 
   editCommentText: (e)->
     e.preventDefault() if e

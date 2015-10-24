@@ -85,6 +85,8 @@
         infiniteScroll: true,
         tags: <%=raw @tags.to_json %>,
         comments: new Houston.Feedback.Comments(comments, {parse: true}),
+        projects: <%=raw @projects.pluck(:id, :name).map { |id, name|
+          { id: id, name: name, current: id == @project.id } }.to_json %>,
         project: <%=raw @project.slug.to_json %>
       });
       commentsView.render();

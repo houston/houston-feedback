@@ -1,0 +1,19 @@
+<div class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Move Comments</h3>
+  </div>
+  <div class="modal-body">
+    <p>Move the selected comments a new project</p>
+    <label for="comments_new_project">New Project</label>
+    <select id="comments_new_project" name="project">
+      {{#projects}}
+        <option value="{{id}}" {{#if current}}selected{{/if}}>{{name}}</option>
+      {{/projects}}
+    </select>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button type="button" class="btn btn-danger" id="move_comments_button">Move Comments</button>
+  </div>
+</div>

@@ -21,6 +21,9 @@
     {{#if permissions/destroy}}
     <button class="btn btn-delete btn-small btn-danger">Delete</button>
     {{/if}}
+    {{#if permissions/update}}
+    <button class="btn btn-move btn-small btn-danger">Change Project</button>
+    {{/if}}
     <button class="btn btn-read btn-small btn-default {{#if read}}active{{/if}}" data-toggle="button">Read</button>
   </div>
 </div>

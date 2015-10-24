@@ -53,6 +53,7 @@ module Houston
             render json: json
           end
           format.html do
+            @projects = Project.unretired
             @tags = Comment.for_project(project).tags
           end
           format.xlsx do

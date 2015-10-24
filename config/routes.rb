@@ -9,6 +9,7 @@ Houston::Feedback::Engine.routes.draw do
     get "by_project/:slug/history", to: "project_feedback#history"
 
     delete "comments", to: "comments#destroy"
+    post "comments/move", to: "comments#move"
 
     post "comments/:id/read", to: "comments#mark_read"
     post "comments/:id/unread", to: "comments#mark_unread"
