@@ -25,7 +25,7 @@ module Houston
           createdAt: comment.created_at,
           import: comment.import,
           reporter: present_reporter(comment.user),
-          customer: comment.customer,
+          attributedTo: comment.attributed_to,
           text: comment.text,
           excerpt: comment.excerpt,
           permissions: {

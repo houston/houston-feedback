@@ -29,7 +29,7 @@ class Houston.Feedback.Comment extends Backbone.Model
       line.trim()
         .replace /^#+\s*(.*)$/mg, "*$1*"
         .replace /^>\s*/mg, ""
-    lines.push "    — #{@get("customer") || @get("reporter")?.name}"
+    lines.push "    — #{@get("attributedTo") || @get("reporter")?.name}"
     lines.map((line)-> "> #{line}").join("\n")
       .replace /> \n> \n/mg, "> \n"
       .replace /^(> \*.*\*\n)> \n(?!> \*)/mg, "$1"
@@ -47,7 +47,7 @@ class Houston.Feedback.Comment extends Backbone.Model
     """
     <p style="margin: 0; padding: 0;">&nbsp;</p>
     <div style="font-family: 'Helvetica Neue', roboto, Helvetica, Arial, sans-serif; padding: 1em;">
-      <h3 style="font-weight: normal; font-size: 1.25em; line-height: 1em; padding: 0; margin: 0;">#{@get("customer") || @get("reporter")?.name}</h3>
+      <h3 style="font-weight: normal; font-size: 1.25em; line-height: 1em; padding: 0; margin: 0;">#{@get("attributedTo") || @get("reporter")?.name}</h3>
       <div style="font-size: 0.92em; line-height: 1em; padding: 0; margin: 0; color: #888;">#{@get("reporter")?.name} • #{Handlebars.helpers.formatDateWithYear2 @get("createdAt")}</div>
       <div style="border-left: 5px solid #ddd; padding-left: 0.66em; margin: 0;">#{App.mdown(lines.join("\n"))}</div>
     </div>

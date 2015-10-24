@@ -51,7 +51,7 @@ namespace :feedback do
           end
           Houston::Feedback::Comment.create(attributes.merge(
             text: ticket_to_feedback_text2(ticket, goldmine_notes(number)),
-            customer: "GM #{number}"))
+            attributed_to: "GM #{number}"))
         end
       end
       pbar.inc

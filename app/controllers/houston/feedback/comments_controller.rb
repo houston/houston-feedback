@@ -26,7 +26,7 @@ module Houston
         authorize! :update, comment
 
         comment.text = params[:text]
-        comment.customer = params[:customer]
+        comment.attributed_to = params[:attributedTo]
         comment.updated_by = current_user
 
         if comment.save

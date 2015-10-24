@@ -3,8 +3,8 @@
     <div class="feedback-comment">
       <%= avatar_for comment.user %>
       
-      <% if comment.customer %>
-        <h3 class="feedback-customer unknown"><%= comment.customer %></h3>
+      <% if comment.attributed_to %>
+        <h3 class="feedback-customer unknown"><%= comment.attributed_to %></h3>
       <% else %>
         <h3 class="feedback-customer unknown"><%= comment.user.name %></h3>
       <% end %>

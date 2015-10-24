@@ -44,7 +44,7 @@ class Houston::Feedback::CommentExcelPresenter
         number: i + 4,
         cells: [
           { column: 2, value: comment.user.try(:name), style: general },
-          { column: 3, value: comment.customer, style: general },
+          { column: 3, value: comment.attributed_to, style: general },
           { column: 4, value: comment.created_at, style: timestamp },
           { column: 5, value: comment.text, style: general }
         ])

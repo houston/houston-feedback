@@ -22,7 +22,7 @@ module Houston::Feedback
         case key
         when "text"
           textual_changes.push "changed the text"
-        when "customer"
+        when "attributed_to"
           textual_changes.push "changed the customer"
         when "tags"
           before = before.split if before.is_a?(String)

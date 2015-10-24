@@ -66,7 +66,8 @@ module Houston
       end
 
       def create
-        comment = Comment.new(params.pick(:customer, :text, :tags))
+        params[:attributed_to] = params[:attributedTo] if params.key?(:attributedTo)
+        comment = Comment.new(params.pick(:attributed_to, :text, :tags))
         comment.project = project
         comment.user = current_user
 
@@ -116,8 +117,8 @@ module Houston
         session[:import_customer_fields] = headings.values_at(*customer_fields)
 
         csv.each do |row|
-          customer = row.values_at(*customer_fields).map { |val| val.to_s.strip }.reject(&:blank?).join(", ")
-          next if customer.blank?
+          attributed_to = row.values_at(*customer_fields).map { |val| val.to_s.strip }.reject(&:blank?).join(", ")
+          next if attributed_to.blank?
 
           feedback_fields.each do |i|
             feedback, question = row[i].to_s.strip, headings[i]
@@ -128,7 +129,7 @@ module Houston
               import: import,
               project: project,
               user: current_user,
-              customer: customer,
+              attributed_to: attributed_to,
               text: feedback,
               tags: tags)
             comment.update_plain_text # because the import command won't

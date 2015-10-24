@@ -3,13 +3,13 @@
     <a href="#" class="feedback-comment-close"><i class="fa fa-times" /></a>
   
     {{{avatar reporter/email 24 reporter/name}}}
-  
-    {{#if customer}}
-      <h3 class="feedback-customer">{{customer}}</h3>
+
+    {{#if attributedTo}}
+      <h3 class="feedback-customer">{{attributedTo}}</h3>
     {{else}}
       <h3 class="feedback-customer unknown">{{reporter/name}}</h3>
     {{/if}}
-    <h3 class="feedback-customer-edit"><input type="text" value="{{customer}}" /></h3>
+    <h3 class="feedback-customer-edit"><input type="text" value="{{attributedTo}}" /></h3>
   
     <div class="feedback-metadata">
       <span class="feedback-reporter">{{reporter/name}}</span>

@@ -419,9 +419,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
     e.preventDefault() if e
 
     text = $('.feedback-text.edit textarea').val()
-    customer = $('.feedback-customer-edit > input').val()
+    attributedTo = $('.feedback-customer-edit > input').val()
     comment = @comments.get @selectedId()
-    comment.save(text: text, customer: customer)
+    comment.save(text: text, attributedTo: attributedTo)
       .success =>
         @redrawComment comment
         @editSelected()

@@ -13,7 +13,7 @@ module Houston
 
       has_many :user_flags, class_name: "Houston::Feedback::CommentUserFlags"
 
-      versioned only: [:customer, :text, :tags]
+      versioned only: [:attributed_to, :text, :tags]
 
       class << self
         def for_project(project)
@@ -100,7 +100,7 @@ module Houston
           update_all <<-SQL
             search_vector = setweight(to_tsvector('english', tags), 'A') ||
                             setweight(to_tsvector('english', plain_text), 'B') ||
-                            setweight(to_tsvector('english', customer), 'B')
+                            setweight(to_tsvector('english', attributed_to), 'B')
           SQL
         end
 
@@ -153,7 +153,7 @@ module Houston
       end
 
       def search_vector_should_change?
-        (changed & %w{tags plain_text customer}).any?
+        (changed & %w{tags plain_text attributed_to}).any?
       end
 
       def update_search_vector
