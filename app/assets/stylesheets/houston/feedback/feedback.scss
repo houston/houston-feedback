@@ -121,17 +121,26 @@
 
 .feedback-edit-comment,
 .feedback-digest .feedback-comment {
-  h3 {
+  .feedback-customer {
     font-size: 1.25em;
     font-weight: 400;
     line-height: 1em;
     margin: 0;
     min-height: 1em;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: 2em;
+    margin-right: 2em;
+    display: inline-block;
+
+    &.unidentified {
+      border-bottom: 2px dashed;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
   }
+  a.feedback-customer { cursor: pointer; }
 
   .avatar {
     float: left;
@@ -397,7 +406,8 @@
 
 #search_instructions {
   padding: 0 2em;
-  height: 19em;
+  height: 22.5em;
+  overflow: hidden;
 
   h3 {
     color: #888;

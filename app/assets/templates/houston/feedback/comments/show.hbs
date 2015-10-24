@@ -1,9 +1,11 @@
 <div class="feedback-snippet">
-  {{#if attributedTo}}
-    <span class="feedback-customer">{{attributedTo}}</span>
+  {{#if customer}}
+    <span class="feedback-customer">{{customer/name}}</span>
+  {{else}}{{#if attributedTo}}
+    <span class="feedback-customer unidentified">{{attributedTo}}</span>
   {{else}}
     <span class="feedback-customer unknown">{{reporter/name}}</span>
-  {{/if}}
+  {{/if}}{{/if}}
   <div class="feedback-metadata">
     <span class="feedback-reporter">{{{avatar reporter/email 16 reporter/name}}}</span>
     <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>

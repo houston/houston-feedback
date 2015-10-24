@@ -1,0 +1,31 @@
+<div class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Identify Customer</h3>
+  </div>
+  <div class="modal-body">
+    <div>
+      <label for="identify_customer_mode_existing">
+        <input type="radio" id="identify_customer_mode_existing" name="identify_customer_mode" value="existing">
+        Existing customer: 
+      </label>
+      <select id="customer_id" name="customer_id">
+        <option value="" selected>Select a customer</option>
+        {{#customers}}
+          <option value="{{id}}">{{name}}</option>
+        {{/customers}}
+      </select>
+    </div>
+    <div>
+      <label for="identify_customer_mode_new">
+        <input type="radio" id="identify_customer_mode_new" name="identify_customer_mode" checked value="new">
+        New customer:
+      </label>
+      <input type="text" id="customer_name" name="customer_name"/>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+    <button type="button" class="btn btn-primary" id="identify_customer_button">Save</button>
+  </div>
+</div>

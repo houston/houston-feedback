@@ -42,7 +42,6 @@ module Houston
         @q = params.fetch(:q, "-#no -#addressed -#invalid ")
         @comments = Comment \
           .for_project(project)
-          .includes(:user)
           .with_flags_for(current_user)
           .search(@q)
 
@@ -55,6 +54,7 @@ module Houston
           format.html do
             @projects = Project.unretired
             @tags = Comment.for_project(project).tags
+            @customers = Customer.all
           end
           format.xlsx do
             send_data CommentExcelPresenter.new(project, params[:q], comments),

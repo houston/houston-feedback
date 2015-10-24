@@ -6,12 +6,14 @@ module Houston
       self.table_name = "feedback_comments"
 
       before_save :update_plain_text, :if => :text_changed?
+      before_save :update_customer, :if => :attributed_to_changed?
       after_save :update_search_vector, :if => :search_vector_should_change?
 
       belongs_to :project
       belongs_to :user
 
       has_many :user_flags, class_name: "Houston::Feedback::CommentUserFlags"
+      belongs_to :customer, class_name: "Houston::Feedback::Customer"
 
       versioned only: [:attributed_to, :text, :tags]
 
@@ -41,6 +43,7 @@ module Houston
           not_tags = []
           flags = []
           reporter_id = nil
+          customer_ids = nil
           created_at = nil
           query_string = query_string
             .gsub(/\/(read|unread|untagged)/) { flags << $1; "" }
@@ -49,6 +52,10 @@ module Houston
             .gsub(/by:([A-Za-z0-9]+)/) {
               reporter_id = User.where(["lower(concat(first_name, last_name)) = ?", $1])
                 .limit(1).pluck(:id)[0] || reporter_id
+              "" }
+            .gsub(/customer:([A-Za-z0-9]+)/) {
+              customer_ids = Houston::Feedback::Customer.where(["lower(regexp_replace(name, '\\s+', '', 'g')) = ?", $1]).pluck(:id)
+              customer_ids = [0] if customer_ids.none?
               "" }
             .gsub(/added:(\d{8}?)\.\.(\d{8}?)/) {
               min, max = $1, $2
@@ -89,6 +96,7 @@ module Houston
           results = results.where("flags.read IS FALSE OR flags.read IS NULL") if flags.member? "unread"
           results = results.where("tags='' OR tags='converted'") if flags.member? "untagged"
           results = results.where(user_id: reporter_id) if reporter_id
+          results = results.where(customer_id: customer_ids) if customer_ids
           results = results.where(created_at: created_at) if created_at
           results = results.where(query.conditions)
             .select("feedback_comments.*", excerpt.as("excerpt"), rank.as("rank"))
@@ -158,6 +166,10 @@ module Houston
 
       def update_search_vector
         self.class.where(id: id).reindex!
+      end
+
+      def update_customer
+        self.customer = Customer.find_by_attributed_to attributed_to
       end
 
     end

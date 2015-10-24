@@ -15,6 +15,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderImportModal: HandlebarsTemplates['houston/feedback/comments/import']
   renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/comments/delete_imported']
   renderChangeProjectModal: HandlebarsTemplates['houston/feedback/comments/change_project']
+  renderIdentifyCustomerModal: HandlebarsTemplates['houston/feedback/comments/identify_customer']
   renderNewCommentModal: HandlebarsTemplates['houston/feedback/comments/new']
   renderTagCloud: HandlebarsTemplates['houston/feedback/comments/tags']
 
@@ -37,6 +38,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click #toggle_extra_tags_link': 'toggleExtraTags'
     'click .feedback-tag-cloud > .feedback-tag': 'clickTag'
     'click .feedback-search-example': 'clickExample'
+    'click .feedback-query': 'clickQuery'
+    'click .feedback-customer-identify': 'identifyCustomer'
     'click .btn-read': 'toggleRead'
     'click .btn-copy': 'copy'
 
@@ -45,6 +48,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @comments = @options.comments
     @tags = @options.tags
     @projects = @options.projects
+    @customers = @options.customers
     @canCopy = ('clipboardData' in _.keys(ClipboardEvent.prototype))
 
     $('#import_csv_field').change (e)->
@@ -184,7 +188,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
     e.preventDefault() if e
     search = $('#search_feedback').serialize()
-    url = window.location.pathname + '?' + search
+    url = window.location.pathname
+    url = url + '?' + search unless $('#q').val() is "-#no -#addressed -#invalid "
     xlsxHref = window.location.pathname + '.xlsx?' + search
     history.pushState({}, '', url)
     $('#excel_export_button').attr('href', xlsxHref)
@@ -534,6 +539,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $('#q').val q
     @search()
 
+  clickQuery: (e)->
+    e.preventDefault() if e
+    q = @getQuery $(e.target).attr('href')
+    $('#q').val q
+    $('#search_instructions').addClass('collapsed')
+    @search()
+
   getQuery: (params)->
     @getParameterByName(params, 'q')
 
@@ -568,3 +580,42 @@ class Houston.Feedback.CommentsView extends Backbone.View
       e.preventDefault()
 
     document.execCommand "copy"
+
+
+
+  identifyCustomer: (e)->
+    e.preventDefault()
+
+    comment = @selectedComments[0]
+    attribution = comment.get('attributedTo')
+
+    html = @renderIdentifyCustomerModal
+      customers: @customers
+    $modal = $(html).modal()
+    $modal.on 'hidden', -> $(@).remove()
+    $modal.find('#customer_name').focus()
+
+    $modal.find('#customer_id').change ->
+      $modal.find('#identify_customer_mode_existing').prop('checked', true)
+
+    $modal.find('#customer_name').focus ->
+      $modal.find('#identify_customer_mode_new').prop('checked', true)
+
+    $modal.find('#identify_customer_button').click =>
+      if $modal.find('#identify_customer_mode_existing').prop('checked')
+        id = $modal.find('#customer_id').val()
+        return unless id
+
+        promise = $.post "/feedback/customers/#{id}/attribution",
+          attribution: attribution
+      else
+        name = $modal.find('#customer_name').val()
+        promise = $.post "/feedback/customers",
+          attribution: attribution
+          name: name
+
+      promise.success =>
+        window.location.reload()
+      promise.error ->
+        console.log 'error', arguments
+      $modal.modal('hide')

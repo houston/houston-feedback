@@ -4,12 +4,14 @@
   
     {{{avatar reporter/email 24 reporter/name}}}
 
-    {{#if attributedTo}}
-      <h3 class="feedback-customer">{{attributedTo}}</h3>
+    {{#if customer}}
+      <a href="?q=customer:{{customer/slug}}" class="feedback-customer feedback-query">{{customer/name}}</a>
+    {{else}}{{#if attributedTo}}
+      <a class="feedback-customer unidentified feedback-customer-identify">{{attributedTo}}</a>
     {{else}}
-      <h3 class="feedback-customer unknown">{{reporter/name}}</h3>
-    {{/if}}
-    <h3 class="feedback-customer-edit"><input type="text" value="{{attributedTo}}" /></h3>
+      <span class="feedback-customer unknown">{{reporter/name}}</span>
+    {{/if}}{{/if}}
+    <span class="feedback-customer-edit"><input type="text" value="{{attributedTo}}" /></span>
   
     <div class="feedback-metadata">
       <span class="feedback-reporter">{{reporter/name}}</span>

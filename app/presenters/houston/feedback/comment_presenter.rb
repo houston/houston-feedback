@@ -13,7 +13,7 @@ module Houston
       def as_json(*args)
         comments = @comments
         comments = Houston.benchmark "[#{self.class.name.underscore}] Load objects" do
-          comments.load
+          comments.includes(:user, :customer).load
         end if comments.is_a?(ActiveRecord::Relation)
         Houston.benchmark "[#{self.class.name.underscore}] Prepare JSON" do
           comments.map(&method(:comment_to_json))
@@ -26,6 +26,10 @@ module Houston
           import: comment.import,
           reporter: present_reporter(comment.user),
           attributedTo: comment.attributed_to,
+          customer: comment.customer && {
+            id: comment.customer.id,
+            slug: comment.customer.slug,
+            name: comment.customer.name },
           text: comment.text,
           excerpt: comment.excerpt,
           permissions: {

@@ -51,20 +51,26 @@
         <dt><%= example "redirect" %></dt>
         <dd>finds comments with the word <b>redirect</b></dd>
 
+        <dt><%= example "/unread" %></dt>
+        <dd>finds comments that I haven't read</dd>
+
         <dt><%= example "#export -#addressed" %></dt>
         <dd>finds comments with the tag <b>export</b> but not the tag <b>addressed</b></dd>
+
+        <dt><%= example "/read #invalid|no" %></dt>
+        <dd>finds comments tagged either <b>invalid</b> or <b>no</b> that I've read</dd>
 
         <dt><%= example "import by:rodkyles" %></dt>
         <dd>finds comments with the word <b>import</b> entered by <b>Rod Kyles</b></dd>
 
-        <dt><%= example "added:20150101 #invalid|no" %></dt>
-        <dd>finds comments added on <b>Jan 1, 2015</b> tagged either <b>invalid</b> or <b>no</b></dd>
+        <dt><%= example "by:rodkyles added:#{3.weeks.ago.strftime("%Y%m%d")}.." %></dt>
+        <dd>finds comments added by <b>Rod Kyles</b> in the last 3 weeks</dd>
 
-        <dt><%= example "added:20150101..20150530 /read" %></dt>
-        <dd>finds comments added between <b>Jan 1, 2015</b> and <b>May 30, 2015</b> that I've read</dd>
+        <dt><%= example "added:20150101..20150530" %></dt>
+        <dd>finds comments added between <b>Jan 1, 2015</b> and <b>May 30, 2015</b></dd>
 
-        <dt><%= example "added:#{3.weeks.ago.strftime("%Y%m%d")}.. /unread" %></dt>
-        <dd>finds comments added in the last 3 weeks that I haven't read</dd>
+        <dt><%= example "customer:jillmartian" %></dt>
+        <dd>finds comments by the customer <b>Jill Martian</b></dd>
       </dl>
     </div>
   </div>
@@ -87,6 +93,8 @@
         comments: new Houston.Feedback.Comments(comments, {parse: true}),
         projects: <%=raw @projects.pluck(:id, :name).map { |id, name|
           { id: id, name: name, current: id == @project.id } }.to_json %>,
+        customers: <%=raw @customers.pluck(:id, :name).map { |id, name|
+          { id: id, name: name } }.to_json %>,
         project: <%=raw @project.slug.to_json %>
       });
       commentsView.render();

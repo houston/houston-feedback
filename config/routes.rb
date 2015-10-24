@@ -17,6 +17,9 @@ Houston::Feedback::Engine.routes.draw do
 
     delete "comments/tags", to: "tags#remove"
     post "comments/tags", to: "tags#add"
+
+    post "customers", to: "customers#create"
+    post "customers/:id/attribution", to: "customers#add_attribution"
   end
 
 end
