@@ -470,7 +470,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
     e.preventDefault() if e
     $a = $(e.target).closest('a')
     tag = @getQuery $a.attr('href')
-    $('#q').val tag
+    q = $('#q').val()
+    q = if q.length then "#{q} #{tag}" else tag
+    $('#q').val q
     @search()
 
   getQuery: (params)->
