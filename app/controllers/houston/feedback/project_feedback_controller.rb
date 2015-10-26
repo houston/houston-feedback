@@ -2,7 +2,7 @@ require "csv"
 
 module Houston
   module Feedback
-    class ProjectFeedbackController < ApplicationController
+    class ProjectFeedbackController < Houston::Feedback::ApplicationController
       attr_reader :project, :comments
 
       layout "houston/feedback/application"
