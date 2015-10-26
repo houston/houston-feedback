@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-# Declare your gem's dependencies in feedback.gemspec.
+# Declare your gem's dependencies in houston-feedback.gemspec.
 # Bundler will treat runtime dependencies like base dependencies, and
 # development dependencies will be added by default to the :development group.
 gemspec
@@ -10,9 +10,15 @@ gemspec
 # Git. Remember to move these dependencies to your gemspec before releasing
 # your gem to rubygems.org.
 
-# To use debugger
-# gem 'debugger'
+group :development, :test do
+  gem "pry"
+end
 
-# Load Houston's gems
-ENV["HOUSTON_CONFIG"] = File.expand_path("../config/config.rb", __FILE__)
-eval_gemfile "test/dummy/Gemfile"
+group :test do
+  gem "minitest"
+  gem "capybara"
+  gem "shoulda-context"
+
+  gem "minitest-reporters", require: false
+  gem "minitest-reporters-turn_reporter", require: false
+end
