@@ -28,5 +28,5 @@ $.fn.extend
   selectedTags: ->
     text = @.val()
     tags = _.map text.split(/[,;]/), (tag)->
-      tag.compact().toLowerCase().replace(/^#/, '').replace(/[^\w\?]+/g, '-')
+      tag.trim().toLowerCase().replace(/^#/, '').replace(/[^\w\?]+/g, '-')
     _.reject tags, (tag)-> !tag
