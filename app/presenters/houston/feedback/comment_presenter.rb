@@ -1,7 +1,7 @@
 module Houston
   module Feedback
     class CommentPresenter
-      attr_reader :ability
+      attr_reader :ability, :comments
 
       delegate :can?, to: :ability
 
@@ -11,7 +11,6 @@ module Houston
       end
 
       def as_json(*args)
-        comments = @comments
         comments = Houston.benchmark "[#{self.class.name.underscore}] Load objects" do
           comments.includes(:user, :customer).load
         end if comments.is_a?(ActiveRecord::Relation)
