@@ -24,7 +24,11 @@ module Houston
         { id: comment.id,
           createdAt: comment.created_at,
           import: comment.import,
-          reporter: present_reporter(comment.user),
+          reporter: comment.user && {
+            id: comment.user.id,
+            name: comment.user.name,
+            firstName: comment.user.first_name,
+            email: comment.user.email },
           attributedTo: comment.attributed_to,
           customer: comment.customer && {
             id: comment.customer.id,
@@ -38,13 +42,6 @@ module Houston
           read: comment[:read],
           rank: comment[:rank],
           tags: comment.tags }
-      end
-
-      def present_reporter(user)
-        { id: user.id,
-          name: user.name,
-          firstName: user.first_name,
-          email: user.email } if user
       end
 
     end
