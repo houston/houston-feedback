@@ -157,7 +157,7 @@ module Houston
         column = arel_table[column] if column.is_a?(Symbol)
         options = options.map { |(key, value)| "#{key.to_s.camelize}=#{value}" }.join(", ")
         tsquery = Arel.sql(query.send(:tsquery))
-        Arel::Nodes::NamedFunction.new("ts_headline", [column, tsquery, options])
+        Arel::Nodes::NamedFunction.new("ts_headline", [column, Arel::Nodes.build_quoted(tsquery), Arel::Nodes.build_quoted(options)])
       end
 
       def search_vector_should_change?
