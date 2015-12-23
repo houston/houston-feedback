@@ -57,7 +57,7 @@ module Houston
             @customers = Customer.all
           end
           format.xlsx do
-            send_data CommentExcelPresenter.new(project, params[:q], comments),
+            send_data CommentExcelPresenter.new(project, params[:q], comments.preload(:user)),
               type: :xlsx,
               filename: "Comments.xlsx",
               disposition: "attachment"
