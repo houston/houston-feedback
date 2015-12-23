@@ -21,7 +21,7 @@ class Houston.Feedback.Comment extends Backbone.Model
       success()
 
   text: ->
-    lines = @get("text").lines()
+    lines = @get("text").match(/^.*$/gm)
 
     # Replace H_ tags with bold text of the same font size
     # and get rid of inner quotes.
@@ -35,7 +35,7 @@ class Houston.Feedback.Comment extends Backbone.Model
       .replace /^(> \*.*\*\n)> \n(?!> \*)/mg, "$1"
 
   html: ->
-    lines = @get("text").lines()
+    lines = @get("text").match(/^.*$/gm)
 
     # Replace H_ tags with bold text of the same font size
     # and get rid of inner quotes.
