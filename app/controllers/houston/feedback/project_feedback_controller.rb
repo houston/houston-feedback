@@ -54,7 +54,7 @@ module Houston
           format.html do
             @projects = Project.unretired
             @tags = Comment.for_project(project).tags
-            @customers = Customer.all
+            @customers = Customer.order(:name)
           end
           format.xlsx do
             send_data CommentExcelPresenter.new(project, params[:q], comments.preload(:user)),
