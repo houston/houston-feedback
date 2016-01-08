@@ -9,7 +9,7 @@ module Houston
         authorize! :tag, Comment
 
         comments.find_each do |comment|
-          comment.tags = comment.tags | tags
+          comment.tags = comment.tags | tags.map { |tag| tag.underscore.dasherize }
           comment.updated_by = current_user
           comment.save
         end
@@ -33,7 +33,7 @@ module Houston
 
       def find_comments_and_tags
         @comments = Comment.where(id: params[:comment_ids])
-        @tags = Array(params[:tags]).map { |tag| tag.underscore.dasherize }
+        @tags = Array(params[:tags])
       end
 
     end
