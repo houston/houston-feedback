@@ -260,8 +260,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
       tags: []
       read: _.all comments, (comment)-> comment.get('read')
 
-    tags = (comment.get('tags') for comment in comments).flatten()
-    for tag, array of tags.groupBy()
+    tags = _.flatten(comment.get('tags') for comment in comments)
+    for tag, array of _.groupBy(tags)
       tag.count = array.length
       percent = array.length / context.count
       percent = 0.2 if percent < 0.2
