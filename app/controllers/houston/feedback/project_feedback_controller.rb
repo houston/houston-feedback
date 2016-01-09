@@ -145,6 +145,8 @@ module Houston
           Comment.for_project(project).reindex!
         end
 
+        Houston.observer.fire "feedback:comments:import", comments
+
         render json: {count: comments.count}
       end
 
