@@ -66,6 +66,11 @@ module Houston
               max = Date.strptime(max, "%Y%m%d").end_of_day
               created_at = min..max
               "" }
+            .gsub(/added:today/) {
+              min = Date.today.beginning_of_day
+              max = Date.today.end_of_day
+              created_at = min..max
+              "" }
             .gsub(/added:(\d{8})/) {
               date = Date.strptime($1, "%Y%m%d")
               min = date.beginning_of_day
