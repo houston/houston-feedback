@@ -10,7 +10,7 @@
     <span class="feedback-reporter">{{{avatar reporter/email 16 reporter/name}}}</span>
     <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>
   </div>
-  <div class="feedback-text">{{{excerpt}}}</div>
+  <div class="feedback-text">{{{markdown excerpt}}}</div>
 </div>
 <div class="feedback-tag-list">
   {{#each tags}}<span class="feedback-tag">{{this}}</span>{{/each}}
