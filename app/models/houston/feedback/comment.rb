@@ -18,6 +18,8 @@ module Houston
 
       versioned only: [:attributed_to, :text, :tags]
 
+      validates :attributed_to, length: { maximum: 255 }, allow_blank: true
+
       class << self
         def for_project(project)
           where(project_id: project.id)
