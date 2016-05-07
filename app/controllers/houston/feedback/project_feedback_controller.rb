@@ -87,7 +87,17 @@ module Houston
         @target = params[:target]
         session[:csv_path] = params[:file].tempfile.path
 
-        csv = CSV.open(session[:csv_path]).to_a
+        begin
+          csv = CSV.open(session[:csv_path]).to_a
+        rescue
+          @data = {
+            ok: false,
+            filename: params[:file].original_filename,
+            error: $!.message }
+          render layout: false
+          return
+        end
+
         headings = []
         Array(csv.shift).each_with_index do |heading, i|
           next if COMMON_SURVEY_FIELDS_TO_IGNORE.member?(heading)
@@ -97,9 +107,10 @@ module Houston
         end
 
         @data = {
+          ok: true,
+          filename: params[:file].original_filename,
           headings: headings,
-          customerFields: session.fetch(:import_customer_fields, []),
-          filename: params[:file].original_filename }
+          customerFields: session.fetch(:import_customer_fields, []) }
         render layout: false
       end
 

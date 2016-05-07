@@ -58,8 +58,14 @@ class Houston.Feedback.CommentsView extends Backbone.View
       # file again, we get another 'change' event.
       $(e.target).val('').attr('type', 'text').attr('type', 'file')
 
-    $('#feedback_csv_upload_target').on 'upload:complete', (e, headers)=>
-      @promptToImportCsv(headers)
+    $('#feedback_csv_upload_target').on 'upload:complete', (e, data)=>
+      if data.ok
+        @promptToImportCsv(data)
+      else
+        alertify.error """
+        <b>There is a problem with the file "#{data.filename}"</b><br/>
+        #{data.error}
+        """
 
     $('#new_feedback_button').click =>
       @newFeedback()
