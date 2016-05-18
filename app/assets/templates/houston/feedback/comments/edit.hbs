@@ -1,7 +1,7 @@
 <div id="comment_{{id}}" class="feedback-comment feedback-edit-comment" data-id="{{id}}">
   <div class="feedback-header">
     <a href="#" class="feedback-comment-close"><i class="fa fa-times" /></a>
-  
+
     {{{avatar reporter/email 24 reporter/name}}}
 
     {{#if customer}}
@@ -12,13 +12,13 @@
       <span class="feedback-customer unknown">{{reporter/name}}</span>
     {{/if}}{{/if}}
     <span class="feedback-customer-edit"><input type="text" value="{{attributedTo}}" maxlength="255" /></span>
-  
+
     <div class="feedback-metadata">
       <span class="feedback-reporter">{{reporter/name}}</span>
       <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>
     </div>
   </div>
-  
+
   <div class="feedback-tags">
     <div class="feedback-tag-list">
       {{#each tags}}<span class="feedback-tag">
@@ -26,14 +26,14 @@
         <a class="feedback-remove-tag"><i class="fa fa-close"></i></a>
       </span>{{/each}}
     </div>
-    <input type="text" class="feedback-new-tag" placeholder="New Tag" />
+    <input type="text" class="feedback-new-tag mousetrap" placeholder="New Tag" />
   </div>
-  
+
   <div class="feedback-text markdown">{{{markdown text}}}</div>
   <div class="feedback-text edit uploader">
     <textarea>{{text}}</textarea>
   </div>
-  
+
   <div class="feedback-commands">
     {{#if permissions/destroy}}
     <button class="btn btn-delete btn-small btn-danger">Delete</button>
@@ -47,7 +47,7 @@
     {{#if canCopy}}
     <button class="btn btn-copy btn-small btn-default">Copy</button>
     {{/if}}
-    
+
     <span class="feedback-comment-index">
       <b>{{index}}</b> of <b>{{total}}</b>
     </span>

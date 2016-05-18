@@ -51,6 +51,20 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @customers = @options.customers
     @canCopy = ('clipboardData' in _.keys(ClipboardEvent.prototype))
 
+    Mousetrap.bind "command+k command+r", (e) =>
+      e.preventDefault()
+      for comment in @selectedComments
+        @markAsRead(comment)
+
+    Mousetrap.bind "command+k command+u", (e) =>
+      e.preventDefault()
+      for comment in @selectedComments
+        @markAsUnread(comment)
+
+    Mousetrap.bind "command+k command+e", (e) =>
+      e.preventDefault()
+      @editCommentText()
+
     $('#import_csv_field').change (e)->
       $(e.target).closest('form').submit()
 
@@ -419,12 +433,23 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   editCommentText: (e)->
     e.preventDefault() if e
-    if $('.feedback-edit-comment').hasClass('edit-text')
-      $('.feedback-edit-comment').removeClass('edit-text')
-      $('.btn-edit').text('Edit')
+    if @isEditingCommentText()
+      @endEditCommentText()
     else
-      $('.feedback-edit-comment').addClass('edit-text')
-      $('.btn-edit').text('Cancel')
+      @beginEditCommentText()
+
+  isEditingCommentText: ->
+    $('.feedback-edit-comment').hasClass('edit-text')
+
+  beginEditCommentText: ->
+    $('.feedback-edit-comment').addClass('edit-text')
+    $('.btn-edit').text('Cancel')
+    $('.feedback-edit-comment textarea').focus()
+
+  endEditCommentText: ->
+    $('.feedback-edit-comment').removeClass('edit-text')
+    $('.btn-edit').text('Edit')
+    $('.feedback-edit-comment .feedback-new-tag').focus()
 
   saveCommentText: (e)->
     e.preventDefault() if e
@@ -448,6 +473,12 @@ class Houston.Feedback.CommentsView extends Backbone.View
   keydownCommentText: (e)->
     # Don't select another comment or jump to the search bar
     e.stopImmediatePropagation()
+    switch e.keyCode
+      when KEY.ESC then @endEditCommentText()
+      when KEY.RETURN
+        if e.metaKey or e.ctrlKey
+          e.preventDefault()
+          @saveCommentText()
 
   newFeedback: (e)->
     e.preventDefault() if e
