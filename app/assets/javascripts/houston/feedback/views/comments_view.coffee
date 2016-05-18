@@ -236,6 +236,11 @@ class Houston.Feedback.CommentsView extends Backbone.View
       topTags: tags.slice(0, 5)
       extraTags: tags.slice(5)
 
+    #
+    $(window).resize =>
+      $('#results').css('min-height', $(window).height() - 154)
+    $('#results').css('min-height', $(window).height() - 154)
+
     $('#feedback_edit').affix(offset: {top: 192})
 
     @focusSearch()

@@ -337,7 +337,7 @@
 #feedback_edit.affix {
   top: 90px;
   right: 20px;
-  bottom: 52px;
+  bottom: 20px;
   padding-left: 20px;
 
   .feedback-comment {
@@ -347,6 +347,8 @@
     height: 60%; // Hack -> we should do this with JS to make it the height of the window minus other feedback controls
   }
 }
+
+html.tester-bar #feedback_edit.affix { bottom: 52px; }
 
 .feedback-tag-cloud {
   margin: 0.33em 0 1.66em 0;
