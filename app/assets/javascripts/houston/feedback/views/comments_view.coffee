@@ -28,6 +28,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'keydown': 'keydown'
     'keydown #q': 'keydownSearch'
     'click .feedback-comment-close': 'selectNone'
+    'click .feedback-comment-copy-url': 'copyUrl'
     'click .feedback-remove-tag': 'removeTag'
     'keydown .feedback-new-tag': 'keydownNewTag'
     'click .btn-delete': 'deleteComments'
@@ -189,7 +190,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
   keydownSearch: (e)->
     if e.keyCode is KEY.DOWN
       e.stopImmediatePropagation()
-      @select @$el.find('.feedback-search-result:first'), 'new'
+      @selectFirstResult()
+
+  selectFirstResult: ->
+    @select @$el.find('.feedback-search-result:first'), 'new'
 
   submitSearch: (e)->
     $('#search_instructions').addClass('collapsed')
@@ -619,6 +623,21 @@ class Houston.Feedback.CommentsView extends Backbone.View
       e = e.originalEvent || e
       e.clipboardData.setData "text/plain", comment.text()
       e.clipboardData.setData "text/html", comment.html()
+      e.preventDefault()
+
+    document.execCommand "copy"
+
+  copyUrl: (e)->
+    e.preventDefault()
+
+    # I only show the *Copy* button when there's one
+    # selected comment right now, so make that assumption.
+    comment = @selectedComments[0]
+    url = App.meta("relative_url_root") + "feedback/#{comment.id}"
+
+    $(document).one "copy", (e)=>
+      e = e.originalEvent || e
+      e.clipboardData.setData "text/plain", url
       e.preventDefault()
 
     document.execCommand "copy"

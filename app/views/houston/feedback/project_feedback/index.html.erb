@@ -98,6 +98,10 @@
         project: <%=raw @project.slug.to_json %>
       });
       commentsView.render();
+
+      <% if params[:q] =~ /^id:\d+$/ %>
+        commentsView.selectFirstResult();
+      <% end %>
     });
   </script>
 <% end -%>

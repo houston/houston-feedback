@@ -5,6 +5,30 @@ module Houston
       before_filter :find_comments, only: [:destroy, :move]
 
 
+      def show
+        comment = Comment.find(params[:id])
+        project = comment.project
+
+        if request.format.oembed?
+          author = comment.attributed_to
+          if comment.user
+            author << " (#{comment.user.name})" unless author.empty?
+            author = comment.user.name if author.empty?
+          end
+
+          render json: MultiJson.dump({
+            version: "1.0",
+            type: "link",
+            provider_name: project.slug,
+            author_name: author,
+            html: comment.plain_text })
+        else
+          authorize! :read, comment
+          redirect_to project_feedback_url(project, q: "id:#{comment.id}")
+        end
+      end
+
+
       def destroy
         authorize! :destroy, Comment
         ids = comments.pluck(:id)

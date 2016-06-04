@@ -169,6 +169,16 @@
     &:hover { color: #005580; }
   }
 
+  .feedback-comment-copy-url {
+    position: absolute;
+    top: 2px;
+    right: 24px;
+    font-size: 18px;
+    color: #e4e4e4;
+
+    &:hover { color: #005580; }
+  }
+
   .feedback-comment-index, .btn-edit, .btn-save, .btn-read, .btn-copy {
     float: right;
     margin-left: 3px;

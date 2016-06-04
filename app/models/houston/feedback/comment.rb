@@ -47,6 +47,7 @@ module Houston
           flags = []
           reporter_id = nil
           customer_ids = nil
+          ids = []
           created_at = nil
           query_string = query_string
             .gsub(/\/(read|unread|untagged)/) { flags << $1; "" }
@@ -79,6 +80,9 @@ module Houston
               max = date.end_of_day
               created_at = min..max
               "" }
+            .gsub(/id:(\d+)/) {
+              ids << $1.to_i
+              "" }
             .strip
 
           config = PgSearch::Configuration.new({against: "plain_text"}, self)
@@ -103,6 +107,7 @@ module Houston
           results = results.where("flags.read IS TRUE") if flags.member? "read"
           results = results.where("flags.read IS FALSE OR flags.read IS NULL") if flags.member? "unread"
           results = results.where("tags='' OR tags='converted'") if flags.member? "untagged"
+          results = results.where(id: ids) if ids.any?
           results = results.where(user_id: reporter_id) if reporter_id
           results = results.where(customer_id: customer_ids) if customer_ids
           results = results.where(created_at: created_at) if created_at
