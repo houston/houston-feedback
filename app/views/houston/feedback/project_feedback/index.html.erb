@@ -2,27 +2,27 @@
 <h1 class="project-banner <%= @project.color %> space-below" data-project-slug="<%= @project.slug %>" data-project-color="<%= @project.color %>">
   <small>comments for</small>
   <%= @project.name %>
-  
+
   <%= render partial: "projects/keyboard_shortcuts" %>
-  
+
   <%= link_to project_feedback_path(params.pick(:q).merge(format: :xlsx)), id: "excel_export_button", class: "project-banner-btn" do %>
     <i class="fa fa-file-excel-o"></i>
-    
+
     <span>
       Export<br />
       to Excel
     </span>
   <% end %>
-  
+
   <%= link_to "#", id: "new_feedback_button", class: "project-banner-btn" do %>
     <i class="fa fa-comment-o"></i>
-    
+
     <span>
       Add<br />
       Comment
     </span>
   <% end %>
-  
+
   <iframe id="feedback_csv_upload_target" name="feedback_csv_upload_target" class="upload-target" src=""></iframe>
   <%= form_tag upload_project_feedback_path(@project), multipart: true, target: "feedback_csv_upload_target", class: "project-banner-btn" do -%>
     <label for="import_csv_field">
@@ -74,9 +74,9 @@
       </dl>
     </div>
   </div>
-  
+
   <p id="search_report" class="feedback-search-report"></p>
-  
+
   <div id="tags_report" class="feedback-tags-report"></div>
   <div id="results" class="span6 infinite-scroll"></div>
   <div id="feedback_edit" class="span6"></div>
