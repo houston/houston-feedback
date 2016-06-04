@@ -1,30 +1,36 @@
 module Houston
   module Feedback
     class CommentsController < ApplicationController
-      attr_reader :comments
+      attr_reader :comments, :comment
       before_filter :find_comments, only: [:destroy, :move]
 
 
       def show
-        comment = Comment.find(params[:id])
-        project = comment.project
+        @comment = Comment.find(params[:id])
 
-        if request.format.oembed?
-          author = comment.attributed_to
+        if unfurling?
+          @author = comment.attributed_to
           if comment.user
-            author << " (#{comment.user.name})" unless author.empty?
-            author = comment.user.name if author.empty?
+            @author << " (#{comment.user.name})" unless @author.empty?
+            @author = comment.user.name if @author.empty?
           end
 
-          render json: MultiJson.dump({
-            version: "1.0",
-            type: "link",
-            provider_name: project.slug,
-            author_name: author,
-            html: comment.plain_text })
+          lines = comment.text.split(/\n/)
+
+          # Replace H_ tags with bold text of the same font size
+          # and get rid of inner quotes.
+          lines = lines.map do |line|
+            line.strip
+              .gsub(/^#+\s*(.*)$/m, "*\\1*") # replace H_ tags with bold text
+              .gsub(/^>\s*/m, "") # get rid of inner quotes
+              .gsub(/\*{2}/, "*") # it takes only one * to bold things in Slack
+              .gsub(/\!\[.*\]\(([^)]+)\)/, "\\1") # clean up images
+          end
+          @message = lines.join("\n").gsub(/\n+/m, "\n").strip
+
         else
           authorize! :read, comment
-          redirect_to project_feedback_url(project, q: "id:#{comment.id}")
+          redirect_to project_feedback_url(comment.project, q: "id:#{comment.id}")
         end
       end
 

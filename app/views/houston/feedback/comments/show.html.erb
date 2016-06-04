@@ -1,0 +1,8 @@
+<% content_for :meta do %>
+  <%= tag "meta", property: "og:type", content: "article" %>
+  <%= tag "meta", property: "og:site_name", content: "#{@comment.project.slug} / feedback" %>
+  <%= tag "meta", property: "og:title", content: @author %>
+  <%= tag "meta", property: "og:description", content: @message %>
+  <%= tag "meta", property: "og:url", content: request.url %>
+  <%= tag "meta", property: "article:published_time", content: @comment.created_at %>
+<% end %>
