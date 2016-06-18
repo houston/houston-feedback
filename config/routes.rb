@@ -15,6 +15,7 @@ Houston::Feedback::Engine.routes.draw do
 
     post "comments/:id/read", to: "comments#mark_read"
     post "comments/:id/unread", to: "comments#mark_unread"
+    put "comments/:id/signal_strength", to: "comments#signal_strength"
     put "comments/:id", to: "comments#update"
 
     delete "comments/tags", to: "tags#remove"

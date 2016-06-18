@@ -26,7 +26,7 @@ module Houston
         end
 
         def with_flags_for(user)
-          joins(<<-SQL).select("feedback_comments.*", "flags.read")
+          joins(<<-SQL).select("feedback_comments.*", "flags.read", "flags.signal_strength")
             LEFT OUTER JOIN feedback_comments_user_flags \"flags\"
             ON flags.comment_id=feedback_comments.id AND flags.user_id=#{user.id}
           SQL
@@ -125,6 +125,12 @@ module Houston
           SQL
         end
 
+        def cache_average_signal_strength!
+          update_all <<-SQL
+            average_signal_strength = (SELECT AVG(feedback_comments_user_flags.signal_strength) FROM feedback_comments_user_flags WHERE feedback_comments_user_flags.signal_strength IS NOT NULL AND feedback_comments_user_flags.comment_id=feedback_comments.id)
+          SQL
+        end
+
         def tags
           pluck("regexp_split_to_table(tags, '\\n')")
             .reject(&:blank?)
@@ -161,6 +167,23 @@ module Houston
         flags.save!
       rescue ActiveRecord::RecordNotUnique
         # race condition, OK
+      end
+
+      def set_signal_strength_by!(user, value)
+        value = nil if value == 0 or value == "0"
+        flags = user_flags.where(user_id: user.id).first_or_create
+        flags.signal_strength = value
+        flags.save!
+      rescue ActiveRecord::RecordNotUnique
+        # race condition, OK
+      end
+
+      def get_signal_strength_by(user)
+        user_flags.where(user_id: user.id).pluck(:signal_strength).first
+      end
+
+      def cache_average_signal_strength!
+        self.class.where(id: id).cache_average_signal_strength!
       end
 
     private

@@ -39,6 +39,8 @@ module Houston
           permissions: {
             update: can?(:update, comment),
             destroy: can?(:destroy, comment) },
+          averageSignalStrength: comment.average_signal_strength,
+          signalStrength: comment[:signal_strength],
           read: comment[:read],
           rank: comment[:rank],
           tags: comment.tags }

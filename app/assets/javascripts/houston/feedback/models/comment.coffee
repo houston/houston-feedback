@@ -20,6 +20,13 @@ class Houston.Feedback.Comment extends Backbone.Model
       @set 'read', false
       success()
 
+  setSignalStrength: (i, success)->
+    $.put("#{@url()}/signal_strength", signal_strength: i).success (data) =>
+      @set
+        signalStrength: data.signalStrength
+        averageSignalStrength: data.averageSignalStrength
+      success()
+
   text: ->
     lines = @get("text").match(/^.*$/gm)
 

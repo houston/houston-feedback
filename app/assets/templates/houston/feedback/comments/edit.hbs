@@ -6,6 +6,23 @@
     <a href="#" class="feedback-comment-copy" title="Copy Text"><i class="fa fa-copy" /></a>
     {{/if}}
 
+    <div class="feedback-signal-strength-selector dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        <span class="feedback-comment-signal-strength">
+          {{{signalStrengthImage signalStrength size=20}}}
+        </span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><a href="#" data-value="1">{{{signalStrengthImage 1 size=20}}} 1</a></li>
+        <li><a href="#" data-value="2">{{{signalStrengthImage 2 size=20}}} 2</a></li>
+        <li><a href="#" data-value="3">{{{signalStrengthImage 3 size=20}}} 3</a></li>
+        <li><a href="#" data-value="4">{{{signalStrengthImage 4 size=20}}} 4</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="#" data-value="0">No value</a></li>
+      </ul>
+    </div>
+
+
 
     {{{avatar reporter/email 24 reporter/name}}}
 

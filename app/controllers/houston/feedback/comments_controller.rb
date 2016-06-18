@@ -2,12 +2,11 @@ module Houston
   module Feedback
     class CommentsController < ApplicationController
       attr_reader :comments, :comment
+      before_filter :find_comment, except: [:destroy, :move]
       before_filter :find_comments, only: [:destroy, :move]
 
 
       def show
-        @comment = Comment.find(params[:id])
-
         if unfurling?
           @author = comment.attributed_to
           if comment.user
@@ -52,7 +51,6 @@ module Houston
 
 
       def update
-        comment = Comment.find(params[:id])
         authorize! :update, comment
 
         comment.text = params[:text]
@@ -68,20 +66,29 @@ module Houston
 
 
       def mark_read
-        comment = Comment.find params[:id]
         comment.read_by! current_user
         head :ok
       end
 
 
       def mark_unread
-        comment = Comment.find params[:id]
         comment.read_by! current_user, false
         head :ok
       end
 
 
+      def signal_strength
+        comment.set_signal_strength_by! current_user, params[:signal_strength]
+        find_comment # reload
+        render json: Houston::Feedback::CommentPresenter.new(current_ability, comment)
+      end
+
+
     private
+
+      def find_comment
+        @comment = Comment.with_flags_for(current_user).find params[:id]
+      end
 
       def find_comments
         if params.key? :comment_ids

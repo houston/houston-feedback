@@ -1,0 +1,12 @@
+App.Feedback = {
+  images: <%=raw MultiJson.dump(
+    %w{
+      signal-strength-0
+      signal-strength-1
+      signal-strength-2
+      signal-strength-3
+      signal-strength-4
+    }.each_with_object({}) { |image, map|
+      map[image] = image_url("houston/feedback/#{image}.png")
+    }) %>
+};

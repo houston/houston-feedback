@@ -100,6 +100,7 @@
   }
 
   .feedback-reporter { display: block; float: left; }
+  .feedback-comment-signal-strength { display: block; float: left; margin: 0 3px 0 0; }
   .feedback-created { display: block; float: right; }
 
   .feedback-tag-list {
@@ -423,6 +424,12 @@ html.tester-bar #feedback_edit.affix { bottom: 52px; }
     flex-wrap: nowrap;
 
     textarea { flex-grow: 100; }
+  }
+
+  .feedback-signal-strength-selector {
+    display: inline-block;
+
+    .dropdown-menu { min-width: 100px; }
   }
 }
 

@@ -43,6 +43,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .feedback-customer-identify': 'identifyCustomer'
     'click .btn-read': 'toggleRead'
     'click .feedback-comment-copy': 'copy'
+    'click .feedback-signal-strength-selector .dropdown-menu a': 'clickSignalStrength'
 
   initialize: ->
     @$results = @$el.find('#results')
@@ -65,6 +66,17 @@ class Houston.Feedback.CommentsView extends Backbone.View
     Mousetrap.bind "command+k command+e", (e) =>
       e.preventDefault()
       @editCommentText()
+
+    _.each [1..4], (i) =>
+      Mousetrap.bind "command+k command+#{i}", (e) =>
+        e.preventDefault()
+        for comment in @selectedComments
+          @setSignalStrength comment, i
+
+    Mousetrap.bind "command+k command+0", (e) =>
+      e.preventDefault()
+      for comment in @selectedComments
+        @setSignalStrength comment, null
 
     $('#import_csv_field').change (e)->
       $(e.target).closest('form').submit()
@@ -559,6 +571,19 @@ class Houston.Feedback.CommentsView extends Backbone.View
       $(".feedback-search-result.feedback-comment[data-id=\"#{comment.get('id')}\"]")
         .addClass('feedback-comment-unread')
         .removeClass('feedback-comment-read')
+      callback() if callback
+
+  clickSignalStrength: (e) ->
+    value = $(e.target).closest("a").data("value")
+    for comment in @selectedComments
+      @setSignalStrength(comment, value)
+
+  setSignalStrength: (comment, i, callback) ->
+    comment.setSignalStrength i, ->
+      $("#comment_#{comment.get('id')}.feedback-search-result .feedback-comment-signal-strength")
+        .html(Handlebars.helpers.signalStrengthImage(comment.get('averageSignalStrength'), {hash: {size: 16}}))
+      $("#comment_#{comment.get('id')}.feedback-edit-comment .feedback-comment-signal-strength")
+        .html(Handlebars.helpers.signalStrengthImage(i, {hash: {size: 20}}))
       callback() if callback
 
 
