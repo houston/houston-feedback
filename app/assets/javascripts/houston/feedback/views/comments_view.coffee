@@ -42,7 +42,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .feedback-query': 'clickQuery'
     'click .feedback-customer-identify': 'identifyCustomer'
     'click .btn-read': 'toggleRead'
-    'click .btn-copy': 'copy'
+    'click .feedback-comment-copy': 'copy'
 
   initialize: ->
     @$results = @$el.find('#results')

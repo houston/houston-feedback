@@ -1,7 +1,11 @@
 <div id="comment_{{id}}" class="feedback-comment feedback-edit-comment" data-id="{{id}}">
   <div class="feedback-header">
     <a href="#" class="feedback-comment-close"><i class="fa fa-times" /></a>
-    <a href="#" class="feedback-comment-copy-url"><i class="fa fa-link" /></a>
+    {{#if canCopy}}
+    <a href="#" class="feedback-comment-copy-url" title="Copy URL"><i class="fa fa-link" /></a>
+    <a href="#" class="feedback-comment-copy" title="Copy Text"><i class="fa fa-copy" /></a>
+    {{/if}}
+
 
     {{{avatar reporter/email 24 reporter/name}}}
 
@@ -45,9 +49,6 @@
     <button class="btn btn-edit btn-small btn-default">Edit</button>
     {{/if}}
     <button class="btn btn-read btn-small btn-default {{#if read}}active{{/if}}" data-toggle="button">Read</button>
-    {{#if canCopy}}
-    <button class="btn btn-copy btn-small btn-default">Copy</button>
-    {{/if}}
 
     <span class="feedback-comment-index">
       <b>{{index}}</b> of <b>{{total}}</b>
