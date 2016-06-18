@@ -21,6 +21,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   events:
     'submit #search_feedback': 'submitSearch'
+    'change #sort_feedback': 'sort'
     'click #feedback_search_reset': 'resetSearch'
     'focus .feedback-search-result': 'resultFocused'
     'mousedown .feedback-search-result': 'resultClicked'
@@ -47,11 +48,12 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   initialize: ->
     @$results = @$el.find('#results')
-    @comments = @options.comments
+    @sortedComments = @comments = @options.comments
     @tags = @options.tags
     @projects = @options.projects
     @customers = @options.customers
     @canCopy = ('clipboardData' in _.keys(ClipboardEvent.prototype))
+    @sortOrder = 'rank'
 
     Mousetrap.bind "command+k command+r", (e) =>
       e.preventDefault()
@@ -103,7 +105,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
           promise = new $.Deferred()
           @offset += 50
           promise.resolve @template
-            comments: (comment.toJSON() for comment in @comments.slice(@offset, @offset + 50))
+            comments: (comment.toJSON() for comment in @sortedComments.slice(@offset, @offset + 50))
           promise
 
 
@@ -233,14 +235,31 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $.getJSON url, (comments)=>
       @selectNone()
       @comments = new Houston.Feedback.Comments(comments, parse: true)
+      @sortedComments = @applySort(@comments)
       @searchTime = (new Date() - start)
       @render()
+
+  sort: ->
+    @sortOrder = $('#sort_feedback').val()
+    @sortedComments = @applySort(@comments)
+    @render()
+
+  applySort: (comments) ->
+    console.log("sorting #{comments.length} comments by #{@sortOrder}")
+    switch @sortOrder
+      when "rank" then comments
+      when "added" then comments.sortBy("createdAt").reverse()
+      when "signal_strength" then comments.sortBy("averageSignalStrength").reverse()
+      when "customer" then comments.sortBy (comment) -> comment.attribution().toLowerCase()
+      else
+        console.log("Unknown sort order: #{@sortOrder}")
+        comments
 
 
 
   render: ->
     @offset = 0
-    html = @template(comments: (comment.toJSON() for comment in @comments.slice(0, 50)))
+    html = @template(comments: (comment.toJSON() for comment in @sortedComments.slice(0, 50)))
     @$results.html(html)
 
     @$el.find('#search_report').html @renderSearchReport

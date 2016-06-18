@@ -27,6 +27,9 @@ class Houston.Feedback.Comment extends Backbone.Model
         averageSignalStrength: data.averageSignalStrength
       success()
 
+  attribution: ->
+    (@get("customer")?.name or @get("attributedTo") or @get("reporter")?.name or "").trim()
+
   text: ->
     lines = @get("text").match(/^.*$/gm)
 

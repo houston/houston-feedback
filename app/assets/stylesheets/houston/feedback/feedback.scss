@@ -5,6 +5,7 @@
 #search_feedback {
   margin: 0;
   position: relative;
+  display: table;
 
   input[type="search"] {
     margin: 0;
@@ -13,6 +14,30 @@
     height: 2.25em;
     padding: 0.25em 1em;
   }
+
+  .feedback-search-bar {
+    display: table-cell;
+    width: 99%;
+    white-space: nowrap;
+    vertical-align: middle;
+    position: relative;
+  }
+
+  .feedback-search-sort {
+    display: table-cell;
+    width: 1%;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding-left: 3px;
+
+    select {
+      margin: 0;
+      width: 180px;
+      height: 31.5px;
+    }
+  }
+
+
 
   #feedback_search_reset {
     position: absolute;
