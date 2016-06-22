@@ -27,6 +27,14 @@ $.fn.extend
 
   selectedTags: ->
     text = @.val()
-    tags = _.map text.split(/[,;]/), (tag)->
-      tag.trim().toLowerCase().replace(/^#/, '').replace(/[^\w\?]+/g, '-')
+    tags = _.reduce text.split(/[,;]/), (tags, tag) ->
+
+      # Normalize tags
+      tag = tag.trim().toLowerCase().replace(/^#/, '').replace(/[^\w\/\?]+/g, '-')
+
+      # Convert "feature/subfeature" to ["feature", "feature-subfeature"]
+      tags.concat _.reduce tag.split(/\//), (tags, tag)->
+        tags.concat tags.slice(-1).concat(tag).join("-")
+      , []
+    , []
     _.reject tags, (tag)-> !tag
