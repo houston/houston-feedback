@@ -1,4 +1,4 @@
-Houston.config.add_user_option "feedback.digest" do
+Houston.add_user_option "feedback.digest" do
   name "Feedback"
   html do |f|
     <<-HTML

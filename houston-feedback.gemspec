@@ -18,11 +18,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.test_files = Dir["test/**/*"]
 
-  spec.add_dependency "rails"
+  spec.add_dependency "houston-core", ">= 0.7.0.beta2"
   spec.add_dependency "pg_search"
   spec.add_dependency "activerecord-import"
 
-  spec.add_development_dependency "bundler", "~> 1.10.6"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "houston-core", ">= 0.5.3"
+  spec.add_development_dependency "bundler", "~> 1.11.2"
+  spec.add_development_dependency "rake", "~> 11.2"
 end
