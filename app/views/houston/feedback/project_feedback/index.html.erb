@@ -39,57 +39,65 @@
 </h1>
 <% end %>
 
-<div id="feedback" class="row-fluid">
-  <div class="feedback-search callout callout-slim callout-banner">
-    <form id="search_feedback" <%= "class=unperformed" if params[:q].blank? %>>
-      <div class="feedback-search-bar">
-        <%= search_field_tag "q", @q, autocomplete: "off" %>
-        <a id="feedback_search_reset"><i class="fa fa-times"></i></a>
+<div id="feedback" class="feedback-window">
+  <div class="feedback-window-results">
+    <div class="feedback-search <%= "feedback-search-show-instructions" if params[:q].blank? %>">
+      <form id="search_feedback" <%= "class=unperformed" if params[:q].blank? %>>
+        <div class="feedback-search-bar">
+          <%= search_field_tag "q", @q, autocomplete: "off" %>
+          <a id="feedback_search_reset"><i class="fa fa-times"></i></a>
+        </div>
+        <div class="feedback-search-sort">
+          <select id="sort_feedback">
+            <option value="rank">Best match first</option>
+            <option value="added">Most recent first</option>
+            <option value="signal_strength">Best signal strength first</option>
+            <option value="customer">Customer name A-Z</option>
+          </select>
+        </div>
+      </form>
+      <div id="search_instructions">
+        <h3>Searching for Feedback</h3>
+        <dl class="feedback-search-examples">
+          <dt><%= example "redirect" %></dt>
+          <dd>finds comments with the word <b>redirect</b></dd>
+
+          <dt><%= example "/unread" %></dt>
+          <dd>finds comments that I haven't read</dd>
+
+          <dt><%= example "#export -#addressed" %></dt>
+          <dd>finds comments with the tag <b>export</b> but not the tag <b>addressed</b></dd>
+
+          <dt><%= example "/read #invalid|no" %></dt>
+          <dd>finds comments tagged either <b>invalid</b> or <b>no</b> that I've read</dd>
+
+          <dt><%= example "import by:rodkyles" %></dt>
+          <dd>finds comments with the word <b>import</b> entered by <b>Rod Kyles</b></dd>
+
+          <dt><%= example "by:rodkyles added:#{3.weeks.ago.strftime("%Y%m%d")}.." %></dt>
+          <dd>finds comments added by <b>Rod Kyles</b> in the last 3 weeks</dd>
+
+          <dt><%= example "added:20150101..20150530" %></dt>
+          <dd>finds comments added between <b>Jan 1, 2015</b> and <b>May 30, 2015</b></dd>
+
+          <dt><%= example "customer:jillmartian" %></dt>
+          <dd>finds comments by the customer <b>Jill Martian</b></dd>
+        </dl>
       </div>
-      <div class="feedback-search-sort">
-        <select id="sort_feedback">
-          <option value="rank">Best match first</option>
-          <option value="added">Most recent first</option>
-          <option value="signal_strength">Best signal strength first</option>
-          <option value="customer">Customer name A-Z</option>
-        </select>
+    </div>
+
+    <div class="scrollable">
+      <div class="scrollable-document">
+        <div class="feedback-report">
+          <p id="search_report" class="feedback-search-report"></p>
+          <div id="tags_report" class="feedback-tags-report"></div>
+        </div>
+        <div id="results" class="infinite-scroll"></div>
       </div>
-    </form>
-    <div id="search_instructions" <%= "class=collapsed" unless params[:q].blank? %>>
-      <h3>Searching for Feedback</h3>
-      <dl class="feedback-search-examples">
-        <dt><%= example "redirect" %></dt>
-        <dd>finds comments with the word <b>redirect</b></dd>
-
-        <dt><%= example "/unread" %></dt>
-        <dd>finds comments that I haven't read</dd>
-
-        <dt><%= example "#export -#addressed" %></dt>
-        <dd>finds comments with the tag <b>export</b> but not the tag <b>addressed</b></dd>
-
-        <dt><%= example "/read #invalid|no" %></dt>
-        <dd>finds comments tagged either <b>invalid</b> or <b>no</b> that I've read</dd>
-
-        <dt><%= example "import by:rodkyles" %></dt>
-        <dd>finds comments with the word <b>import</b> entered by <b>Rod Kyles</b></dd>
-
-        <dt><%= example "by:rodkyles added:#{3.weeks.ago.strftime("%Y%m%d")}.." %></dt>
-        <dd>finds comments added by <b>Rod Kyles</b> in the last 3 weeks</dd>
-
-        <dt><%= example "added:20150101..20150530" %></dt>
-        <dd>finds comments added between <b>Jan 1, 2015</b> and <b>May 30, 2015</b></dd>
-
-        <dt><%= example "customer:jillmartian" %></dt>
-        <dd>finds comments by the customer <b>Jill Martian</b></dd>
-      </dl>
     </div>
   </div>
 
-  <p id="search_report" class="feedback-search-report"></p>
-
-  <div id="tags_report" class="feedback-tags-report"></div>
-  <div id="results" class="span6 infinite-scroll"></div>
-  <div id="feedback_edit" class="span6"></div>
+  <div id="feedback_edit" class="feedback-window-edit"></div>
 </div>
 
 <% content_for :javascripts do -%>

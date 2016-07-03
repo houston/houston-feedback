@@ -133,6 +133,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'new'
 
   select: (comment, mode)->
+    $('.feedback-search').removeClass('feedback-search-show-instructions') if comment
     $el = @$comment(comment)
 
     $anchor = $('.feedback-search-result.anchor')
@@ -210,19 +211,19 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @select @$el.find('.feedback-search-result:first'), 'new'
 
   submitSearch: (e)->
-    $('#search_instructions').addClass('collapsed')
     @search(e)
 
   resetSearch: (e)->
     $('#q').val "-#no -#addressed -#invalid "
-    $('#search_instructions').removeClass('collapsed')
     @search(e)
+    $('.feedback-search').addClass('feedback-search-show-instructions')
     $('#search_feedback').addClass('unperformed')
 
   search: (e)->
     return unless history.pushState
 
     $('#search_feedback').removeClass('unperformed')
+    $('.feedback-search').removeClass('feedback-search-show-instructions')
 
     e.preventDefault() if e
     search = $('#search_feedback').serialize()
@@ -260,7 +261,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   render: ->
     @offset = 0
     html = @template(comments: (comment.toJSON() for comment in @sortedComments.slice(0, 50)))
-    @$results.html(html)
+    @$results.html(html).removeClass("done")
 
     @$el.find('#search_report').html @renderSearchReport
       results: @comments.length
@@ -271,16 +272,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
       topTags: tags.slice(0, 5)
       extraTags: tags.slice(5)
 
-    #
-    $(window).resize =>
-      $('#results').css('min-height', $(window).height() - 154)
-    $('#results').css('min-height', $(window).height() - 154)
-
-    $('#feedback_edit').affix(offset: {top: 192})
-
     @focusSearch()
 
   focusSearch: ->
+    @selectNone()
     window.scrollTo(0, 0)
     $('#search_feedback input').focus().select()
 
@@ -620,7 +615,6 @@ class Houston.Feedback.CommentsView extends Backbone.View
     q = $('#q').val()
     q = if q.length then "#{q} #{tag}" else tag
     $('#q').val q
-    $('#search_instructions').addClass('collapsed')
     @search()
 
   clickExample: (e)->
@@ -633,7 +627,6 @@ class Houston.Feedback.CommentsView extends Backbone.View
     e.preventDefault() if e
     q = @getQuery $(e.target).attr('href')
     $('#q').val q
-    $('#search_instructions').addClass('collapsed')
     @search()
 
   getQuery: (params)->
