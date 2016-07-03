@@ -51,7 +51,7 @@ module Houston
           ids = []
           created_at = nil
           query_string = query_string
-            .gsub(/\/(read|unread|untagged)/) { flags << $1; "" }
+            .gsub(/\/(read|unread|untagged|imported|unimported)/) { flags << $1; "" }
             .gsub(/\-\#([a-z\-\?0-9\|]+)/) { not_tags << $1; "" }
             .gsub(/\#([a-z\-\?0-9\|]+)/) { tags << $1; "" }
             .gsub(/by:([A-Za-z0-9]+)/) {
@@ -108,6 +108,8 @@ module Houston
           results = results.where("flags.read IS TRUE") if flags.member? "read"
           results = results.where("flags.read IS FALSE OR flags.read IS NULL") if flags.member? "unread"
           results = results.where("tags='' OR tags='converted'") if flags.member? "untagged"
+          results = results.where.not(import: nil) if flags.member? "imported"
+          results = results.where(import: nil) if flags.member? "unimported"
           results = results.where(id: ids) if ids.any?
           results = results.where(user_id: reporter_id) if reporter_id
           results = results.where(customer_id: customer_ids) if customer_ids
