@@ -41,12 +41,6 @@ html.tester-bar .feedback-window {
   background: #f4f4f4;
   border-bottom: 1px solid #ccc;
   height: 32px;
-
-  transition: height 0.2s ease;
-
-  &.feedback-search-show-instructions {
-    height: 100%;
-  }
 }
 
 #search_feedback {
@@ -557,28 +551,27 @@ html.tester-bar .feedback-window {
 }
 
 #search_instructions {
-  overflow: hidden;
-  height: 0;
-  opacity: 0;
+  height: 100%;
+  padding: 20px;
 
   h3 {
-    font-size: 1em;
     line-height: inherit;
-    margin: 1.5em 0 0.5em 0;
+    margin: 0 0 20px 0;
+    font-size: 1.25em;
+    font-weight: 400;
+    height: 53px;
+    border-bottom: 1px solid #e4e4e4;
+    padding: 0.33em 0 0 0;
+    box-sizing: border-box;
+    color: #888;
   }
-
-  transition: height 0.3s ease, opacity 0.2s ease;
-}
-
-.feedback-search.feedback-search-show-instructions #search_instructions {
-  height: calc(100% - 20px);
-  opacity: 1;
 }
 
 .feedback-search-examples {
-  padding: 0;
+  padding: 0 10px;
   margin: 0 0 1em;
   overflow: hidden;
+  font-size: 13px;
 
   dt {
     clear: left;
@@ -590,6 +583,7 @@ html.tester-bar .feedback-window {
 
     a { display: block; }
   }
+
   dd {
     margin-left: 14em;
     padding: 4px 0;

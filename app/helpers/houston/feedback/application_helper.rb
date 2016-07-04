@@ -1,10 +1,6 @@
 module Houston::Feedback
   module ApplicationHelper
 
-    def example(q)
-      link_to q, {q: q}, {class: "feedback-search-example"}
-    end
-
     def textual_changes(changes)
       before_all = {}
       after_all = {}

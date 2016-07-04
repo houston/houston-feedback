@@ -3,6 +3,12 @@ Handlebars.registerHelper 'tagUrl', (tag)->
 
 Handlebars.registerHelper 'renderComment', HandlebarsTemplates['houston/feedback/comments/show']
 
+Handlebars.registerHelper 'example', (example)->
+  url = "#{window.location.pathname}?q=#{encodeURIComponent(example)}"
+  """
+  <a class="feedback-search-example" href="#{url}">#{example}</a>
+  """
+
 Handlebars.registerHelper 'signalStrengthImage', (value, context) ->
   value = +value
   value = 0 unless value >= 0 and value <= 4

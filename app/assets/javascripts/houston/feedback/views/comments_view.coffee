@@ -19,6 +19,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderIdentifyCustomerModal: HandlebarsTemplates['houston/feedback/comments/identify_customer']
   renderNewCommentModal: HandlebarsTemplates['houston/feedback/comments/new']
   renderTagCloud: HandlebarsTemplates['houston/feedback/comments/tags']
+  renderSearchInstructions: HandlebarsTemplates['houston/feedback/search_instructions']
 
   events:
     'submit #search_feedback': 'submitSearch'
@@ -144,7 +145,6 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'new'
 
   select: (comment, mode)->
-    $('.feedback-search').removeClass('feedback-search-show-instructions') if comment
     $el = @$comment(comment)
 
     $anchor = $('.feedback-search-result.anchor')
@@ -227,14 +227,12 @@ class Houston.Feedback.CommentsView extends Backbone.View
   resetSearch: (e)->
     $('#q').val ""
     @search(e)
-    $('.feedback-search').addClass('feedback-search-show-instructions')
     $('#search_feedback').addClass('unperformed')
 
   search: (e)->
     return unless history.pushState
 
     $('#search_feedback').removeClass('unperformed')
-    $('.feedback-search').removeClass('feedback-search-show-instructions')
 
     e.preventDefault() if e
     search = $('#search_feedback').serialize()
@@ -340,7 +338,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @focusEditor()
 
   editNothing: ->
-    $('#feedback_edit').html('')
+    $('#feedback_edit').html @renderSearchInstructions
+      exampleOfThreeWeeksAgo: "by:rodkyles added:#{d3.time.format('%Y%m%d')(3.weeks().before(new Date()))}.."
 
   focusEditor: ->
     $('#feedback_edit').find('input').autocompleteTags(@tags).focus()

@@ -41,7 +41,7 @@
 
 <div id="feedback" class="feedback-window">
   <div class="feedback-window-results">
-    <div class="feedback-search <%= "feedback-search-show-instructions" if params[:q].blank? %>">
+    <div class="feedback-search">
       <form id="search_feedback" <%= "class=unperformed" if params[:q].blank? %>>
         <div class="feedback-search-bar">
           <%= search_field_tag "q", @q, autocomplete: "off" %>
@@ -56,40 +56,6 @@
           </select>
         </div>
       </form>
-      <div id="search_instructions">
-        <h3>Searching for Feedback</h3>
-        <dl class="feedback-search-examples">
-          <dt><%= example "redirect" %></dt>
-          <dd>finds comments with the word <b>redirect</b></dd>
-
-          <dt><%= example "/unread" %></dt>
-          <dd>finds comments that I haven't read</dd>
-
-          <dt><%= example "/all" %></dt>
-          <dd>finds all comments (including archived ones)</dd>
-
-          <dt><%= example "/archived" %></dt>
-          <dd>finds archived comments</dd>
-
-          <dt><%= example "#export -#addressed" %></dt>
-          <dd>finds comments with the tag <b>export</b> but not the tag <b>addressed</b></dd>
-
-          <dt><%= example "/read #invalid|no" %></dt>
-          <dd>finds comments tagged either <b>invalid</b> or <b>no</b> that I've read</dd>
-
-          <dt><%= example "import by:rodkyles" %></dt>
-          <dd>finds comments with the word <b>import</b> entered by <b>Rod Kyles</b></dd>
-
-          <dt><%= example "by:rodkyles added:#{3.weeks.ago.strftime("%Y%m%d")}.." %></dt>
-          <dd>finds comments added by <b>Rod Kyles</b> in the last 3 weeks</dd>
-
-          <dt><%= example "added:20150101..20150530" %></dt>
-          <dd>finds comments added between <b>Jan 1, 2015</b> and <b>May 30, 2015</b></dd>
-
-          <dt><%= example "customer:jillmartian" %></dt>
-          <dd>finds comments by the customer <b>Jill Martian</b></dd>
-        </dl>
-      </div>
     </div>
 
     <div class="scrollable">
