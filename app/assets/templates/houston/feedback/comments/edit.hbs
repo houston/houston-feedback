@@ -39,7 +39,9 @@
       <span class="feedback-reporter">{{reporter/name}}</span>
       <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>
     </div>
+  </div>
 
+  <div class="feedback-body">
     <div class="feedback-tags">
       <div class="feedback-tag-list">
         {{#each tags}}<span class="feedback-tag">
@@ -49,11 +51,13 @@
       </div>
       <input type="text" class="feedback-new-tag mousetrap" placeholder="New Tag" />
     </div>
-  </div>
 
-  <div class="feedback-text markdown">{{{markdown text}}}</div>
-  <div class="feedback-text edit uploader">
-    <textarea>{{text}}</textarea>
+    <hr/>
+
+    <div class="feedback-text markdown">{{{markdown text}}}</div>
+    <div class="feedback-text edit uploader">
+      <textarea>{{text}}</textarea>
+    </div>
   </div>
 
   <div class="feedback-commands">

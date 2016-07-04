@@ -3,7 +3,9 @@
     <a href="#" class="feedback-comment-close"><i class="fa fa-times" /></a>
 
     <span class="feedback-customer unknown">{{count}} selected comments</span>
+  </div>
 
+  <div class="feedback-body">
     <div class="feedback-tags">
       <div class="feedback-tag-list">
         {{#each tags}}
@@ -16,8 +18,6 @@
       <input type="text" class="feedback-new-tag mousetrap" placeholder="New Tag" />
     </div>
   </div>
-
-  <div class="feedback-text empty"></div>
 
   <div class="feedback-commands">
     {{#if permissions/destroy}}

@@ -479,7 +479,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   beginEditCommentText: ->
     $('.feedback-edit-comment').addClass('edit-text')
     $('.btn-edit').text('Cancel')
-    $('.feedback-edit-comment textarea').focus()
+    $('.feedback-edit-comment textarea').autosize().focus()
 
   endEditCommentText: ->
     $('.feedback-edit-comment').removeClass('edit-text')

@@ -98,7 +98,7 @@ html.tester-bar .feedback-window {
   &.unperformed #feedback_search_reset { display: none; }
 }
 
-.feedback-report { padding: 1em; }
+.feedback-report { padding: 20px; }
 
 #search_report {
   color: #888;
@@ -130,9 +130,7 @@ html.tester-bar .feedback-window {
 }
 
 .feedback-search-result {
-  .feedback-snippet {
-    padding: 1em;
-  }
+  .feedback-snippet { padding: 15px 20px; }
 
   &.selected .feedback-snippet { background: rgba(128, 212, 255, 0.2); }
   &:focus { outline: 0; }
@@ -140,6 +138,11 @@ html.tester-bar .feedback-window {
   .feedback-customer {
     font-size: 0.88em;
     font-weight: bold;
+    white-space: nowrap;
+    display: inline-block;
+    width: calc(100% - 120px);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .feedback-metadata {
@@ -210,10 +213,15 @@ html.tester-bar .feedback-window {
     line-height: 1em;
     margin: 0;
     min-height: 1em;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     margin-right: 2em;
     display: inline-block;
+    text-indent: 0;
+    vertical-align: text-top;
+
+    max-width: calc(100% - 140px);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin: 0;
 
     &.unidentified {
       border-bottom: 2px dashed;
@@ -226,8 +234,9 @@ html.tester-bar .feedback-window {
   a.feedback-customer { cursor: pointer; }
 
   .avatar {
-    float: left;
-    margin: 0.25em 0.5em 0 0;
+    position: absolute;
+    left: 0;
+    top: 0.25em;
 
     &.avatar-empty {
       background: rgba(0,0,0,0.1);
@@ -242,35 +251,20 @@ html.tester-bar .feedback-window {
 }
 
 .feedback-edit-comment {
-  .feedback-comment-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    color: #ccc;
-
-    &:hover { color: #005580; }
-  }
-
-  .feedback-comment-copy {
-    position: absolute;
-    top: 11px;
-    right: 60px;
-    font-size: 16px;
-    color: #ccc;
-
-    &:hover { color: #005580; }
-  }
-
+  .feedback-comment-close,
+  .feedback-comment-copy,
   .feedback-comment-copy-url {
     position: absolute;
-    top: 12px;
-    right: 34px;
-    font-size: 18px;
-    color: #ccc;
+    font-size: 20px;
+    color: #e4e4e4;
+    text-indent: 0;
 
     &:hover { color: #005580; }
   }
+
+  .feedback-comment-close { top: 0px; right: 0px; }
+  .feedback-comment-copy { top: 1px; right: 50px; }
+  .feedback-comment-copy-url { top: 2px; right: 24px; }
 
   .feedback-comment-index, .btn-edit, .btn-save, .btn-read, .btn-copy {
     float: right;
@@ -287,22 +281,18 @@ html.tester-bar .feedback-window {
   .feedback-text.edit,
   .feedback-customer-edit { display: none; }
 
-  .feedback-text.empty { background: #eee; }
-
   .feedback-text textarea {
     resize: none;
     width: 100%;
     box-sizing: border-box;
-  }
-  .feedback-text.markdown {
-    overflow-y: auto;
-    padding: 0.5em;
+    padding: 20px;
   }
 
   &.edit-text {
     .feedback-customer { display: none; }
     .feedback-customer-edit {
       display: inline-block;
+      text-indent: 0;
       input { margin: 0; }
     }
 
@@ -315,7 +305,6 @@ html.tester-bar .feedback-window {
   }
 }
 
-.feedback-tags,
 .feedback-tags > input {
   margin: 0.5em 0 0 0;
 }
@@ -491,33 +480,54 @@ html.tester-bar .feedback-window {
   flex-direction: column;
   flex-wrap: nowrap;
 
+  hr {
+    border: none;
+    height: 1px;
+    background: #e4e4e4;
+  }
+
   .feedback-header {
-    padding: 0.5em;
-    background: #f4f4f4;
-    border-bottom: 1px solid #ccc;
+    margin: 20px 20px 0 20px;
+    position: relative;
+    text-indent: 36px;
+    min-height: 52px;
+    height: 52px;
+    border-bottom: 1px solid #e4e4e4;
+    white-space: nowrap;
   }
 
   .feedback-commands {
-    padding: 0.5em;
+    padding: 10px 20px;
     background: #f4f4f4;
     border-top: 1px solid #ccc;
   }
 
-  .feedback-text { flex-grow: 100; }
+  .feedback-body {
+    flex-grow: 100;
+    padding: 20px;
+    overflow-y: auto;
+  }
 
   &.edit-text .feedback-text.edit {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    margin-bottom: 0;
     border-radius: 0;
-    border: none;
+    border-left: none;
+    border-right: none;
+    // margin: 20px -20px; // when we add comments
+    margin: 20px -20px -20px; // remove when we add comments
+    border-bottom: none; // remove when we add comments
+    width: calc(100% + 40px);
+  }
 
-    textarea { flex-grow: 100; }
+  &.edit-text .feedback-body hr {
+    display: none;
   }
 
   .feedback-signal-strength-selector {
     display: inline-block;
+    text-indent: 0;
 
     .dropdown-menu { min-width: 100px; }
   }
