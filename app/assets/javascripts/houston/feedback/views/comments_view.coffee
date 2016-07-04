@@ -13,6 +13,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   renderEditMultiple: HandlebarsTemplates['houston/feedback/comments/edit_multiple']
   renderSearchReport: HandlebarsTemplates['houston/feedback/comments/report']
   renderImportModal: HandlebarsTemplates['houston/feedback/comments/import']
+  renderConfirmDeleteModal: HandlebarsTemplates['houston/feedback/comments/confirm_delete']
   renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/comments/delete_imported']
   renderChangeProjectModal: HandlebarsTemplates['houston/feedback/comments/change_project']
   renderIdentifyCustomerModal: HandlebarsTemplates['houston/feedback/comments/identify_customer']
@@ -415,7 +416,11 @@ class Houston.Feedback.CommentsView extends Backbone.View
         $modal.modal('hide')
         @_deleteComments(import: imports[0])
     else
-      @_deleteComments(comment_ids: ids)
+      $modal = $(@renderConfirmDeleteModal()).modal()
+      $modal.on 'hidden', -> $(@).remove()
+      $modal.find('#delete_comment_button').click =>
+        $modal.modal('hide')
+        @_deleteComments(comment_ids: ids)
 
   _deleteComments: (params)->
     $.destroy '/feedback/comments', params
