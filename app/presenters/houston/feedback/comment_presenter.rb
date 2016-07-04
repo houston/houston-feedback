@@ -29,6 +29,7 @@ module Houston
             name: comment.user.name,
             firstName: comment.user.first_name,
             email: comment.user.email },
+          archived: comment.archived?,
           attributedTo: comment.attributed_to,
           customer: comment.customer && {
             id: comment.customer.id,

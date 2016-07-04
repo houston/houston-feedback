@@ -37,6 +37,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'click .btn-move': 'moveComments'
     'click .btn-edit': 'editCommentText'
     'click .btn-save': 'saveCommentText'
+    'click .btn-archive': 'archiveComment'
+    'click .btn-unarchive': 'unarchiveComment'
     'keydown .feedback-text textarea': 'keydownCommentText'
     'click #toggle_extra_tags_link': 'toggleExtraTags'
     'click .feedback-tag-cloud > .feedback-tag': 'clickTag'
@@ -69,6 +71,14 @@ class Houston.Feedback.CommentsView extends Backbone.View
     Mousetrap.bind "command+k command+e", (e) =>
       e.preventDefault()
       @editCommentText()
+
+    Mousetrap.bind "command+k command+a", (e) =>
+      e.preventDefault()
+      @archiveComment()
+
+    Mousetrap.bind "command+k command+shift+a", (e) =>
+      e.preventDefault()
+      @unarchiveComment()
 
     _.each [1..4], (i) =>
       Mousetrap.bind "command+k command+#{i}", (e) =>
@@ -215,7 +225,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @search(e)
 
   resetSearch: (e)->
-    $('#q').val "-#no -#addressed -#invalid "
+    $('#q').val ""
     @search(e)
     $('.feedback-search').addClass('feedback-search-show-instructions')
     $('#search_feedback').addClass('unperformed')
@@ -229,7 +239,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     e.preventDefault() if e
     search = $('#search_feedback').serialize()
     url = window.location.pathname
-    url = url + '?' + search unless $('#q').val() is "-#no -#addressed -#invalid "
+    url = url + '?' + search
     xlsxHref = window.location.pathname + '.xlsx?' + search
     history.pushState({}, '', url)
     $('#excel_export_button').attr('href', xlsxHref)
@@ -314,6 +324,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
         destroy: _.all comments, (comment)-> comment.get('permissions').destroy
         update: _.all comments, (comment)-> comment.get('permissions').update
       tags: []
+      archived: _.all comments, (comment)-> comment.get('archived')
       read: _.all comments, (comment)-> comment.get('read')
 
     tags = _.flatten(comment.get('tags') for comment in comments)
@@ -519,6 +530,24 @@ class Houston.Feedback.CommentsView extends Backbone.View
         if e.metaKey or e.ctrlKey
           e.preventDefault()
           @saveCommentText()
+
+
+
+  archiveComment: (e)->
+    for comment in @selectedComments
+      comment.archive()
+        .success =>
+          @redrawComment comment
+          $('.btn-archive').removeClass('btn-archive').addClass('btn-unarchive').html('Unarchive')
+
+  unarchiveComment: (e)->
+    for comment in @selectedComments
+      comment.unarchive()
+        .success =>
+          @redrawComment comment
+          $('.btn-unarchive').removeClass('btn-unarchive').addClass('btn-archive').html('Archive')
+
+
 
   newFeedback: (e)->
     e.preventDefault() if e

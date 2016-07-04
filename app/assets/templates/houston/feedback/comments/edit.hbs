@@ -1,10 +1,13 @@
-<div id="comment_{{id}}" class="feedback-comment feedback-edit-comment" data-id="{{id}}">
+<div class="feedback-comment feedback-edit-comment" data-id="{{id}}">
   <div class="feedback-header">
     <a href="#" class="feedback-comment-close"><i class="fa fa-times" /></a>
     {{#if canCopy}}
     <a href="#" class="feedback-comment-copy-url" title="Copy URL"><i class="fa fa-link" /></a>
     <a href="#" class="feedback-comment-copy" title="Copy Text"><i class="fa fa-copy" /></a>
     {{/if}}
+    <span class="feedback-comment-index">
+      <b>{{index}}</b> of <b>{{total}}</b>
+    </span>
 
     <div class="feedback-signal-strength-selector dropdown">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -58,21 +61,29 @@
     <div class="feedback-text edit uploader">
       <textarea>{{text}}</textarea>
     </div>
+
+    {{!-- <hr/>
+
+    <div class="feedback-comments">
+      Comments
+    </div> --}}
   </div>
 
   <div class="feedback-commands">
     {{#if permissions/destroy}}
-    <button class="btn btn-delete btn-small btn-danger">Delete</button>
+    <a class="btn-delete" title="Delete"><i class="fa fa-trash"></i></a>
     {{/if}}
     {{#if permissions/update}}
-    <button class="btn btn-move btn-small btn-danger">Change Project</button>
+    <a class="btn-move" title="Change Project"><i class="fa fa-arrow-circle-right"></i></a>
+
     <button class="btn btn-save btn-small btn-primary">Save</button>
     <button class="btn btn-edit btn-small btn-default">Edit</button>
     {{/if}}
     <button class="btn btn-read btn-small btn-default {{#if read}}active{{/if}}" data-toggle="button">Read</button>
-
-    <span class="feedback-comment-index">
-      <b>{{index}}</b> of <b>{{total}}</b>
-    </span>
+    {{#if archived}}
+      <button class="btn btn-unarchive btn-small btn-default">Unarchive</button>
+    {{else}}
+      <button class="btn btn-archive btn-small btn-default">Archive</button>
+    {{/if}}
   </div>
 </div>

@@ -51,7 +51,7 @@ module Houston
           ids = []
           created_at = nil
           query_string = query_string
-            .gsub(/\/(read|unread|untagged|imported|unimported)/) { flags << $1; "" }
+            .gsub(/\/(read|unread|untagged|imported|unimported|all|archived)/) { flags << $1; "" }
             .gsub(/\-\#([a-z\-\?0-9\|]+)/) { not_tags << $1; "" }
             .gsub(/\#([a-z\-\?0-9\|]+)/) { tags << $1; "" }
             .gsub(/by:([A-Za-z0-9]+)/) {
@@ -101,19 +101,30 @@ module Houston
           rank = query.rank
           rank.extend Arel::AliasPredication
 
-          results = tags.inject(all) { |results, tag|
-            results.where(["tags ~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
-          results = not_tags.inject(results) { |results, tag|
-            results.where(["tags !~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
+          if flags.member? "archived"
+            results = where(archived: true)
+          elsif flags.member? "all"
+            results = all
+          else
+            results = where(archived: false)
+          end
+
           results = results.where("flags.read IS TRUE") if flags.member? "read"
           results = results.where("flags.read IS FALSE OR flags.read IS NULL") if flags.member? "unread"
           results = results.where("tags='' OR tags='converted'") if flags.member? "untagged"
           results = results.where.not(import: nil) if flags.member? "imported"
           results = results.where(import: nil) if flags.member? "unimported"
+
+          results = tags.inject(results) { |results, tag|
+            results.where(["tags ~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
+          results = not_tags.inject(results) { |results, tag|
+            results.where(["tags !~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
+
           results = results.where(id: ids) if ids.any?
           results = results.where(user_id: reporter_id) if reporter_id
           results = results.where(customer_id: customer_ids) if customer_ids
           results = results.where(created_at: created_at) if created_at
+
           results = results.where(query.conditions)
             .select("feedback_comments.*", excerpt.as("excerpt"), rank.as("rank"))
             .order("rank DESC") unless query_string.blank?

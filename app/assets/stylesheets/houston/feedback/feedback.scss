@@ -130,7 +130,15 @@ html.tester-bar .feedback-window {
 }
 
 .feedback-search-result {
-  .feedback-snippet { padding: 15px 20px; }
+  .feedback-snippet {
+    padding: 15px 20px 15px 16px;
+    border-left: 4px solid transparent;
+
+    &.feedback-archived {
+      border-left-color: #aaa;
+      color: #888;
+    }
+  }
 
   &.selected .feedback-snippet { background: rgba(128, 212, 255, 0.2); }
   &:focus { outline: 0; }
@@ -143,6 +151,7 @@ html.tester-bar .feedback-window {
     width: calc(100% - 120px);
     overflow: hidden;
     text-overflow: ellipsis;
+    height: 1.5em;
   }
 
   .feedback-metadata {
@@ -217,6 +226,7 @@ html.tester-bar .feedback-window {
     display: inline-block;
     text-indent: 0;
     vertical-align: text-top;
+    height: 1.1em;
 
     max-width: calc(100% - 140px);
     text-overflow: ellipsis;
@@ -254,7 +264,9 @@ html.tester-bar .feedback-window {
   .feedback-comment-close,
   .feedback-comment-copy,
   .feedback-comment-copy-url {
-    position: absolute;
+    float: right;
+    width: 24px;
+    text-align: right;
     font-size: 20px;
     color: #e4e4e4;
     text-indent: 0;
@@ -262,18 +274,29 @@ html.tester-bar .feedback-window {
     &:hover { color: #005580; }
   }
 
-  .feedback-comment-close { top: 0px; right: 0px; }
-  .feedback-comment-copy { top: 1px; right: 50px; }
-  .feedback-comment-copy-url { top: 2px; right: 24px; }
+  .feedback-comment-copy { font-size: 18px; margin-top: 1px; }
+  .feedback-comment-copy-url { font-size: 16px; margin-top: 2px; }
 
-  .feedback-comment-index, .btn-edit, .btn-save, .btn-read, .btn-copy {
+  .btn-delete, .btn-move {
+    font-size: 20px;
+    display: inline-block;
+    width: 24px;
+    color: #888;
+
+    &:hover { color: #bd362f; }
+  }
+
+  .btn-archive, .btn-unarchive, .btn-edit, .btn-save, .btn-read, .btn-copy {
     float: right;
     margin-left: 3px;
   }
+
   .feedback-comment-index {
-    padding-right: 1em;
+    float: right;
+    clear: right;
     display: inline-block;
-    height: 26px;
+    font-size: 0.88em;
+    color: #888;
     line-height: 26px;
   }
 

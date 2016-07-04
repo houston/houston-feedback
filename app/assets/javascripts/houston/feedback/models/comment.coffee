@@ -20,6 +20,12 @@ class Houston.Feedback.Comment extends Backbone.Model
       @set 'read', false
       success()
 
+  archive: ->
+    @save archived: true
+
+  unarchive: ->
+    @save archived: false
+
   setSignalStrength: (i, success)->
     $.put("#{@url()}/signal_strength", signal_strength: i).success (data) =>
       @set

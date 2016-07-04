@@ -56,6 +56,7 @@ module Houston
         comment.text = params[:text]
         comment.attributed_to = params[:attributedTo]
         comment.updated_by = current_user
+        comment.archived = params[:archived]
 
         if comment.save
           render json: Houston::Feedback::CommentPresenter.new(current_ability, comment)
