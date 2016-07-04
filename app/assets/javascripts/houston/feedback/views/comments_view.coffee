@@ -663,6 +663,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       e.preventDefault()
 
     document.execCommand "copy"
+    alertify.success("Feedback copied!")
 
   copyUrl: (e)->
     e.preventDefault()
@@ -678,6 +679,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       e.preventDefault()
 
     document.execCommand "copy"
+    alertify.success("Short URL copied!")
 
 
 
