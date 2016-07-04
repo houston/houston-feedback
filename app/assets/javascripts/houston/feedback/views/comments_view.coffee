@@ -369,6 +369,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
   addTag: ->
     $input = $('.feedback-new-tag')
     tags = $input.selectedTags()
+    return if tags.length is 0
     ids = @selectedIds()
     $.post '/feedback/comments/tags', comment_ids: ids, tags: tags
       .success =>
