@@ -101,10 +101,10 @@ module Houston
           rank = query.rank
           rank.extend Arel::AliasPredication
 
-          if flags.member? "archived"
-            results = where(archived: true)
-          elsif flags.member? "all"
+          if ids.any? or flags.member? "all"
             results = all
+          elsif flags.member? "archived"
+            results = where(archived: true)
           else
             results = where(archived: false)
           end
