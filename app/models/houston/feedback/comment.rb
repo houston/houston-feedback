@@ -8,7 +8,7 @@ module Houston
       before_save :update_plain_text, :if => :text_changed?
       before_save :update_customer, :if => :attributed_to_changed?
       after_save :update_search_vector, :if => :search_vector_should_change?
-      after_create { Houston.observer.fire "feedback:comment:create", self }
+      after_create { Houston.observer.fire "feedback:comment:create", comment: self }
 
       belongs_to :project
       belongs_to :user
