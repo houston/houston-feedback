@@ -6,6 +6,7 @@ require "dummy/houston"
 Rails.application.initialize! unless Rails.application.initialized?
 
 require "rails/test_help"
+require "factory_girl_rails"
 
 if ENV["CI"] == "true"
   require "minitest/reporters"
