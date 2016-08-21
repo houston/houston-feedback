@@ -56,7 +56,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
     @tags = @options.tags
     @projects = @options.projects
     @customers = @options.customers
-    @canCopy = ('clipboardData' in _.keys(ClipboardEvent.prototype))
+    @canCopy = window.ClipboardEvent and ('clipboardData' in _.keys(ClipboardEvent.prototype))
     @sortOrder = 'rank'
 
     Mousetrap.bind "command+k command+r", (e) =>
