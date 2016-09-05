@@ -2,18 +2,18 @@ require "redcarpet/render_strip"
 
 module Houston
   module Feedback
-    class Comment < ActiveRecord::Base
-      self.table_name = "feedback_comments"
+    class Conversation < ActiveRecord::Base
+      self.table_name = "feedback_conversations"
 
       before_save :update_plain_text, :if => :text_changed?
       before_save :update_customer, :if => :attributed_to_changed?
       after_save :update_search_vector, :if => :search_vector_should_change?
-      after_create { Houston.observer.fire "feedback:comment:create", comment: self }
+      after_create { Houston.observer.fire "feedback:create", conversation: self }
 
       belongs_to :project
       belongs_to :user
 
-      has_many :user_flags, class_name: "Houston::Feedback::CommentUserFlags"
+      has_many :user_flags, class_name: "Houston::Feedback::ConversationUserFlags"
       belongs_to :customer, class_name: "Houston::Feedback::Customer"
 
       versioned only: [:attributed_to, :text, :tags]
@@ -27,9 +27,9 @@ module Houston
 
         def with_flags_for(user)
           return all unless user.respond_to?(:id)
-          joins(<<-SQL).select("feedback_comments.*", "flags.read", "flags.signal_strength")
-            LEFT OUTER JOIN feedback_comments_user_flags \"flags\"
-            ON flags.comment_id=feedback_comments.id AND flags.user_id=#{user.id}
+          joins(<<-SQL).select("feedback_conversations.*", "flags.read", "flags.signal_strength")
+            LEFT OUTER JOIN feedback_user_flags \"flags\"
+            ON flags.conversation_id=feedback_conversations.id AND flags.user_id=#{user.id}
           SQL
         end
 
@@ -126,7 +126,7 @@ module Houston
           results = results.where(created_at: created_at) if created_at
 
           results = results.where(query.conditions)
-            .select("feedback_comments.*", excerpt.as("excerpt"), rank.as("rank"))
+            .select("feedback_conversations.*", excerpt.as("excerpt"), rank.as("rank"))
             .order("rank DESC") unless query_string.blank?
           results
         end
@@ -141,7 +141,7 @@ module Houston
 
         def cache_average_signal_strength!
           update_all <<-SQL
-            average_signal_strength = (SELECT AVG(feedback_comments_user_flags.signal_strength) FROM feedback_comments_user_flags WHERE feedback_comments_user_flags.signal_strength IS NOT NULL AND feedback_comments_user_flags.comment_id=feedback_comments.id)
+            average_signal_strength = (SELECT AVG(feedback_user_flags.signal_strength) FROM feedback_user_flags WHERE feedback_user_flags.signal_strength IS NOT NULL AND feedback_user_flags.conversation_id=feedback_conversations.id)
           SQL
         end
 

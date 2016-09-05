@@ -1,8 +1,8 @@
 <% content_for :title do %>
 <h1 class="project-banner <%= @project.color %> space-below" data-project-slug="<%= @project.slug %>" data-project-color="<%= @project.color %>">
-  <small>comments for</small>
+  <small>conversations for</small>
   <%= @project.name %>
-  
+
   <%= render partial: "projects/keyboard_shortcuts" %>
 </h1>
 <% end %>
@@ -29,7 +29,7 @@
         <td class="feedback-change-time"><%= change.created_at.strftime("%l:%M %p") %></td>
         <td class="feedback-change-user"><%= change.user_id ? avatar_for(change.user) : change.user %></td>
         <td class="feedback-change-description"><%= textual_changes.join("; ").html_safe %></td>
-        <td class="feedback-change-comment"><%= change.versioned_id %></td>
+        <td class="feedback-change-conversation"><%= change.versioned_id %></td>
       </tr>
       <% last_date = date %>
     <% end %>

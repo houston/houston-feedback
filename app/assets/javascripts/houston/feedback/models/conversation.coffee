@@ -1,5 +1,5 @@
-class Houston.Feedback.Comment extends Backbone.Model
-  urlRoot: '/feedback/comments'
+class Houston.Feedback.Conversation extends Backbone.Model
+  urlRoot: '/feedback/conversations'
 
   addTags: (tags)->
     @set 'tags', _.union(@get('tags'), tags).sort(), silent: true
@@ -72,12 +72,12 @@ class Houston.Feedback.Comment extends Backbone.Model
 
 
 
-class Houston.Feedback.Comments extends Backbone.Collection
-  model: Houston.Feedback.Comment
+class Houston.Feedback.Conversations extends Backbone.Collection
+  model: Houston.Feedback.Conversation
 
   countTags: ->
     countByTag = {}
-    for comment in @models
-      for tag in comment.get('tags')
+    for conversation in @models
+      for tag in conversation.get('tags')
         countByTag[tag] = (countByTag[tag] ? 0) + 1
     _.sortBy ({tag: tag, count: count} for tag, count of countByTag), (n)-> -n.count

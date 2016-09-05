@@ -16,8 +16,8 @@ module Houston
 
 
   register_events {{
-    "feedback:comment:create"   => params("comment").desc("A new Feedback was added"),
-    "feedback:comments:import"  => params("comments").desc("Feedback was imported")
+    "feedback:create"   => params("conversation").desc("A new Feedback was added"),
+    "feedback:import"  => params("conversations").desc("Feedback was imported")
   }}
 
 

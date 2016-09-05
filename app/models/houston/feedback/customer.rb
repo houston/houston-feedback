@@ -24,8 +24,8 @@ module Houston
         attributions_removed = Array(changes["attributions"][0]) - attributions
         attributions_added   = attributions - Array(changes["attributions"][0])
 
-        Comment.where(attributed_to: attributions_removed, customer_id: id).update_all(customer_id: nil)
-        Comment.where(attributed_to: attributions_added).update_all(customer_id: id)
+        Conversation.where(attributed_to: attributions_removed, customer_id: id).update_all(customer_id: nil)
+        Conversation.where(attributed_to: attributions_added).update_all(customer_id: id)
       end
 
     end

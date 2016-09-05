@@ -3,7 +3,7 @@ require "csv"
 module Houston
   module Feedback
     class ProjectFeedbackController < Houston::Feedback::ApplicationController
-      attr_reader :project, :comments
+      attr_reader :project, :conversations
 
       layout "houston/feedback/application"
       before_filter :find_project
@@ -37,29 +37,29 @@ module Houston
       ].freeze
 
       def index
-        authorize! :read, Comment
+        authorize! :read, Conversation
 
         @q = params.fetch(:q, "")
-        @comments = Comment \
+        @conversations = Conversation \
           .for_project(project)
           .with_flags_for(current_user)
           .search(@q)
 
         respond_to do |format|
           format.json do
-            hashes = CommentPresenter.new(current_ability, comments).as_json
+            hashes = ConversationPresenter.new(current_ability, conversations).as_json
             json = Houston.benchmark("Encode JSON") { MultiJson.dump(hashes) }
             render json: json
           end
           format.html do
             @projects = Project.unretired
-            @tags = Comment.for_project(project).tags
+            @tags = Conversation.for_project(project).tags
             @customers = Customer.order(:name)
           end
           format.xlsx do
-            send_data CommentExcelPresenter.new(project, params[:q], comments.preload(:user)),
+            send_data ConversationExcelPresenter.new(project, params[:q], conversations.preload(:user)),
               type: :xlsx,
-              filename: "Comments.xlsx",
+              filename: "Feedback.xlsx",
               disposition: "attachment"
           end
         end
@@ -67,22 +67,22 @@ module Houston
 
       def create
         params[:attributed_to] = params[:attributedTo] if params.key?(:attributedTo)
-        comment = Comment.new(params.pick(:attributed_to, :text, :tags))
-        comment.project = project
-        comment.user = current_user
+        conversation = Conversation.new(params.pick(:attributed_to, :text, :tags))
+        conversation.project = project
+        conversation.user = current_user
 
-        authorize! :create, comment
+        authorize! :create, conversation
 
-        if comment.save
-          comment.read_by! current_user
-          render json: CommentPresenter.new(current_ability, comment)
+        if conversation.save
+          conversation.read_by! current_user
+          render json: ConversationPresenter.new(current_ability, conversation)
         else
-          render json: comment.errors, status: :unprocessable_entity
+          render json: conversation.errors, status: :unprocessable_entity
         end
       end
 
       def upload_csv
-        authorize! :create, Comment
+        authorize! :create, Conversation
 
         @target = params[:target]
         session[:csv_path] = params[:file].tempfile.path
@@ -115,7 +115,7 @@ module Houston
       end
 
       def import
-        authorize! :create, Comment
+        authorize! :create, Conversation
 
         customer_fields = params.fetch(:customer_fields, []).map(&:to_i)
         feedback_fields = params.fetch(:feedback_fields, []).map(&:to_i)
@@ -123,7 +123,7 @@ module Houston
 
         import = SecureRandom.hex(16) # generates a 32-character string, naturally
         csv = CSV.open(session[:csv_path]).to_a
-        comments = []
+        conversations = []
         headings = csv.shift
         session[:import_customer_fields] = headings.values_at(*customer_fields)
 
@@ -136,36 +136,36 @@ module Houston
             next if feedback.blank?
 
             feedback = "###### #{question}\n#{feedback}" unless question.blank?
-            comment = Comment.new(
+            conversation = Conversation.new(
               import: import,
               project: project,
               user: current_user,
               attributed_to: attributed_to,
               text: feedback,
               tags: tags)
-            comment.update_plain_text # because the import command won't
-            comments.push(comment)
+            conversation.update_plain_text # because the import command won't
+            conversations.push(conversation)
           end
         end
 
-        Houston.benchmark("[feedback:csv] import #{comments.count} comments") do
-          Comment.import comments
+        Houston.benchmark("[feedback:csv] import #{conversations.count} conversations") do
+          Conversation.import conversations
         end
 
-        Houston.benchmark("[feedback:csv] index comments") do
-          Comment.for_project(project).reindex!
+        Houston.benchmark("[feedback:csv] index conversations") do
+          Conversation.for_project(project).reindex!
         end
 
-        Houston.observer.fire "feedback:comments:import", comments: comments
+        Houston.observer.fire "feedback:import", conversations: conversations
 
-        render json: {count: comments.count}
+        render json: {count: conversations.count}
       end
 
       def history
         @title = "Feedback History"
         authorize! :read, VestalVersions::Version
         @changes = VestalVersions::Version
-          .where(versioned_type: "Houston::Feedback::Comment")
+          .where(versioned_type: "Houston::Feedback::Conversation")
           .order(created_at: :desc)
           .includes(:user)
       end

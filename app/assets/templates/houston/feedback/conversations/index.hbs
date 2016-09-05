@@ -1,0 +1,5 @@
+{{#each conversations}}
+  <div id="conversation_{{id}}" tabindex="0" class="feedback-conversation feedback-search-result {{#if read}}feedback-conversation-read{{else}}feedback-conversation-unread{{/if}}" data-id="{{id}}" data-rank="{{rank}}">
+    {{{renderFeedback this}}}
+  </div>
+{{/each}}

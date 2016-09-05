@@ -6,19 +6,19 @@ KEY =
   UP: 38
   DOWN: 40
 
-class Houston.Feedback.CommentsView extends Backbone.View
-  template: HandlebarsTemplates['houston/feedback/comments/index']
-  renderComment: HandlebarsTemplates['houston/feedback/comments/show']
-  renderEditComment: HandlebarsTemplates['houston/feedback/comments/edit']
-  renderEditMultiple: HandlebarsTemplates['houston/feedback/comments/edit_multiple']
-  renderSearchReport: HandlebarsTemplates['houston/feedback/comments/report']
-  renderImportModal: HandlebarsTemplates['houston/feedback/comments/import']
-  renderConfirmDeleteModal: HandlebarsTemplates['houston/feedback/comments/confirm_delete']
-  renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/comments/delete_imported']
-  renderChangeProjectModal: HandlebarsTemplates['houston/feedback/comments/change_project']
-  renderIdentifyCustomerModal: HandlebarsTemplates['houston/feedback/comments/identify_customer']
-  renderNewCommentModal: HandlebarsTemplates['houston/feedback/comments/new']
-  renderTagCloud: HandlebarsTemplates['houston/feedback/comments/tags']
+class Houston.Feedback.ConversationsView extends Backbone.View
+  template: HandlebarsTemplates['houston/feedback/conversations/index']
+  renderFeedback: HandlebarsTemplates['houston/feedback/conversations/show']
+  renderEditConversation: HandlebarsTemplates['houston/feedback/conversations/edit']
+  renderEditMultiple: HandlebarsTemplates['houston/feedback/conversations/edit_multiple']
+  renderSearchReport: HandlebarsTemplates['houston/feedback/conversations/report']
+  renderImportModal: HandlebarsTemplates['houston/feedback/conversations/import']
+  renderConfirmDeleteModal: HandlebarsTemplates['houston/feedback/conversations/confirm_delete']
+  renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/conversations/delete_imported']
+  renderChangeProjectModal: HandlebarsTemplates['houston/feedback/conversations/change_project']
+  renderIdentifyCustomerModal: HandlebarsTemplates['houston/feedback/conversations/identify_customer']
+  renderNewConversationModal: HandlebarsTemplates['houston/feedback/conversations/new']
+  renderTagCloud: HandlebarsTemplates['houston/feedback/conversations/tags']
   renderSearchInstructions: HandlebarsTemplates['houston/feedback/search_instructions']
 
   events:
@@ -30,29 +30,29 @@ class Houston.Feedback.CommentsView extends Backbone.View
     'mouseup .feedback-search-result': 'resultReleased'
     'keydown': 'keydown'
     'keydown #q': 'keydownSearch'
-    'click .feedback-comment-close': 'selectNone'
-    'click .feedback-comment-copy-url': 'copyUrl'
+    'click .feedback-conversation-close': 'selectNone'
+    'click .feedback-conversation-copy-url': 'copyUrl'
     'click .feedback-remove-tag': 'removeTag'
     'keydown .feedback-new-tag': 'keydownNewTag'
-    'click .btn-delete': 'deleteComments'
-    'click .btn-move': 'moveComments'
-    'click .btn-edit': 'editCommentText'
-    'click .btn-save': 'saveCommentText'
-    'click .btn-archive': 'archiveComment'
-    'click .btn-unarchive': 'unarchiveComment'
-    'keydown .feedback-text textarea': 'keydownCommentText'
+    'click .btn-delete': 'deleteConversations'
+    'click .btn-move': 'moveConversations'
+    'click .btn-edit': 'editConversationText'
+    'click .btn-save': 'saveConversationText'
+    'click .btn-archive': 'archiveConversation'
+    'click .btn-unarchive': 'unarchiveConversation'
+    'keydown .feedback-text textarea': 'keydownConversationText'
     'click #toggle_extra_tags_link': 'toggleExtraTags'
     'click .feedback-tag-cloud > .feedback-tag': 'clickTag'
     'click .feedback-search-example': 'clickExample'
     'click .feedback-query': 'clickQuery'
     'click .feedback-customer-identify': 'identifyCustomer'
     'click .btn-read': 'toggleRead'
-    'click .feedback-comment-copy': 'copy'
+    'click .feedback-conversation-copy': 'copy'
     'click .feedback-signal-strength-selector .dropdown-menu a': 'clickSignalStrength'
 
   initialize: ->
     @$results = @$el.find('#results')
-    @sortedComments = @comments = @options.comments
+    @sortedConversations = @conversations = @options.conversations
     @tags = @options.tags
     @projects = @options.projects
     @customers = @options.customers
@@ -61,36 +61,36 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
     Mousetrap.bind "command+k command+r", (e) =>
       e.preventDefault()
-      for comment in @selectedComments
-        @markAsRead(comment)
+      for conversation in @selectedConversations
+        @markAsRead(conversation)
 
     Mousetrap.bind "command+k command+u", (e) =>
       e.preventDefault()
-      for comment in @selectedComments
-        @markAsUnread(comment)
+      for conversation in @selectedConversations
+        @markAsUnread(conversation)
 
     Mousetrap.bind "command+k command+e", (e) =>
       e.preventDefault()
-      @editCommentText()
+      @editConversationText()
 
     Mousetrap.bind "command+k command+a", (e) =>
       e.preventDefault()
-      @archiveComment()
+      @archiveConversation()
 
     Mousetrap.bind "command+k command+shift+a", (e) =>
       e.preventDefault()
-      @unarchiveComment()
+      @unarchiveConversation()
 
     _.each [1..4], (i) =>
       Mousetrap.bind "command+k command+#{i}", (e) =>
         e.preventDefault()
-        for comment in @selectedComments
-          @setSignalStrength comment, i
+        for conversation in @selectedConversations
+          @setSignalStrength conversation, i
 
     Mousetrap.bind "command+k command+0", (e) =>
       e.preventDefault()
-      for comment in @selectedComments
-        @setSignalStrength comment, null
+      for conversation in @selectedConversations
+        @setSignalStrength conversation, null
 
     $('#import_csv_field').change (e)->
       $(e.target).closest('form').submit()
@@ -117,7 +117,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
           promise = new $.Deferred()
           @offset += 50
           promise.resolve @template
-            comments: (comment.toJSON() for comment in @sortedComments.slice(@offset, @offset + 50))
+            conversations: (conversation.toJSON() for conversation in @sortedConversations.slice(@offset, @offset + 50))
           promise
 
 
@@ -144,8 +144,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
     return 'lasso' if e.shiftKey
     'new'
 
-  select: (comment, mode)->
-    $el = @$comment(comment)
+  select: (conversation, mode)->
+    $el = @$conversation(conversation)
 
     $anchor = $('.feedback-search-result.anchor')
     mode = 'new' if mode is 'lasso' and $anchor.length is 0
@@ -164,8 +164,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
         $el.addClass('selected')
         $el.focus() unless $el.is(':focus')
 
-    @selectedComments = _.compact(@comments.get(id) for id in @selectedIds())
-    @$el.toggleClass 'feedback-selected', @selectedComments.length > 0
+    @selectedConversations = _.compact(@conversations.get(id) for id in @selectedIds())
+    @$el.toggleClass 'feedback-selected', @selectedConversations.length > 0
     @editSelected()
 
   $selection: ->
@@ -176,7 +176,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   selectedId: ->
     ids = @selectedIds()
-    throw "Expected only one comment to be selected, but there are #{ids.length}" unless ids.length is 1
+    throw "Expected only one conversation to be selected, but there are #{ids.length}" unless ids.length is 1
     ids[0]
 
   selectPrev: (mode)->
@@ -194,12 +194,12 @@ class Houston.Feedback.CommentsView extends Backbone.View
   selectNone: ->
     @select null, 'new'
 
-  $comment: (comment)->
-    return $() unless comment
-    return @$comment comment[0] if _.isArray(comment)
-    return @$comment comment.target if comment.target
-    return $("#comment_#{comment.id}") if comment.constructor is Houston.Feedback.Comment
-    $(comment).closest('.feedback-search-result')
+  $conversation: (conversation)->
+    return $() unless conversation
+    return @$conversation conversation[0] if _.isArray(conversation)
+    return @$conversation conversation.target if conversation.target
+    return $("#conversation_#{conversation.id}") if conversation.constructor is Houston.Feedback.Conversation
+    $(conversation).closest('.feedback-search-result')
 
   keydown: (e)->
     switch e.keyCode
@@ -208,10 +208,10 @@ class Houston.Feedback.CommentsView extends Backbone.View
       when KEY.ESC then @focusSearch()
       when KEY.DELETE
         return unless e.metaKey
-        return unless _.all @selectedComments, (comment)=> comment.get('permissions').destroy
+        return unless _.all @selectedConversations, (conversation)=> conversation.get('permissions').destroy
         e.preventDefault()
-        ids = (comment.id for comment in @selectedComments)
-        @_deleteComments(comment_ids: ids)
+        ids = (conversation.id for conversation in @selectedConversations)
+        @_deleteConversations(conversation_ids: ids)
 
   keydownSearch: (e)->
     if e.keyCode is KEY.DOWN
@@ -242,41 +242,41 @@ class Houston.Feedback.CommentsView extends Backbone.View
     history.pushState({}, '', url)
     $('#excel_export_button').attr('href', xlsxHref)
     start = new Date()
-    $.getJSON url, (comments)=>
+    $.getJSON url, (conversations)=>
       @selectNone()
-      @comments = new Houston.Feedback.Comments(comments, parse: true)
-      @sortedComments = @applySort(@comments)
+      @conversations = new Houston.Feedback.Conversations(conversations, parse: true)
+      @sortedConversations = @applySort(@conversations)
       @searchTime = (new Date() - start)
       @render()
 
   sort: ->
     @sortOrder = $('#sort_feedback').val()
-    @sortedComments = @applySort(@comments)
+    @sortedConversations = @applySort(@conversations)
     @render()
 
-  applySort: (comments) ->
-    console.log("sorting #{comments.length} comments by #{@sortOrder}")
+  applySort: (conversations) ->
+    console.log("sorting #{conversations.length} conversations by #{@sortOrder}")
     switch @sortOrder
-      when "rank" then comments
-      when "added" then comments.sortBy("createdAt").reverse()
-      when "signal_strength" then comments.sortBy("averageSignalStrength").reverse()
-      when "customer" then comments.sortBy (comment) -> comment.attribution().toLowerCase()
+      when "rank" then conversations
+      when "added" then conversations.sortBy("createdAt").reverse()
+      when "signal_strength" then conversations.sortBy("averageSignalStrength").reverse()
+      when "customer" then conversations.sortBy (conversation) -> conversation.attribution().toLowerCase()
       else
         console.log("Unknown sort order: #{@sortOrder}")
-        comments
+        conversations
 
 
 
   render: ->
     @offset = 0
-    html = @template(comments: (comment.toJSON() for comment in @sortedComments.slice(0, 50)))
+    html = @template(conversations: (conversation.toJSON() for conversation in @sortedConversations.slice(0, 50)))
     @$results.html(html).removeClass("done")
 
     @$el.find('#search_report').html @renderSearchReport
-      results: @comments.length
+      results: @conversations.length
       searchTime: @searchTime
 
-    tags = @comments.countTags()
+    tags = @conversations.countTags()
     $('#tags_report').html @renderTagCloud
       topTags: tags.slice(0, 5)
       extraTags: tags.slice(5)
@@ -289,43 +289,43 @@ class Houston.Feedback.CommentsView extends Backbone.View
     $('#search_feedback input').focus().select()
 
   editSelected: ->
-    if @selectedComments.length is 1
-      @editComment @selectedComments[0]
-    else if @selectedComments.length > 1
-      @editMultiple @selectedComments
+    if @selectedConversations.length is 1
+      @editConversation @selectedConversations[0]
+    else if @selectedConversations.length > 1
+      @editMultiple @selectedConversations
     else
       @editNothing()
 
-  editComment: (comment)->
+  editConversation: (conversation)->
     if @timeoutId
       window.clearTimeout(@timeoutId)
       @timeoutId = null
 
-    if comment.isUnread()
+    if conversation.isUnread()
       @timeoutId = window.setTimeout =>
-        @markAsRead comment, ->
-          $('.feedback-comment.feedback-edit-comment .btn-read').addClass('active')
+        @markAsRead conversation, ->
+          $('.feedback-conversation.feedback-edit-conversation .btn-read').addClass('active')
       , 1500
 
-    context = comment.toJSON()
-    context.index = $('.feedback-comment.selected').index() + 1
-    context.total = @comments.length
+    context = conversation.toJSON()
+    context.index = $('.feedback-conversation.selected').index() + 1
+    context.total = @conversations.length
     context.canCopy = @canCopy
-    $('#feedback_edit').html @renderEditComment(context)
+    $('#feedback_edit').html @renderEditConversation(context)
     $('#feedback_edit .uploader').supportImages()
     @focusEditor()
 
-  editMultiple: (comments)->
+  editMultiple: (conversations)->
     context =
-      count: comments.length
+      count: conversations.length
       permissions:
-        destroy: _.all comments, (comment)-> comment.get('permissions').destroy
-        update: _.all comments, (comment)-> comment.get('permissions').update
+        destroy: _.all conversations, (conversation)-> conversation.get('permissions').destroy
+        update: _.all conversations, (conversation)-> conversation.get('permissions').update
       tags: []
-      archived: _.all comments, (comment)-> comment.get('archived')
-      read: _.all comments, (comment)-> comment.get('read')
+      archived: _.all conversations, (conversation)-> conversation.get('archived')
+      read: _.all conversations, (conversation)-> conversation.get('read')
 
-    tags = _.flatten(comment.get('tags') for comment in comments)
+    tags = _.flatten(conversation.get('tags') for conversation in conversations)
     for tag, array of _.groupBy(tags)
       tag.count = array.length
       percent = array.length / context.count
@@ -351,9 +351,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
     tag = $tag.text().replace(/\s/g, '')
     ids = @selectedIds()
     tags = [tag]
-    $.destroy '/feedback/comments/tags', comment_ids: ids, tags: tags
+    $.destroy '/feedback/conversations/tags', conversation_ids: ids, tags: tags
       .success =>
-        @comments.get(id).removeTags(tags) for id in ids
+        @conversations.get(id).removeTags(tags) for id in ids
         @editSelected()
       .error ->
         console.log 'error', arguments
@@ -371,13 +371,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
     tags = $input.selectedTags()
     return if tags.length is 0
     ids = @selectedIds()
-    $.post '/feedback/comments/tags', comment_ids: ids, tags: tags
+    $.post '/feedback/conversations/tags', conversation_ids: ids, tags: tags
       .success =>
         @tags = _.uniq @tags.concat(tags)
         for id in ids
-          comment = @comments.get(id)
-          comment.addTags(tags)
-          @redrawComment comment
+          conversation = @conversations.get(id)
+          conversation.addTags(tags)
+          @redrawConversation conversation
         @editSelected()
       .error ->
         console.log 'error', arguments
@@ -400,7 +400,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       $.post "#{window.location.pathname}/import", params
         .success (response)=>
           $modal.modal('hide')
-          alertify.success "#{response.count} comments imported"
+          alertify.success "#{response.count} conversations imported"
           tags = params["tags[]"]
           if tags
             tags = [tags] unless _.isArray(tags)
@@ -413,38 +413,38 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
 
 
-  deleteComments: (e)->
+  deleteConversations: (e)->
     e.preventDefault()
     ids = @selectedIds()
-    imports = _.uniq(@comments.get(id).get('import') for id in ids)
+    imports = _.uniq(@conversations.get(id).get('import') for id in ids)
     if imports.length is 1 and imports[0]
       $modal = $(@renderDeleteImportedModal()).modal()
       $modal.on 'hidden', -> $(@).remove()
       $modal.find('#delete_selected').click =>
         $modal.modal('hide')
-        @_deleteComments(comment_ids: ids)
+        @_deleteConversations(conversation_ids: ids)
       $modal.find('#delete_imported').click =>
         $modal.modal('hide')
-        @_deleteComments(import: imports[0])
+        @_deleteConversations(import: imports[0])
     else
       $modal = $(@renderConfirmDeleteModal()).modal()
       $modal.on 'hidden', -> $(@).remove()
-      $modal.find('#delete_comment_button').click =>
+      $modal.find('#delete_conversation_button').click =>
         $modal.modal('hide')
-        @_deleteComments(comment_ids: ids)
+        @_deleteConversations(conversation_ids: ids)
 
-  _deleteComments: (params)->
-    $.destroy '/feedback/comments', params
+  _deleteConversations: (params)->
+    $.destroy '/feedback/conversations', params
       .success (response)=>
         @selectNext() or @selectPrev() or @selectNone()
 
         ids = response.ids
-        alertify.success "#{ids.length} comments deleted"
+        alertify.success "#{ids.length} conversations deleted"
 
         selectors = []
         for id in ids
-          @comments.remove(id)
-          selectors.push "#comment_#{id}"
+          @conversations.remove(id)
+          selectors.push "#conversation_#{id}"
 
         $(selectors.join(",")).remove()
       .error ->
@@ -452,29 +452,29 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
 
 
-  moveComments: (e)->
+  moveConversations: (e)->
     e.preventDefault()
     ids = @selectedIds()
     html = @renderChangeProjectModal(projects: @projects)
     $modal = $(html).modal()
     $modal.on 'hidden', -> $(@).remove()
-    $modal.find('#move_comments_button').click =>
-      newProjectId = $modal.find('#comments_new_project').val()
+    $modal.find('#move_conversations_button').click =>
+      newProjectId = $modal.find('#conversations_new_project').val()
       $modal.modal('hide')
-      @_moveComments(comment_ids: ids, project_id: newProjectId)
+      @_moveConversations(conversation_ids: ids, project_id: newProjectId)
 
-  _moveComments: (params)->
-    $.post '/feedback/comments/move', params
+  _moveConversations: (params)->
+    $.post '/feedback/conversations/move', params
       .success (response)=>
         @selectNext() or @selectPrev() or @selectNone()
 
         ids = response.ids
-        alertify.success "#{ids.length} comments moved"
+        alertify.success "#{ids.length} conversations moved"
 
         selectors = []
         for id in ids
-          @comments.remove(id)
-          selectors.push "#comment_#{id}"
+          @conversations.remove(id)
+          selectors.push "#conversation_#{id}"
 
         $(selectors.join(",")).remove()
       .error ->
@@ -482,76 +482,76 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
 
 
-  editCommentText: (e)->
+  editConversationText: (e)->
     e.preventDefault() if e
-    if @isEditingCommentText()
-      @endEditCommentText()
+    if @isEditingConversationText()
+      @endEditConversationText()
     else
-      @beginEditCommentText()
+      @beginEditConversationText()
 
-  isEditingCommentText: ->
-    $('.feedback-edit-comment').hasClass('edit-text')
+  isEditingConversationText: ->
+    $('.feedback-edit-conversation').hasClass('edit-text')
 
-  beginEditCommentText: ->
-    $('.feedback-edit-comment').addClass('edit-text')
+  beginEditConversationText: ->
+    $('.feedback-edit-conversation').addClass('edit-text')
     $('.btn-edit').text('Cancel')
-    $('.feedback-edit-comment textarea').autosize().focus()
+    $('.feedback-edit-conversation textarea').autosize().focus()
 
-  endEditCommentText: ->
-    $('.feedback-edit-comment').removeClass('edit-text')
+  endEditConversationText: ->
+    $('.feedback-edit-conversation').removeClass('edit-text')
     $('.btn-edit').text('Edit')
-    $('.feedback-edit-comment .feedback-new-tag').focus()
+    $('.feedback-edit-conversation .feedback-new-tag').focus()
 
-  saveCommentText: (e)->
+  saveConversationText: (e)->
     e.preventDefault() if e
 
     text = $('.feedback-text.edit textarea').val()
     attributedTo = $('.feedback-customer-edit > input').val()
-    comment = @comments.get @selectedId()
-    comment.save(text: text, attributedTo: attributedTo)
+    conversation = @conversations.get @selectedId()
+    conversation.save(text: text, attributedTo: attributedTo)
       .success =>
-        @redrawComment comment
+        @redrawConversation conversation
         @editSelected()
-        alertify.success "Comment updated"
-        $('.feedback-edit-comment').removeClass('edit-text')
+        alertify.success "Conversation updated"
+        $('.feedback-edit-conversation').removeClass('edit-text')
         $('.btn-edit').text('Edit')
       .error ->
         console.log 'error', arguments
 
-  redrawComment: (comment)->
-    $("#comment_#{comment.id}").html @renderComment(comment.toJSON())
+  redrawConversation: (conversation)->
+    $("#conversation_#{conversation.id}").html @renderFeedback(conversation.toJSON())
 
-  keydownCommentText: (e)->
-    # Don't select another comment or jump to the search bar
+  keydownConversationText: (e)->
+    # Don't select another conversation or jump to the search bar
     e.stopImmediatePropagation()
     switch e.keyCode
-      when KEY.ESC then @endEditCommentText()
+      when KEY.ESC then @endEditConversationText()
       when KEY.RETURN
         if e.metaKey or e.ctrlKey
           e.preventDefault()
-          @saveCommentText()
+          @saveConversationText()
 
 
 
-  archiveComment: (e)->
-    for comment in @selectedComments
-      comment.archive()
+  archiveConversation: (e)->
+    for conversation in @selectedConversations
+      conversation.archive()
         .success =>
-          @redrawComment comment
+          @redrawConversation conversation
           $('.btn-archive').removeClass('btn-archive').addClass('btn-unarchive').html('Unarchive')
 
-  unarchiveComment: (e)->
-    for comment in @selectedComments
-      comment.unarchive()
+  unarchiveConversation: (e)->
+    for conversation in @selectedConversations
+      conversation.unarchive()
         .success =>
-          @redrawComment comment
+          @redrawConversation conversation
           $('.btn-unarchive').removeClass('btn-unarchive').addClass('btn-archive').html('Archive')
 
 
 
   newFeedback: (e)->
     e.preventDefault() if e
-    $modal = $(@renderNewCommentModal()).modal()
+    $modal = $(@renderNewConversationModal()).modal()
     $modal.on 'hidden', -> $(@).remove()
 
     $modal.find('#new_feedback_customer').focus()
@@ -565,7 +565,7 @@ class Houston.Feedback.CommentsView extends Backbone.View
       $.post window.location.pathname, params
         .success =>
           $modal.modal('hide')
-          alertify.success "Comment created"
+          alertify.success "Conversation created"
           @search()
         .error ->
           console.log 'error', arguments
@@ -607,30 +607,30 @@ class Houston.Feedback.CommentsView extends Backbone.View
     addTags
 
 
-  markAsRead: (comment, callback)->
-    comment.markAsRead ->
-      $(".feedback-search-result.feedback-comment[data-id=\"#{comment.get('id')}\"]")
-        .removeClass('feedback-comment-unread')
-        .addClass('feedback-comment-read')
+  markAsRead: (conversation, callback)->
+    conversation.markAsRead ->
+      $(".feedback-search-result.feedback-conversation[data-id=\"#{conversation.get('id')}\"]")
+        .removeClass('feedback-conversation-unread')
+        .addClass('feedback-conversation-read')
       callback() if callback
 
-  markAsUnread: (comment, callback)->
-    comment.markAsUnread ->
-      $(".feedback-search-result.feedback-comment[data-id=\"#{comment.get('id')}\"]")
-        .addClass('feedback-comment-unread')
-        .removeClass('feedback-comment-read')
+  markAsUnread: (conversation, callback)->
+    conversation.markAsUnread ->
+      $(".feedback-search-result.feedback-conversation[data-id=\"#{conversation.get('id')}\"]")
+        .addClass('feedback-conversation-unread')
+        .removeClass('feedback-conversation-read')
       callback() if callback
 
   clickSignalStrength: (e) ->
     value = $(e.target).closest("a").data("value")
-    for comment in @selectedComments
-      @setSignalStrength(comment, value)
+    for conversation in @selectedConversations
+      @setSignalStrength(conversation, value)
 
-  setSignalStrength: (comment, i, callback) ->
-    comment.setSignalStrength i, ->
-      $("#comment_#{comment.get('id')}.feedback-search-result .feedback-comment-signal-strength")
-        .html(Handlebars.helpers.signalStrengthImage(comment.get('averageSignalStrength'), {hash: {size: 16}}))
-      $("#comment_#{comment.get('id')}.feedback-edit-comment .feedback-comment-signal-strength")
+  setSignalStrength: (conversation, i, callback) ->
+    conversation.setSignalStrength i, ->
+      $("#conversation_#{conversation.get('id')}.feedback-search-result .feedback-conversation-signal-strength")
+        .html(Handlebars.helpers.signalStrengthImage(conversation.get('averageSignalStrength'), {hash: {size: 16}}))
+      $("#conversation_#{conversation.get('id')}.feedback-edit-conversation .feedback-conversation-signal-strength")
         .html(Handlebars.helpers.signalStrengthImage(i, {hash: {size: 20}}))
       callback() if callback
 
@@ -675,11 +675,11 @@ class Houston.Feedback.CommentsView extends Backbone.View
 
   toggleRead: (e)->
     if !$(e.target).hasClass('active')
-      for comment in @selectedComments
-        @markAsRead(comment)
+      for conversation in @selectedConversations
+        @markAsRead(conversation)
     else
-      for comment in @selectedComments
-        @markAsUnread(comment)
+      for conversation in @selectedConversations
+        @markAsUnread(conversation)
 
 
 
@@ -687,13 +687,13 @@ class Houston.Feedback.CommentsView extends Backbone.View
     e.preventDefault()
 
     # I only show the *Copy* button when there's one
-    # selected comment right now, so make that assumption.
-    comment = @selectedComments[0]
+    # selected conversation right now, so make that assumption.
+    conversation = @selectedConversations[0]
 
     $(document).one "copy", (e)=>
       e = e.originalEvent || e
-      e.clipboardData.setData "text/plain", comment.text()
-      e.clipboardData.setData "text/html", comment.html()
+      e.clipboardData.setData "text/plain", conversation.text()
+      e.clipboardData.setData "text/html", conversation.html()
       e.preventDefault()
 
     document.execCommand "copy"
@@ -703,9 +703,9 @@ class Houston.Feedback.CommentsView extends Backbone.View
     e.preventDefault()
 
     # I only show the *Copy* button when there's one
-    # selected comment right now, so make that assumption.
-    comment = @selectedComments[0]
-    url = App.meta("relative_url_root") + "feedback/#{comment.id}"
+    # selected conversation right now, so make that assumption.
+    conversation = @selectedConversations[0]
+    url = App.meta("relative_url_root") + "feedback/#{conversation.id}"
 
     $(document).one "copy", (e)=>
       e = e.originalEvent || e
@@ -720,8 +720,8 @@ class Houston.Feedback.CommentsView extends Backbone.View
   identifyCustomer: (e)->
     e.preventDefault()
 
-    comment = @selectedComments[0]
-    attribution = comment.get('attributedTo')
+    conversation = @selectedConversations[0]
+    attribution = conversation.get('attributedTo')
 
     html = @renderIdentifyCustomerModal
       customers: @customers

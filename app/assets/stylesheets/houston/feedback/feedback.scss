@@ -109,10 +109,10 @@ html.tester-bar .feedback-window {
   user-select: none;
 }
 
-.feedback-comment {
+.feedback-conversation {
   position: relative;
 
-  &.feedback-comment-unread {
+  &.feedback-conversation-unread {
     font-weight: 500;
   }
 
@@ -188,7 +188,7 @@ html.tester-bar .feedback-window {
   }
 
   .feedback-reporter { display: block; float: left; }
-  .feedback-comment-signal-strength { display: block; float: left; margin: 0 3px 0 0; }
+  .feedback-conversation-signal-strength { display: block; float: left; margin: 0 3px 0 0; }
   .feedback-created { display: block; float: right; }
 
   .feedback-tag-list {
@@ -204,12 +204,12 @@ html.tester-bar .feedback-window {
   &.feedback-selected .feedback-search-result .feedback-tag-list { display: none; }
 }
 
-.feedback-digest .feedback-comment {
+.feedback-digest .feedback-conversation {
   margin-bottom: 3em;
 }
 
-.feedback-edit-comment,
-.feedback-digest .feedback-comment {
+.feedback-edit-conversation,
+.feedback-digest .feedback-conversation {
   .feedback-customer {
     font-size: 1.25em;
     font-weight: 400;
@@ -254,10 +254,10 @@ html.tester-bar .feedback-window {
   .feedback-reporter, .feedback-created { vertical-align: bottom; }
 }
 
-.feedback-edit-comment {
-  .feedback-comment-close,
-  .feedback-comment-copy,
-  .feedback-comment-copy-url {
+.feedback-edit-conversation {
+  .feedback-conversation-close,
+  .feedback-conversation-copy,
+  .feedback-conversation-copy-url {
     float: right;
     width: 24px;
     text-align: right;
@@ -268,8 +268,8 @@ html.tester-bar .feedback-window {
     &:hover { color: #005580; }
   }
 
-  .feedback-comment-copy { font-size: 18px; margin-top: 1px; }
-  .feedback-comment-copy-url { font-size: 16px; margin-top: 2px; }
+  .feedback-conversation-copy { font-size: 18px; margin-top: 1px; }
+  .feedback-conversation-copy-url { font-size: 16px; margin-top: 2px; }
 
   .btn-delete, .btn-move {
     font-size: 20px;
@@ -285,7 +285,7 @@ html.tester-bar .feedback-window {
     margin-left: 3px;
   }
 
-  .feedback-comment-index {
+  .feedback-conversation-index {
     float: right;
     clear: right;
     display: inline-block;
@@ -445,7 +445,7 @@ html.tester-bar .feedback-window {
   bottom: 20px;
   padding-left: 20px;
 
-  .feedback-comment {
+  .feedback-conversation {
     height: 100%;
   }
   .feedback-text.markdown {
@@ -491,7 +491,7 @@ html.tester-bar .feedback-window {
   }
 }
 
-.feedback-comment.feedback-edit-comment {
+.feedback-conversation.feedback-edit-conversation {
   height: 100%;
   display: flex;
   flex-direction: column;

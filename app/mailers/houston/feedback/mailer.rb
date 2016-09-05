@@ -5,8 +5,8 @@ module Houston::Feedback
     # helper Houston::Reports::ApplicationHelper
 
 
-    def daily_digest_for(comments, user, options={})
-      @comments = comments.includes(:project, :user)
+    def daily_digest_for(conversations, user, options={})
+      @conversations = conversations.includes(:project, :user)
 
       mail(options.pick(:cc, :bcc).merge({
         to:       user,
@@ -15,8 +15,8 @@ module Houston::Feedback
       }))
     end
 
-    def weekly_digest_for(comments, user, options={})
-      @comments = comments.includes(:project, :user)
+    def weekly_digest_for(conversations, user, options={})
+      @conversations = conversations.includes(:project, :user)
 
       mail(options.pick(:cc, :bcc).merge({
         to:       user,

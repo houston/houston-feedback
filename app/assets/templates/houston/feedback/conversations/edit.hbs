@@ -1,17 +1,17 @@
-<div class="feedback-comment feedback-edit-comment" data-id="{{id}}">
+<div class="feedback-conversation feedback-edit-conversation" data-id="{{id}}">
   <div class="feedback-header">
-    <a href="#" class="feedback-comment-close"><i class="fa fa-times" /></a>
+    <a href="#" class="feedback-conversation-close"><i class="fa fa-times" /></a>
     {{#if canCopy}}
-    <a href="#" class="feedback-comment-copy-url" title="Copy URL"><i class="fa fa-link" /></a>
-    <a href="#" class="feedback-comment-copy" title="Copy Text"><i class="fa fa-copy" /></a>
+    <a href="#" class="feedback-conversation-copy-url" title="Copy URL"><i class="fa fa-link" /></a>
+    <a href="#" class="feedback-conversation-copy" title="Copy Text"><i class="fa fa-copy" /></a>
     {{/if}}
-    <span class="feedback-comment-index">
+    <span class="feedback-conversation-index">
       <b>{{index}}</b> of <b>{{total}}</b>
     </span>
 
     <div class="feedback-signal-strength-selector dropdown">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <span class="feedback-comment-signal-strength">
+        <span class="feedback-conversation-signal-strength">
           {{{signalStrengthImage signalStrength size=20}}}
         </span>
       </a>
@@ -61,12 +61,6 @@
     <div class="feedback-text edit uploader">
       <textarea>{{text}}</textarea>
     </div>
-
-    {{!-- <hr/>
-
-    <div class="feedback-comments">
-      Comments
-    </div> --}}
   </div>
 
   <div class="feedback-commands">

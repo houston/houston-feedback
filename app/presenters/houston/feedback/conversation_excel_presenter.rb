@@ -1,21 +1,21 @@
-class Houston::Feedback::CommentExcelPresenter
+class Houston::Feedback::ConversationExcelPresenter
   include OpenXml::Xlsx::Elements
 
-  attr_reader :project, :query, :comments
+  attr_reader :project, :query, :conversations
 
-  def initialize(project, query, comments)
+  def initialize(project, query, conversations)
     @project = project
     @query = query
-    @comments = comments || []
+    @conversations = conversations || []
   end
 
   def to_s
     package = OpenXml::Xlsx::Package.new
     worksheet = package.workbook.worksheets[0]
 
-    comments = Houston.benchmark "[#{self.class.name.underscore}] Load objects" do
-      self.comments.load
-    end if self.comments.is_a?(ActiveRecord::Relation)
+    conversations = Houston.benchmark "[#{self.class.name.underscore}] Load objects" do
+      self.conversations.load
+    end if self.conversations.is_a?(ActiveRecord::Relation)
 
     title = { font: Font.new("Calibri", 16) }
     heading = { alignment: Alignment.new("left", "center") }
@@ -39,14 +39,14 @@ class Houston::Feedback::CommentExcelPresenter
         { column: 5, value: "Text", style: heading }
       ])
 
-    comments.each_with_index do |comment, i|
+    conversations.each_with_index do |conversation, i|
       worksheet.add_row(
         number: i + 4,
         cells: [
-          { column: 2, value: comment.user.try(:name), style: general },
-          { column: 3, value: comment.attributed_to, style: general },
-          { column: 4, value: comment.created_at, style: timestamp },
-          { column: 5, value: comment.text, style: general }
+          { column: 2, value: conversation.user.try(:name), style: general },
+          { column: 3, value: conversation.attributed_to, style: general },
+          { column: 4, value: conversation.created_at, style: timestamp },
+          { column: 5, value: conversation.text, style: general }
         ])
     end
 
@@ -57,7 +57,7 @@ class Houston::Feedback::CommentExcelPresenter
       4 => 14,
       5 => 132})
 
-    worksheet.add_table 1, "Comments", "B3:E#{comments.length + 3}", [
+    worksheet.add_table 1, "Conversations", "B3:E#{conversations.length + 3}", [
       TableColumn.new("Reporter"),
       TableColumn.new("Customer"),
       TableColumn.new("Created"),

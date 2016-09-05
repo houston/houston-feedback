@@ -1,9 +1,9 @@
 module Houston
   module Feedback
-    class CommentUserFlags < ActiveRecord::Base
-      self.table_name = "feedback_comments_user_flags"
+    class ConversationUserFlags < ActiveRecord::Base
+      self.table_name = "feedback_user_flags"
 
-      belongs_to :comment, class_name: "Houston::Feedback::Comment"
+      belongs_to :conversation, class_name: "Houston::Feedback::Conversation"
       belongs_to :user
 
       validates :signal_strength, inclusion: { in: [1, 2, 3, 4] }, allow_nil: true
@@ -13,7 +13,7 @@ module Houston
     private
 
       def cache_average_signal_strength
-        comment.cache_average_signal_strength!
+        conversation.cache_average_signal_strength!
       end
 
     end

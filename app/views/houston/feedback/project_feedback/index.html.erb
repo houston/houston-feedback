@@ -1,6 +1,6 @@
 <% content_for :title do %>
 <h1 class="project-banner <%= @project.color %> space-below" data-project-slug="<%= @project.slug %>" data-project-color="<%= @project.color %>">
-  <small>comments for</small>
+  <small>Feedback for</small>
   <%= @project.name %>
 
   <%= render partial: "projects/keyboard_shortcuts" %>
@@ -19,7 +19,7 @@
 
     <span>
       Add<br />
-      Comment
+      Feedback
     </span>
   <% end %>
 
@@ -75,22 +75,22 @@
 <% content_for :javascripts do -%>
   <script type="text/javascript">
     $(function() {
-      var comments = <%=raw Houston::Feedback::CommentPresenter.new(current_ability, @comments).to_json %>;
-      window.commentsView = new Houston.Feedback.CommentsView({
+      var conversations = <%=raw Houston::Feedback::ConversationPresenter.new(current_ability, @conversations).to_json %>;
+      window.conversationsView = new Houston.Feedback.ConversationsView({
         el: document.getElementById('feedback'),
         infiniteScroll: true,
         tags: <%=raw @tags.to_json %>,
-        comments: new Houston.Feedback.Comments(comments, {parse: true}),
+        conversations: new Houston.Feedback.Conversations(conversations, {parse: true}),
         projects: <%=raw @projects.pluck(:id, :name).map { |id, name|
           { id: id, name: name, current: id == @project.id } }.to_json %>,
         customers: <%=raw @customers.pluck(:id, :name).map { |id, name|
           { id: id, name: name } }.to_json %>,
         project: <%=raw @project.slug.to_json %>
       });
-      commentsView.render();
+      conversationsView.render();
 
       <% if params[:q] =~ /^id:\d+$/ %>
-        commentsView.selectFirstResult();
+        conversationsView.selectFirstResult();
       <% end %>
     });
   </script>

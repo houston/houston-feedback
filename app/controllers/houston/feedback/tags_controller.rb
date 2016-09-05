@@ -1,29 +1,29 @@
 module Houston
   module Feedback
     class TagsController < ApplicationController
-      attr_reader :comments, :tags
-      before_filter :find_comments_and_tags
+      attr_reader :conversations, :tags
+      before_filter :find_conversations_and_tags
 
 
       def add
-        authorize! :tag, Comment
+        authorize! :tag, Conversation
 
-        comments.find_each do |comment|
-          comment.tags = comment.tags | tags.map { |tag| tag.underscore.dasherize }
-          comment.updated_by = current_user
-          comment.save
+        conversations.find_each do |conversation|
+          conversation.tags = conversation.tags | tags.map { |tag| tag.underscore.dasherize }
+          conversation.updated_by = current_user
+          conversation.save
         end
         head :ok
       end
 
 
       def remove
-        authorize! :tag, Comment
+        authorize! :tag, Conversation
 
-        comments.find_each do |comment|
-          comment.tags = comment.tags - tags
-          comment.updated_by = current_user
-          comment.save
+        conversations.find_each do |conversation|
+          conversation.tags = conversation.tags - tags
+          conversation.updated_by = current_user
+          conversation.save
         end
         head :ok
       end
@@ -31,8 +31,8 @@ module Houston
 
     private
 
-      def find_comments_and_tags
-        @comments = Comment.where(id: params[:comment_ids])
+      def find_conversations_and_tags
+        @conversations = Conversation.where(id: params[:conversation_ids])
         @tags = Array(params[:tags])
       end
 

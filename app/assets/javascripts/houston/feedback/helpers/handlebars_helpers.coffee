@@ -1,7 +1,7 @@
 Handlebars.registerHelper 'tagUrl', (tag)->
   "?q=#{encodeURIComponent("##{tag}")}"
 
-Handlebars.registerHelper 'renderComment', HandlebarsTemplates['houston/feedback/comments/show']
+Handlebars.registerHelper 'renderFeedback', HandlebarsTemplates['houston/feedback/conversations/show']
 
 Handlebars.registerHelper 'example', (example)->
   url = "#{window.location.pathname}?q=#{encodeURIComponent(example)}"

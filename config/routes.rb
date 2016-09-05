@@ -1,7 +1,7 @@
 Houston::Feedback::Engine.routes.draw do
 
   scope "feedback" do
-    get ":id", to: "comments#show"
+    get ":id", to: "conversations#show"
 
     get "by_project/:slug", to: "project_feedback#index", as: :project_feedback
     post "by_project/:slug", to: "project_feedback#create"
@@ -10,16 +10,16 @@ Houston::Feedback::Engine.routes.draw do
     post "by_project/:slug/from_email", to: "project_feedback#from_email"
     get "by_project/:slug/history", to: "project_feedback#history"
 
-    delete "comments", to: "comments#destroy"
-    post "comments/move", to: "comments#move"
+    delete "conversations", to: "conversations#destroy"
+    post "conversations/move", to: "conversations#move"
 
-    post "comments/:id/read", to: "comments#mark_read"
-    post "comments/:id/unread", to: "comments#mark_unread"
-    put "comments/:id/signal_strength", to: "comments#signal_strength"
-    put "comments/:id", to: "comments#update"
+    post "conversations/:id/read", to: "conversations#mark_read"
+    post "conversations/:id/unread", to: "conversations#mark_unread"
+    put "conversations/:id/signal_strength", to: "conversations#signal_strength"
+    put "conversations/:id", to: "conversations#update"
 
-    delete "comments/tags", to: "tags#remove"
-    post "comments/tags", to: "tags#add"
+    delete "conversations/tags", to: "tags#remove"
+    post "conversations/tags", to: "tags#add"
 
     post "customers", to: "customers#create"
     post "customers/:id/attribution", to: "customers#add_attribution"
