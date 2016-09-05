@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
   spec.test_files = Dir["test/**/*"]
 
-  spec.add_dependency "houston-core", ">= 0.7.0.beta4"
+  spec.add_dependency "houston-core", ">= 0.8.0.pre"
   spec.add_dependency "pg_search"
   spec.add_dependency "activerecord-import"
   spec.add_dependency "pluck_map"

@@ -4,8 +4,7 @@ admin:
   email: admin@example.com
   email_addresses:
   - admin@example.com
-  administrator: true
-  role: Developer
+  role: Owner
   encrypted_password: $2a$10$Pf9Q94yN7t/YGqGS6pBl5uOL8lUvqgWpGeXRMHGbgPU0ixbWzthOG
 # password: password
 
@@ -15,6 +14,6 @@ other_user:
   email: other@example.com
   email_addresses:
   - other@example.com
-  role: Developer
+  role: Member
   encrypted_password: $2a$10$Pf9Q94yN7t/YGqGS6pBl5uOL8lUvqgWpGeXRMHGbgPU0ixbWzthOG
 # password: password
