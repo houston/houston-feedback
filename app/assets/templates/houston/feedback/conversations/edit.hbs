@@ -39,7 +39,7 @@
     <span class="feedback-customer-edit"><input type="text" value="{{attributedTo}}" maxlength="255" /></span>
 
     <div class="feedback-metadata">
-      <span class="feedback-reporter">{{reporter/name}}</span>
+      <span class="feedback-reporter">{{coalesce reporter/name "Unknown"}}</span>
       <span class="feedback-created date">{{{formatDateWithYear2 createdAt}}}</span>
     </div>
   </div>
