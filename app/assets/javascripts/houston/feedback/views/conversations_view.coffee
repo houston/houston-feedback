@@ -50,7 +50,8 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     'click .feedback-conversation-copy': 'copy'
     'click .feedback-signal-strength-selector .dropdown-menu a': 'clickSignalStrength'
 
-  initialize: ->
+  initialize: (options)->
+    @options = options
     @$results = @$el.find('#results')
     @sortedConversations = @conversations = @options.conversations
     @tags = @options.tags
