@@ -42,7 +42,7 @@ module Houston
         end
 
         # http://blog.lostpropertyhq.com/postgres-full-text-search-is-good-enough/
-        def search(query_string)
+        def search(query_string, current_user=nil)
           tags = []
           not_tags = []
           flags = []
@@ -54,7 +54,14 @@ module Houston
             .gsub(/\/(read|unread|untagged|imported|unimported|all|archived)/) { flags << $1; "" }
             .gsub(/\-\#([a-z\-\?0-9\|]+)/) { not_tags << $1; "" }
             .gsub(/\#([a-z\-\?0-9\|]+)/) { tags << $1; "" }
-            .gsub(/by:([A-Za-z0-9]+)/) {
+            .gsub(/\bby:me\b/) {
+              if current_user
+                reporter_id = current_user.id
+                ""
+              else
+                "by:me"
+              end }
+            .gsub(/\bby:([A-Za-z0-9]+)\b/) {
               reporter_id = User.where(["lower(concat(first_name, last_name)) = ?", $1])
                 .limit(1).pluck(:id)[0] || reporter_id
               "" }

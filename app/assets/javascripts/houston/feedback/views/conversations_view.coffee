@@ -339,7 +339,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
 
   editNothing: ->
     $('#feedback_edit').html @renderSearchInstructions
-      exampleOfThreeWeeksAgo: "by:rodkyles added:#{d3.time.format('%Y%m%d')(3.weeks().before(new Date()))}.."
+      exampleOfThreeWeeksAgo: "by:me added:#{d3.time.format('%Y%m%d')(3.weeks().before(new Date()))}.."
 
   focusEditor: ->
     $('#feedback_edit').find('input').autocompleteTags(@tags).focus()

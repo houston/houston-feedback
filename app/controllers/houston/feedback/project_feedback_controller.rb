@@ -43,7 +43,7 @@ module Houston
         @conversations = Conversation \
           .for_project(project)
           .with_flags_for(current_user)
-          .search(@q)
+          .search(@q, current_user)
 
         respond_to do |format|
           format.json do
