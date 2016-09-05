@@ -1,0 +1,8 @@
+<div id="comment_{{id}}" data-id="{{id}}" class="feedback-comment {{#ifMe user}}editable{{/ifMe}}">
+  <div class="feedback-comment-author">{{{avatar user/email 24 user/name}}}</div>
+  <div class="feedback-comment-body">
+    <span class="feedback-comment-author-name">{{user/name}}</span>
+    <span class="feedback-comment-created-at">{{{formatTimeAgo createdAt}}}</span>
+    <div class="feedback-comment-text markdown">{{{markdown text}}}</div>
+  </div>
+</div>

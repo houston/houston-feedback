@@ -33,6 +33,46 @@ class Houston.Feedback.Conversation extends Backbone.Model
         averageSignalStrength: data.averageSignalStrength
       success()
 
+  deleteComment: (id)->
+    id = +id
+    deferred = jQuery.Deferred()
+    $.destroy "/feedback/comments/#{id}"
+      .success =>
+        i = _.findIndex @get('comments'), (comment)-> comment.id is id
+        @get('comments').splice(i, 0)
+        deferred.resolve()
+      .error (response)->
+        deferred.reject Errors.fromResponse(response)
+    deferred.promise()
+
+  createComment: (text)->
+    deferred = jQuery.Deferred()
+    $.post "/feedback/comments", comment: {conversation_id: @id, text: text}
+      .success (comment)=>
+        @get('comments').unshift(comment)
+        deferred.resolve(comment)
+      .error (response)->
+        deferred.reject Errors.fromResponse(response)
+    deferred.promise()
+
+  updateComment: (id, text)->
+    id = +id
+    deferred = jQuery.Deferred()
+    $.put "/feedback/comments/#{id}", comment: {text: text}
+      .success (comment)=>
+        i = _.findIndex @get('comments'), (comment)-> comment.id is id
+        @get('comments')[i] = comment
+        deferred.resolve(comment)
+      .error (response)->
+        deferred.reject Errors.fromResponse(response)
+    deferred.promise()
+
+
+  findComment: (id)->
+    _.detect @get("comments"), (comment)-> comment.id == +id
+
+
+
   attribution: ->
     (@get("customer")?.name or @get("attributedTo") or @get("reporter")?.name or "").trim()
 

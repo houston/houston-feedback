@@ -1,0 +1,15 @@
+<div id="comment_{{id}}" data-id="{{id}}" class="feedback-comment feedback-edit-comment">
+  <div class="feedback-comment-author">{{{avatar user/email 24 user/name}}}</div>
+  <div class="feedback-comment-body">
+    <span class="feedback-comment-author-name">{{user/name}}</span>
+    <span class="feedback-comment-created-at">{{{formatTimeAgo createdAt}}}</span>
+    <div class="feedback-comment-text">
+      <textarea class="feedback-comment-text-input" placeholder="Write a new comment">{{text}}</textarea>
+
+      <div class="confirm-delete">
+        <button class="btn btn-default btn-mini btn-cancel-delete-comment">Cancel</button>
+        <button class="btn btn-danger btn-mini btn-delete-comment">Delete Comment</button>
+      </div>
+    </div>
+  </div>
+</div>

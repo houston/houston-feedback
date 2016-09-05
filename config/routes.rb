@@ -23,6 +23,10 @@ Houston::Feedback::Engine.routes.draw do
 
     post "customers", to: "customers#create"
     post "customers/:id/attribution", to: "customers#add_attribution"
+
+    post "comments", to: "comments#create"
+    put "comments/:id", to: "comments#update"
+    delete "comments/:id", to: "comments#destroy"
   end
 
 end

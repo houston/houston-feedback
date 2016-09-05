@@ -237,17 +237,16 @@ html.tester-bar .feedback-window {
   }
   a.feedback-customer { cursor: pointer; }
 
-  .avatar {
+  .feedback-header > .avatar {
     position: absolute;
     left: 0;
     top: 0.25em;
+  }
 
-    &.avatar-empty {
-      background: rgba(0,0,0,0.1);
-      height: 24px;
-      content: '';
-      display: block;
-    }
+  .avatar.avatar-empty {
+    background: rgba(0,0,0,0.1);
+    height: 24px;
+    display: block;
   }
 
   .feedback-reporter::after { content: ' • '; }
@@ -320,10 +319,55 @@ html.tester-bar .feedback-window {
     }
     .feedback-text.edit { display: block; }
   }
+
+  .feedback-comment {
+    display: flex;
+    margin: 0 -20px;
+    padding: 0.25em 20px 0;
+
+    .feedback-comment-author {
+      flex-shrink: 0;
+      padding: 0.5em 1em 0em 0.5em;
+    }
+
+    &.feedback-new-comment {
+      margin-bottom: 1.5em;
+
+      .feedback-comment-author { padding: 0.25em 1em 0.25em 0.5em; }
+    }
+
+    .feedback-comment-body {
+      flex-grow: 1;
+      position: relative;
+    }
+
+    .feedback-comment-author-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: #aaa;
+    }
+
+    .feedback-comment-created-at {
+      float: right;
+      font-size: 11px;
+      color: #ccc;
+    }
+
+    textarea {
+      width: 100%;
+    }
+
+    .confirm-delete { display: none; }
+    &.confirming {
+      .confirm-delete { display: inline-block; }
+      textarea { display: none; }
+    }
+  }
 }
 
 .feedback-tags > input {
   margin: 0.5em 0 0 0;
+  width: 100%;
 }
 
 .feedback-project .label {
@@ -500,7 +544,7 @@ html.tester-bar .feedback-window {
   hr {
     border: none;
     height: 1px;
-    background: #e4e4e4;
+    background: #f0f0f0;
   }
 
   .feedback-header {
@@ -593,5 +637,12 @@ html.tester-bar .feedback-window {
   dd {
     margin-left: 14em;
     padding: 4px 0;
+  }
+}
+
+.feedback-conversation.feedback-search-result,
+.feedback-comment.editable {
+  &:hover {
+    background: #f4f4f4;
   }
 }

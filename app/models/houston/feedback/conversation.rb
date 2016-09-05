@@ -15,6 +15,7 @@ module Houston
 
       has_many :user_flags, class_name: "Houston::Feedback::ConversationUserFlags"
       belongs_to :customer, class_name: "Houston::Feedback::Customer"
+      has_many :comments, class_name: "Houston::Feedback::Comment"
 
       versioned only: [:attributed_to, :text, :tags]
 

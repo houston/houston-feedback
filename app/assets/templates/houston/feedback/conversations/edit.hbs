@@ -61,6 +61,30 @@
     <div class="feedback-text edit uploader">
       <textarea>{{text}}</textarea>
     </div>
+
+    <hr/>
+
+    <div class="feedback-comments">
+      <h6>Comments</h6>
+
+      {{#if permissions/addComment}}
+      <div class="feedback-comment feedback-new-comment">
+        <div class="feedback-comment-author">
+          {{{userAvatar 24}}}
+        </div>
+        <div class="feedback-comment-body feedback-comment-text">
+          <textarea class="feedback-comment-text-input" placeholder="Write a new comment" />
+        </div>
+      </div>
+      {{/if}}
+
+      <div id="comments">
+        {{#each comments}}
+          {{{renderComment this}}}
+        {{/each}}
+      </div>
+
+    </div>
   </div>
 
   <div class="feedback-commands">

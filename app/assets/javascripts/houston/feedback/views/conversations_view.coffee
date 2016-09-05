@@ -20,6 +20,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
   renderNewConversationModal: HandlebarsTemplates['houston/feedback/conversations/new']
   renderTagCloud: HandlebarsTemplates['houston/feedback/conversations/tags']
   renderSearchInstructions: HandlebarsTemplates['houston/feedback/search_instructions']
+  renderEditComment: HandlebarsTemplates['houston/feedback/comments/edit']
 
   events:
     'submit #search_feedback': 'submitSearch'
@@ -41,6 +42,11 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     'click .btn-archive': 'archiveConversation'
     'click .btn-unarchive': 'unarchiveConversation'
     'keydown .feedback-text textarea': 'keydownConversationText'
+    'keydown .feedback-comment-text-input': 'keydownCommentText'
+    'keydown .confirm-delete': 'keydownConfirmDelete'
+    'click .feedback-comment.editable': 'editCommentText'
+    'click .btn-cancel-delete-comment': 'cancelDeleteComment'
+    'click .btn-delete-comment': 'deleteComment'
     'click #toggle_extra_tags_link': 'toggleExtraTags'
     'click .feedback-tag-cloud > .feedback-tag': 'clickTag'
     'click .feedback-search-example': 'clickExample'
@@ -53,6 +59,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
   initialize: (options)->
     @options = options
     @$results = @$el.find('#results')
+    @renderComment = Handlebars.helpers.renderComment
     @sortedConversations = @conversations = @options.conversations
     @tags = @options.tags
     @projects = @options.projects
@@ -314,6 +321,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     context.canCopy = @canCopy
     $('#feedback_edit').html @renderEditConversation(context)
     $('#feedback_edit .uploader').supportImages()
+    $('#feedback_edit .feedback-comment-text-input').autosize()
     @focusEditor()
 
   editMultiple: (conversations)->
@@ -322,6 +330,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
       permissions:
         destroy: _.all conversations, (conversation)-> conversation.get('permissions').destroy
         update: _.all conversations, (conversation)-> conversation.get('permissions').update
+        addComment: _.all conversations, (conversation)-> conversation.get('permissions').addComment
       tags: []
       archived: _.all conversations, (conversation)-> conversation.get('archived')
       read: _.all conversations, (conversation)-> conversation.get('read')
@@ -531,6 +540,115 @@ class Houston.Feedback.ConversationsView extends Backbone.View
         if e.metaKey or e.ctrlKey
           e.preventDefault()
           @saveConversationText()
+
+
+
+  keydownCommentText: (e)->
+    if e.keyCode is KEY.ESC
+      # Don't jump focus back to the Search bar
+      e.stopImmediatePropagation()
+      e.preventDefault()
+
+      # Maybe stop editing this comment
+      $comment = $(e.target).closest(".feedback-comment")
+      if $comment.hasClass("feedback-edit-comment")
+        @stopEditingComment($comment)
+
+    if e.keyCode is KEY.RETURN and !e.shiftKey
+      e.stopImmediatePropagation()
+      e.preventDefault()
+
+      $comment = $(e.target).closest(".feedback-comment")
+      $text = $comment.find(".feedback-comment-text-input")
+
+      if $comment.hasClass("feedback-edit-comment")
+        if $text.val() is ""
+          @confirmDeleteComment $comment
+        else
+          @updateComment($comment)
+      else
+        unless $text.val() is ""
+          @createComment($comment)
+
+    if e.keyCode is KEY.DELETE
+      $comment = $(e.target).closest(".feedback-comment")
+      return unless $comment.hasClass("feedback-edit-comment")
+
+      $text = $comment.find(".feedback-comment-text-input")
+      return unless $text.val() is ""
+
+      @confirmDeleteComment $comment
+
+  confirmDeleteComment: ($comment)->
+    $comment.addClass("confirming")
+      .find(".confirm-delete .btn.btn-default").focus()
+
+  keydownConfirmDelete: (e)->
+    if e.keyCode is KEY.ESC
+      @cancelDeleteComment(e)
+
+  cancelDeleteComment: (e)->
+    e.stopImmediatePropagation()
+    e.preventDefault()
+
+    $comment = $(e.target).closest(".feedback-comment")
+    $comment.removeClass("confirming")
+      .find(".feedback-comment-text-input")
+      .focus()
+
+  deleteComment: (e)->
+    e.stopImmediatePropagation()
+    e.preventDefault()
+
+    $comment = $(e.target).closest(".feedback-comment")
+    id = $comment.attr("data-id")
+    @selectedConversations[0].deleteComment(id)
+      .then (comment)=>
+        $comment.remove()
+      .fail (errors)->
+        errors.renderToAlert()
+
+
+  createComment: ($comment)->
+    $text = $comment.find(".feedback-comment-text-input")
+    $text.prop "disabled", true
+    @selectedConversations[0].createComment($text.val())
+      .then (comment)=>
+        $('#comments').prepend @renderComment(comment)
+        $text.prop("disabled", false).val("").focus()
+      .fail (errors)->
+        errors.renderToAlert()
+        $text.prop "disabled", false
+
+  updateComment: ($comment)->
+    $text = $comment.find(".feedback-comment-text-input")
+    $text.prop "disabled", true
+    id = $comment.attr("data-id")
+    @selectedConversations[0].updateComment(id, $text.val())
+      .then (comment)=>
+        @stopEditingComment $comment
+      .fail (errors)->
+        errors.renderToAlert()
+        $text.prop "disabled", false
+
+  editCommentText: (e)->
+    @$el.find(".feedback-edit-comment").each (i, el)=>
+      @stopEditingComment $(el)
+
+    $comment = $(e.target).closest('.feedback-comment.editable')
+    id = $comment.attr("data-id")
+    comment = @selectedConversations[0].findComment(id)
+    $(@renderEditComment(comment))
+      .replaceAll($comment)
+      .find("textarea")
+      .autosize()
+      .select()
+      .focus()
+
+  stopEditingComment: ($comment)->
+    id = $comment.attr("data-id")
+    comment = @selectedConversations[0].findComment(id)
+    $(@renderComment(comment)).replaceAll($comment)
 
 
 

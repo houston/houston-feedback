@@ -21,7 +21,7 @@ module Houston
       end
 
       def optimized_present_all(conversations)
-        reporters = User.where(id: conversations.reorder(nil).pluck("DISTINCT feedback_conversations.user_id")).pluck(:id, :email, :first_name, :last_name).each_with_object({}) { |(id, email, first_name, last_name), map| map[id] = {
+        reporters = User.all.pluck(:id, :email, :first_name, :last_name).each_with_object({}) { |(id, email, first_name, last_name), map| map[id] = {
           id: id,
           name: "#{first_name} #{last_name}",
           firstName: first_name,
@@ -31,6 +31,12 @@ module Houston
           id: id,
           slug: name.gsub(/\s+/, "").downcase,
           name: name } }
+
+        comments = Comment.where(conversation_id: conversations.reorder(nil).pluck("DISTINCT feedback_conversations.id")).pluck(:id, :created_at, :conversation_id, :user_id, :text).each_with_object(Hash.new { |hash, key| hash[key] = [] }) { |(id, created_at, conversation_id, user_id, text), map| map[conversation_id].push(
+          id: id,
+          createdAt: created_at,
+          user: reporters[user_id],
+          text: text) }
 
         conversations.arel.projections
         excerpt = conversations.arel.projections.detect { |fn| fn.is_a?(Arel::Nodes::NamedFunction) && fn.alias == "excerpt" }
@@ -74,7 +80,8 @@ module Houston
             conversation.user_id = user_id
             conversation.project_id = project_id
             { update: can?(:update, conversation),
-              destroy: can?(:destroy, conversation) }
+              destroy: can?(:destroy, conversation),
+              addComment: can?(:comment_on, conversation) }
           end
 
           q.averageSignalStrength select: :average_signal_strength
@@ -82,6 +89,8 @@ module Houston
           q.read select: "flags.read"
           q.rank select: rank ? rank : "NULL"
           q.tags select: :tags, map: ->(tags) { tags.to_s.split("\n") }
+
+          q.comments select: :id, map: ->(id) { comments[id] }
         end.to_h(conversations)
       end
 
@@ -110,12 +119,15 @@ module Houston
           excerpt: conversation.excerpt,
           permissions: {
             update: can?(:update, conversation),
-            destroy: can?(:destroy, conversation) },
+            destroy: can?(:destroy, conversation),
+            addComment: can?(:comment_on, conversation) },
           averageSignalStrength: conversation.average_signal_strength,
           signalStrength: conversation[:signal_strength],
           read: conversation[:read],
           rank: conversation[:rank],
-          tags: conversation.tags }
+          tags: conversation.tags,
+          comments: conversation.comments.map { |comment|
+            Houston::Feedback::CommentPresenter.new(comment).as_json } }
       end
 
     end
