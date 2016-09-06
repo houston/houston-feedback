@@ -576,10 +576,12 @@ html.tester-bar .feedback-window {
     border-radius: 0;
     border-left: none;
     border-right: none;
-    // margin: 20px -20px; // when we add comments
-    margin: 20px -20px -20px; // remove when we add comments
-    border-bottom: none; // remove when we add comments
+    margin: 20px -20px;
     width: calc(100% + 40px);
+
+    &.uploader .drag-and-drop {
+      border-top-color: #e4e4e4;
+    }
   }
 
   &.edit-text .feedback-body hr {
