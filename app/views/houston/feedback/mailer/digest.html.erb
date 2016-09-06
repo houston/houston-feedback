@@ -1,20 +1,24 @@
 <div class="feedback-digest">
   <% @conversations.each do |conversation| %>
     <div class="feedback-conversation">
-      <%= avatar_for conversation.user %>
+      <div class="feedback-header">
+        <%= avatar_for conversation.user %>
 
-      <% if conversation.attributed_to %>
-        <h3 class="feedback-customer unknown"><%= conversation.attributed_to %></h3>
-      <% else %>
-        <h3 class="feedback-customer unknown"><%= conversation.user.name %></h3>
-      <% end %>
-      <div class="feedback-metadata">
-        <span class="feedback-reporter"><%= conversation.user.name %></span>
-        <span class="feedback-created date"><%= conversation.created_at.strftime("%b %-e, %Y") %></span>
+        <% if conversation.attributed_to %>
+          <span class="feedback-customer unknown"><%= conversation.attributed_to %></span>
+        <% else %>
+          <span class="feedback-customer unknown"><%= conversation.user.name %></span>
+        <% end %>
+        <div class="feedback-metadata">
+          <span class="feedback-reporter"><%= conversation.user.name %></span>
+          <span class="feedback-created date"><%= conversation.created_at.strftime("%b %-e, %Y") %></span>
+        </div>
       </div>
+
       <div class="feedback-text markdown">
         <%= mdown conversation.text %>
       </div>
+
       <div class="feedback-tag-list">
         <span class="feedback-project"><b class="label <%= conversation.project.color %>"><%= conversation.project.slug %></b></span><% conversation.tags.each do |tag| %><span class="feedback-tag"><%= tag %></span><% end %>
       </div>

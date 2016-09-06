@@ -204,10 +204,6 @@ html.tester-bar .feedback-window {
   &.feedback-selected .feedback-search-result .feedback-tag-list { display: none; }
 }
 
-.feedback-digest .feedback-conversation {
-  margin-bottom: 3em;
-}
-
 .feedback-edit-conversation,
 .feedback-digest .feedback-conversation {
   .feedback-customer {
@@ -646,5 +642,21 @@ html.tester-bar .feedback-window {
 .feedback-comment.editable {
   &:hover {
     background: #f4f4f4;
+  }
+}
+
+.feedback-digest .feedback-conversation {
+  margin-bottom: 3em;
+
+  .feedback-header {
+    margin: 0;
+    position: relative;
+    text-indent: 36px;
+    white-space: nowrap;
+  }
+
+  .feedback-header > .avatar {
+    top: 5px;
+    left: 4px;
   }
 }
