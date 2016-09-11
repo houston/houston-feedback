@@ -557,6 +557,10 @@ html.tester-bar .feedback-window {
     padding: 10px 20px;
     background: #f4f4f4;
     border-top: 1px solid #ccc;
+
+    > a {
+      cursor: pointer;
+    }
   }
 
   .feedback-body {
