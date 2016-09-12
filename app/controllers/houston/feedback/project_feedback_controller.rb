@@ -52,7 +52,7 @@ module Houston
             render json: json
           end
           format.html do
-            @projects = Project.unretired
+            @projects = Project.unretired.with_feature(:feedback)
             @tags = Conversation.for_project(project).tags
             @customers = Customer.order(:name)
           end
