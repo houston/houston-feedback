@@ -568,9 +568,12 @@ html.tester-bar .feedback-window {
     padding: 10px 20px;
     background: #f4f4f4;
     border-top: 1px solid #ccc;
+    margin-top: 1px;
+    height: 26px;
 
     > a {
       cursor: pointer;
+      line-height: 26px;
     }
   }
 
@@ -587,16 +590,25 @@ html.tester-bar .feedback-window {
     border-radius: 0;
     border-left: none;
     border-right: none;
-    margin: 20px -20px;
+    margin: -21px -20px;
     width: calc(100% + 40px);
 
     &.uploader .drag-and-drop {
-      border-top-color: #e4e4e4;
+      padding: 4px 20px;
     }
   }
 
-  &.edit-text .feedback-body hr {
-    display: none;
+  &.edit-text .feedback-body {
+    display: flex;
+
+    textarea { flex-grow: 1; }
+
+    hr, .feedback-comments { display: none; }
+  }
+
+  &.edit-text .feedback-commands {
+    border-top-color: #e4e4e4;
+    margin-top: 0;
   }
 
   .feedback-signal-strength-selector {

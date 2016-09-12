@@ -505,7 +505,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
   beginEditConversationText: ->
     $('.feedback-edit-conversation').addClass('edit-text')
     $('.btn-edit').text('Cancel')
-    $('.feedback-edit-conversation textarea').autosize().focus()
+    $('.feedback-edit-conversation textarea').focus()
 
   endEditConversationText: ->
     $('.feedback-edit-conversation').removeClass('edit-text')
