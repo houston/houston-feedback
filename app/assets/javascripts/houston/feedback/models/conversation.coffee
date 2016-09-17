@@ -73,6 +73,61 @@ class Houston.Feedback.Conversation extends Backbone.Model
 
 
 
+  snippets: ->
+    [{}].concat @get('snippets')
+
+  addSnippet: (snippet) ->
+    deferred = jQuery.Deferred()
+    $.post "/feedback/conversations/#{@id}/snippets", snippet: snippet
+      .success (snippet)=>
+        index = @get('snippets').push(snippet)
+        deferred.resolve(index)
+      .error (response)->
+        deferred.reject Errors.fromResponse(response)
+    deferred.promise()
+
+  addTagsToSnippet: (tags, i) ->
+    deferred = jQuery.Deferred()
+    if snippet = @get('snippets')[i - 1]
+      tags = snippet.tags.concat(tags)
+      $.put "/feedback/conversations/#{@id}/snippets/#{snippet.id}", snippet: {tags: tags}
+        .success =>
+          snippet.tags = tags
+          deferred.resolve(snippet)
+        .error (response)->
+          deferred.reject Errors.fromResponse(response)
+    else
+      deferred.reject()
+    deferred.promise()
+
+  removeTagsFromSnippet: (tags, i) ->
+    deferred = jQuery.Deferred()
+    if snippet = @get('snippets')[i - 1]
+      tags = _.without(snippet.tags, tags...)
+      $.put "/feedback/conversations/#{@id}/snippets/#{snippet.id}", snippet: {tags: tags}
+        .success =>
+          snippet.tags = tags
+          deferred.resolve(snippet)
+        .error (response)->
+          deferred.reject Errors.fromResponse(response)
+    else
+      deferred.reject()
+    deferred.promise()
+
+  deleteSnippet: (i) ->
+    deferred = jQuery.Deferred()
+    if snippet = @get('snippets')[i - 1]
+      $.destroy "/feedback/conversations/#{@id}/snippets/#{snippet.id}"
+        .success =>
+          @get('snippets').splice(i - 1, 1)
+          deferred.resolve()
+        .error (response)->
+          deferred.reject Errors.fromResponse(response)
+    else
+      deferred.reject()
+    deferred.promise()
+
+
   attribution: ->
     (@get("customer")?.name or @get("attributedTo") or @get("reporter")?.name or "").trim()
 

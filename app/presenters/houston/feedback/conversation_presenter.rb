@@ -32,11 +32,18 @@ module Houston
           slug: name.gsub(/\s+/, "").downcase,
           name: name } }
 
-        comments = Comment.where(conversation_id: conversations.reorder(nil).pluck("DISTINCT feedback_conversations.id")).pluck(:id, :created_at, :conversation_id, :user_id, :text).each_with_object(Hash.new { |hash, key| hash[key] = [] }) { |(id, created_at, conversation_id, user_id, text), map| map[conversation_id].push(
+        conversation_ids = conversations.reorder(nil).pluck("DISTINCT feedback_conversations.id")
+
+        comments = Comment.where(conversation_id: conversation_ids).pluck(:id, :created_at, :conversation_id, :user_id, :text).each_with_object(Hash.new { |hash, key| hash[key] = [] }) { |(id, created_at, conversation_id, user_id, text), map| map[conversation_id].push(
           id: id,
           createdAt: created_at,
           user: reporters[user_id],
           text: text) }
+
+        snippets = Snippet.where.not(range: nil).where(conversation_id: conversation_ids).pluck(:conversation_id, :id, :tags, :range).each_with_object(Hash.new { |hash, key| hash[key] = [] }) { |(conversation_id, id, tags, range), map| map[conversation_id].push(
+          id: id,
+          tags: tags.to_s.split("\n"),
+          highlight: { start: range[0], end: range[1] } ) }
 
         conversations.arel.projections
         excerpt = conversations.arel.projections.detect { |fn| fn.is_a?(Arel::Nodes::NamedFunction) && fn.alias == "excerpt" }
@@ -91,6 +98,7 @@ module Houston
           q.tags select: :tags, map: ->(tags) { tags.to_s.split("\n") }
 
           q.comments select: :id, map: ->(id) { comments[id] }
+          q.snippets select: :id, map: ->(id) { snippets[id] }
         end.to_h(conversations)
       end
 
@@ -127,7 +135,9 @@ module Houston
           rank: conversation[:rank],
           tags: conversation.tags,
           comments: conversation.comments.map { |comment|
-            Houston::Feedback::CommentPresenter.new(comment).as_json } }
+            Houston::Feedback::CommentPresenter.new(comment).as_json },
+          snippets: conversation.snippets.where.not(range: nil).map { |snippet|
+            Houston::Feedback::SnippetPresenter.new(snippet).as_json } }
       end
 
     end

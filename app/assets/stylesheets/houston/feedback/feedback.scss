@@ -178,6 +178,7 @@ html.tester-bar .feedback-window {
     max-height: 3em; // 2 lines
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
 
     h1, h2, h3, h4, h5, h6 {
       font-family: inherit;
@@ -384,6 +385,10 @@ html.tester-bar .feedback-window {
   border-radius: 3px;
   margin-right: 0.33em;
 
+  &.feedback-tag-readonly {
+    background: #c0c0c0;
+  }
+
   a.feedback-remove-tag {
     width: 14px;
     text-align: center;
@@ -574,6 +579,13 @@ html.tester-bar .feedback-window {
     > a {
       cursor: pointer;
       line-height: 26px;
+    }
+
+    > h6 {
+      float: right;
+      margin: 0;
+      line-height: 26px;
+      color: #888;
     }
   }
 

@@ -18,6 +18,10 @@ Houston::Feedback::Engine.routes.draw do
     put "conversations/:id/signal_strength", to: "conversations#signal_strength"
     put "conversations/:id", to: "conversations#update"
 
+    post "conversations/:conversation_id/snippets", to: "conversation_snippets#create"
+    put "conversations/:conversation_id/snippets/:id", to: "conversation_snippets#update"
+    delete "conversations/:conversation_id/snippets/:id", to: "conversation_snippets#destroy"
+
     delete "conversations/tags", to: "tags#remove"
     post "conversations/tags", to: "tags#add"
 

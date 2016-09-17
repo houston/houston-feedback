@@ -8,6 +8,7 @@ module Houston
       before_save :update_plain_text, :if => :text_changed?
       before_save :update_customer, :if => :attributed_to_changed?
       after_save :update_search_vector, :if => :search_vector_should_change?
+      after_save :reset_snippets, :if => :text_changed?
       after_create { Houston.observer.fire "feedback:create", conversation: self }
 
       belongs_to :project
@@ -16,6 +17,7 @@ module Houston
       has_many :user_flags, class_name: "Houston::Feedback::ConversationUserFlags"
       belongs_to :customer, class_name: "Houston::Feedback::Customer"
       has_many :comments, class_name: "Houston::Feedback::Comment"
+      has_many :snippets, class_name: "Houston::Feedback::Snippet"
 
       versioned only: [:attributed_to, :text, :tags]
 
@@ -94,10 +96,10 @@ module Houston
               "" }
             .strip
 
-          config = PgSearch::Configuration.new({against: "plain_text"}, self)
+          config = PgSearch::Configuration.new({against: "text"}, Houston::Feedback::Snippet)
           normalizer = PgSearch::Normalizer.new(config)
           options = { dictionary: "english", tsvector_column: "search_vector" }
-          query = PgSearch::Features::TSearch.new(query_string, options, config.columns, self, normalizer)
+          query = PgSearch::Features::TSearch.new(query_string, options, config.columns, Houston::Feedback::Snippet, normalizer)
 
           excerpt = ts_headline(:plain_text, query,
             start_sel: "<em>",
@@ -109,12 +111,14 @@ module Houston
           rank = query.rank
           rank.extend Arel::AliasPredication
 
+          results = joins(:snippets)
+
           if ids.any? or flags.member? "all"
-            results = all
+            # nothing
           elsif flags.member? "archived"
-            results = where(archived: true)
+            results = results.where(archived: true)
           else
-            results = where(archived: false)
+            results = results.where(archived: false)
           end
 
           results = results.where("flags.read IS TRUE") if flags.member? "read"
@@ -123,10 +127,11 @@ module Houston
           results = results.where.not(import: nil) if flags.member? "imported"
           results = results.where(import: nil) if flags.member? "unimported"
 
+          # TODO: query on snippet tags too
           results = tags.inject(results) { |results, tag|
-            results.where(["tags ~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
+            results.where(["concat(feedback_conversations.tags, E'\\n', feedback_snippets.tags) ~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
           results = not_tags.inject(results) { |results, tag|
-            results.where(["tags !~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
+            results.where(["concat(feedback_conversations.tags, E'\\n', feedback_snippets.tags) !~ ?", "(?n)^(#{tag.gsub("?", "\\?")})$"]) } # (?n) specified the newline-sensitive option
 
           results = results.where(id: ids) if ids.any?
           results = results.where(user_id: reporter_id) if reporter_id
@@ -140,11 +145,7 @@ module Houston
         end
 
         def reindex!
-          update_all <<-SQL
-            search_vector = setweight(to_tsvector('english', tags), 'A') ||
-                            setweight(to_tsvector('english', plain_text), 'B') ||
-                            setweight(to_tsvector('english', attributed_to), 'B')
-          SQL
+          Houston::Feedback::Snippet.where(conversation_id: select(:id)).reindex!
         end
 
         def cache_average_signal_strength!
@@ -228,6 +229,10 @@ module Houston
 
       def update_customer
         self.customer = Customer.find_by_attributed_to attributed_to
+      end
+
+      def reset_snippets
+        snippets.where.not(range: nil).delete_all
       end
 
     end

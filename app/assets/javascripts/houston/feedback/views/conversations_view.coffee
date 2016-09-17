@@ -14,11 +14,13 @@ class Houston.Feedback.ConversationsView extends Backbone.View
   renderSearchReport: HandlebarsTemplates['houston/feedback/conversations/report']
   renderImportModal: HandlebarsTemplates['houston/feedback/conversations/import']
   renderConfirmDeleteModal: HandlebarsTemplates['houston/feedback/conversations/confirm_delete']
+  renderConfirmResetSnippetsModal: HandlebarsTemplates['houston/feedback/conversations/confirm_reset']
   renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/conversations/delete_imported']
   renderChangeProjectModal: HandlebarsTemplates['houston/feedback/conversations/change_project']
   renderIdentifyCustomerModal: HandlebarsTemplates['houston/feedback/conversations/identify_customer']
   renderNewConversationModal: HandlebarsTemplates['houston/feedback/conversations/new']
   renderTagCloud: HandlebarsTemplates['houston/feedback/conversations/tags']
+  renderFeedbackCommands: HandlebarsTemplates['houston/feedback/conversations/commands']
   renderSearchInstructions: HandlebarsTemplates['houston/feedback/search_instructions']
   renderEditComment: HandlebarsTemplates['houston/feedback/comments/edit']
 
@@ -35,7 +37,8 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     'click .feedback-conversation-copy-url': 'copyUrl'
     'click .feedback-remove-tag': 'removeTag'
     'keydown .feedback-new-tag': 'keydownNewTag'
-    'click .btn-delete': 'deleteConversations'
+    'click .btn-delete-conversation': 'deleteConversations'
+    'click .btn-delete-snippet': 'deleteSnippet'
     'click .btn-move': 'moveConversations'
     'click .btn-edit': 'editConversationText'
     'click .btn-save': 'saveConversationText'
@@ -55,6 +58,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     'click .btn-read': 'toggleRead'
     'click .feedback-conversation-copy': 'copy'
     'click .feedback-signal-strength-selector .dropdown-menu a': 'clickSignalStrength'
+    'click .snippet-link': 'selectSnippet'
 
   initialize: (options)->
     @options = options
@@ -99,6 +103,24 @@ class Houston.Feedback.ConversationsView extends Backbone.View
       e.preventDefault()
       for conversation in @selectedConversations
         @setSignalStrength conversation, null
+
+    # Used to work with selection:
+    #  - to determine character ranges from selection
+    #  - to create a selection from character ranges
+    #  - to style selected text
+    #
+    # This is nontrivial work since a selection may span
+    # more than one block element. Rangy can convert that
+    # to an array of text ranges and wrap them in spans.
+    #
+    # https://github.com/timdown/rangy/wiki
+    #
+    rangy.init()
+
+    # Create a snippet
+    Mousetrap.bind "command+k command+s", (e) =>
+      e.preventDefault()
+      @createSnippet()
 
     $('#import_csv_field').change (e)->
       $(e.target).closest('form').submit()
@@ -213,7 +235,12 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     switch e.keyCode
       when KEY.UP then @selectPrev(@mode(e))
       when KEY.DOWN then @selectNext(@mode(e))
-      when KEY.ESC then @focusSearch()
+      when KEY.ESC
+        if @selectedSnippetIndex > 0
+          @selectedSnippetIndex = 0
+          @redrawSnippets()
+        else
+          @focusSearch()
       when KEY.DELETE
         return unless e.metaKey
         return unless _.all @selectedConversations, (conversation)=> conversation.get('permissions').destroy
@@ -315,6 +342,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
           $('.feedback-conversation.feedback-edit-conversation .btn-read').addClass('active')
       , 1500
 
+    @selectedSnippetIndex = 0
     context = conversation.toJSON()
     context.index = $('.feedback-conversation.selected').index() + 1
     context.total = @conversations.length
@@ -322,7 +350,73 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     $('#feedback_edit').html @renderEditConversation(context)
     $('#feedback_edit .uploader').supportImages()
     $('#feedback_edit .feedback-comment-text-input').autosize()
+
+    el = $('#feedback_edit .feedback-text.markdown')[0]
+    @toolbar = new SelectionToolbar(el)
+    @toolbar.use [ {
+      name: "Make Snippet"
+      action: => @createSnippet()
+    } ]
+
+    @redrawSnippets()
+
+  redrawSnippets: ->
+    conversation = @selectedConversations[0]
+    snippets = conversation.snippets()
+    hasSnippets = snippets.length > 1
+    selectedSnippetIndex = @selectedSnippetIndex
+    isSnippet = @selectedSnippetIndex > 0
+
+    context = conversation.toJSON()
+    context.isSnippet = isSnippet
+
+    $('#feedback_commands').html @renderFeedbackCommands(context)
+
+    $el = $('#feedback_edit .feedback-text.markdown')
+    el = $el[0]
+
+    allText = rangy.createRange()
+    allText.selectNode(el)
+    rangy.createClassApplier("snippet").undoToRange(allText)
+    rangy.createClassApplier("snippet-link").undoToRange(allText)
+
+    selection = rangy.getSelection()
+    if isSnippet
+      $el.addClass("feedback-text-snippet")
+      snippet = snippets[@selectedSnippetIndex]
+      selection.selectCharacters(el, snippet.highlight.start, snippet.highlight.end)
+
+      range = selection.getRangeAt(0).nativeRange.getBoundingClientRect()
+      range = selection.nativeSelection.getRangeAt(0).getBoundingClientRect()
+      offset = $el.offset()
+      $el.find(".feedback-text-snippet-marker").css
+        top: range.top - offset.top
+        height: range.height
+
+      snippetClassApplier = rangy.createClassApplier("snippet")
+      snippetClassApplier.applyToRanges selection.getAllRanges()
+
+      $('#feedback_tags').html(
+        Handlebars.helpers.renderFeedbackTagsReadonly(context.tags) +
+        Handlebars.helpers.renderFeedbackTags(snippet.tags))
+
+    else
+      $el.removeClass("feedback-text-snippet")
+      for snippet, i in snippets when snippet.highlight
+        selection.selectCharacters(el, snippet.highlight.start, snippet.highlight.end)
+        snippetClassApplier = rangy.createClassApplier "snippet-link",
+          elementTagName: "span"
+          elementAttributes: {"data-snippet-index": i}
+        snippetClassApplier.applyToRanges selection.getAllRanges()
+
+      $('#feedback_tags').html Handlebars.helpers.renderFeedbackTags(context.tags)
+
+    window.getSelection().removeAllRanges()
     @focusEditor()
+
+  selectSnippet: (e)->
+    @selectedSnippetIndex = +$(e.target).closest(".snippet-link").attr("data-snippet-index")
+    @redrawSnippets()
 
   editMultiple: (conversations)->
     context =
@@ -361,12 +455,21 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     tag = $tag.text().replace(/\s/g, '')
     ids = @selectedIds()
     tags = [tag]
-    $.destroy '/feedback/conversations/tags', conversation_ids: ids, tags: tags
-      .success =>
-        @conversations.get(id).removeTags(tags) for id in ids
-        @editSelected()
-      .error ->
-        console.log 'error', arguments
+
+    if @selectedSnippetIndex > 0
+      conversation = @selectedConversations[0]
+      conversation.removeTagsFromSnippet(tags, @selectedSnippetIndex)
+        .done (snippet) =>
+          $('#feedback_tags').html(
+            Handlebars.helpers.renderFeedbackTagsReadonly(conversation.get('tags')) +
+            Handlebars.helpers.renderFeedbackTags(snippet.tags))
+    else
+      $.destroy '/feedback/conversations/tags', conversation_ids: ids, tags: tags
+        .success =>
+          @conversations.get(id).removeTags(tags) for id in ids
+          @editSelected()
+        .error ->
+          console.log 'error', arguments
 
   keydownNewTag: (e)->
     if e.keyCode is KEY.RETURN
@@ -380,17 +483,28 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     $input = $('.feedback-new-tag')
     tags = $input.selectedTags()
     return if tags.length is 0
-    ids = @selectedIds()
-    $.post '/feedback/conversations/tags', conversation_ids: ids, tags: tags
-      .success =>
-        @tags = _.uniq @tags.concat(tags)
-        for id in ids
-          conversation = @conversations.get(id)
-          conversation.addTags(tags)
-          @redrawConversation conversation
-        @editSelected()
-      .error ->
-        console.log 'error', arguments
+
+    if @selectedSnippetIndex > 0
+      conversation = @selectedConversations[0]
+      conversation.addTagsToSnippet(tags, @selectedSnippetIndex)
+        .done (snippet) =>
+          $('#feedback_tags').html(
+            Handlebars.helpers.renderFeedbackTagsReadonly(conversation.get('tags')) +
+            Handlebars.helpers.renderFeedbackTags(snippet.tags))
+          $input.val ''
+
+    else
+      ids = @selectedIds()
+      $.post '/feedback/conversations/tags', conversation_ids: ids, tags: tags
+        .success =>
+          @tags = _.uniq @tags.concat(tags)
+          for id in ids
+            conversation = @conversations.get(id)
+            conversation.addTags(tags)
+            $('#feedback_tags').html Handlebars.helpers.renderFeedbackTags(conversation.get('tags'))
+          @editSelected()
+        .error ->
+          console.log 'error', arguments
 
   promptToImportCsv: (data)->
     $modal = $(@renderImportModal(data)).modal()
@@ -518,7 +632,18 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     text = $('.feedback-text.edit textarea').val()
     attributedTo = $('.feedback-customer-edit > input').val()
     conversation = @conversations.get @selectedId()
-    conversation.save(text: text, attributedTo: attributedTo)
+
+    if conversation.get('text') is text or conversation.snippets().length <= 1
+      @updateConversation(conversation, text: text, attributedTo: attributedTo)
+    else
+      $modal = $(@renderConfirmResetSnippetsModal()).modal()
+      $modal.on 'hidden', -> $(@).remove()
+      $modal.find('#reset_snippets_button').click =>
+        $modal.modal('hide')
+        @updateConversation(conversation, text: text, attributedTo: attributedTo)
+
+  updateConversation: (conversation, params)->
+    conversation.save(params)
       .success =>
         @redrawConversation conversation
         @editSelected()
@@ -872,3 +997,30 @@ class Houston.Feedback.ConversationsView extends Backbone.View
       promise.error ->
         console.log 'error', arguments
       $modal.modal('hide')
+
+
+
+  createSnippet: ->
+    @toolbar.hideToolbar()
+
+    selection = rangy.getSelection()
+    $context = $(selection.anchorNode).closest('.feedback-edit-conversation .feedback-text.markdown')
+    return unless $context.length > 0
+
+    conversation = @selectedConversations[0]
+    range = selection.saveCharacterRanges($context[0])[0]
+    snippet =
+      range: [range.characterRange.start, range.characterRange.end]
+      text: selection.toString()
+    conversation.addSnippet(snippet)
+      .done (index) =>
+        @selectedSnippetIndex = index
+        @redrawSnippets()
+
+  deleteSnippet: (e) ->
+    e.preventDefault()
+    conversation = @selectedConversations[0]
+    conversation.deleteSnippet @selectedSnippetIndex
+      .done =>
+        @selectedSnippetIndex = 0
+        @redrawSnippets()

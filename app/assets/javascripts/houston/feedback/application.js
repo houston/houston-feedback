@@ -11,4 +11,7 @@
 // GO AFTER THE REQUIRES BELOW.
 //
 //= require_tree ../../../templates/houston/feedback
+//= require ../../vendor/rangy-core
+//= require ../../vendor/rangy-classapplier
+//= require ../../vendor/rangy-textrange
 //= require_tree .

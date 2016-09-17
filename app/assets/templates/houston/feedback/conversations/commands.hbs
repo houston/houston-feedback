@@ -1,0 +1,21 @@
+{{#if isSnippet}}
+  <h6>Snippet</h6>
+
+  <a class="btn-delete btn-delete-snippet" title="Delete"><i class="fa fa-trash"></i></a>
+{{else}}
+  {{#if permissions/destroy}}
+  <a class="btn-delete btn-delete-conversation" title="Delete"><i class="fa fa-trash"></i></a>
+  {{/if}}
+  {{#if permissions/update}}
+  <a class="btn-move" title="Change Project"><i class="fa fa-arrow-circle-right"></i></a>
+
+  <button class="btn btn-save btn-small btn-primary">Save</button>
+  <button class="btn btn-edit btn-small btn-default">Edit</button>
+  {{/if}}
+  <button class="btn btn-read btn-small btn-default {{#if read}}active{{/if}}" data-toggle="button">Read</button>
+  {{#if archived}}
+    <button class="btn btn-unarchive btn-small btn-default">Unarchive</button>
+  {{else}}
+    <button class="btn btn-archive btn-small btn-default">Archive</button>
+  {{/if}}
+{{/if}}
