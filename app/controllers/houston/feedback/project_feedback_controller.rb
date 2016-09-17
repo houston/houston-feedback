@@ -1,4 +1,5 @@
 require "csv"
+require "charlock_holmes/string"
 
 module Houston
   module Feedback
@@ -88,8 +89,8 @@ module Houston
         session[:csv_path] = params[:file].tempfile.path
 
         begin
-          csv = CSV.open(session[:csv_path]).to_a
-        rescue
+          csv = read_csv session[:csv_path]
+        rescue ArgumentError
           @data = {
             ok: false,
             filename: params[:file].original_filename,
@@ -122,7 +123,7 @@ module Houston
         tags = params.fetch(:tags, [])
 
         import = SecureRandom.hex(16) # generates a 32-character string, naturally
-        csv = CSV.open(session[:csv_path]).to_a
+        csv = read_csv session[:csv_path]
         conversations = []
         headings = csv.shift
         session[:import_customer_fields] = headings.values_at(*customer_fields)
@@ -178,6 +179,15 @@ module Houston
 
       def find_project
         @project = Project.find_by_slug! params[:slug]
+      end
+
+      def read_csv(path)
+        content = File.read(path)
+        unless content.is_utf8?
+          detection = CharlockHolmes::EncodingDetector.detect(content)
+          content = CharlockHolmes::Converter.convert content, detection[:encoding], "UTF-8"
+        end
+        CSV.parse(content).to_a
       end
 
     end
