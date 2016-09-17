@@ -132,17 +132,20 @@ module Houston
           attributed_to = row.values_at(*customer_fields).map { |val| val.to_s.strip }.reject(&:blank?).join(", ")
           next if attributed_to.blank?
 
+          text = []
           feedback_fields.each do |i|
             feedback, question = row[i].to_s.strip, headings[i]
             next if feedback.blank?
+            text << "###### #{question}\n#{feedback}" unless question.blank?
+          end
 
-            feedback = "###### #{question}\n#{feedback}" unless question.blank?
+          if text.any?
             conversation = Conversation.new(
               import: import,
               project: project,
               user: current_user,
               attributed_to: attributed_to,
-              text: feedback,
+              text: text.join("\n\n"),
               tags: tags)
             conversation.update_plain_text # because the import command won't
             conversations.push(conversation)
