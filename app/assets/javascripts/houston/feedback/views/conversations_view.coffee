@@ -874,7 +874,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     conversation.setSignalStrength i, ->
       $("#conversation_#{conversation.get('id')}.feedback-search-result .feedback-conversation-signal-strength")
         .html(Handlebars.helpers.signalStrengthImage(conversation.get('averageSignalStrength'), {hash: {size: 16}}))
-      $("#conversation_#{conversation.get('id')}.feedback-edit-conversation .feedback-conversation-signal-strength")
+      $("#feedback_edit .feedback-conversation-signal-strength")
         .html(Handlebars.helpers.signalStrengthImage(i, {hash: {size: 20}}))
       callback() if callback
 
