@@ -86,7 +86,11 @@ module Houston
         authorize! :create, Conversation
 
         @target = params[:target]
-        session[:csv_path] = params[:file].tempfile.path
+
+        dir = File.join(Houston::Application.paths["tmp"].first, "uploads")
+        FileUtils.mkdir_p(dir)
+        session[:csv_path] = File.join(dir, "#{Time.now.strftime("%Y%m%d%H%M%S")}.csv")
+        FileUtils.mv params[:file].tempfile.path, session[:csv_path]
 
         begin
           csv = read_csv session[:csv_path]
