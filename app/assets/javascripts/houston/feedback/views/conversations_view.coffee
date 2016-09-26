@@ -324,6 +324,10 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     $('#search_feedback input').focus().select()
 
   editSelected: ->
+    if @toolbar
+      @toolbar.destroy()
+      @toolbar = null
+
     if @selectedConversations.length is 1
       @editConversation @selectedConversations[0]
     else if @selectedConversations.length > 1

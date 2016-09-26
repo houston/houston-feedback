@@ -294,6 +294,8 @@ html.tester-bar .feedback-window {
   .feedback-text.edit,
   .feedback-customer-edit { display: none; }
 
+  .feedback-text[tabindex] { outline: none; }
+
   .feedback-text textarea {
     resize: none;
     width: 100%;

@@ -9,11 +9,14 @@ class @SelectionToolbar
     @selection = null
     @toolbar = null
 
-    @el.addEventListener "mousedown", (e) =>
+    @_blurListener = (e) =>
+      @hideToolbar()
+
+    @_mousedownListener = (e) =>
       # if selectedContent exists when mousedown, it should do nothing but cancel selecting
       return false if @selectedContent
 
-    @el.addEventListener "mouseup", (e) =>
+    @_mouseupListener = (e) =>
       delay =>
         @selection = window.getSelection()
         @selectedContent = @selection.toString()
@@ -23,6 +26,16 @@ class @SelectionToolbar
           @showToolbar(rect)
         else
           @hideToolbar()
+
+    @el.addEventListener "blur", @_blurListener
+    @el.addEventListener "mousedown", @_mousedownListener
+    @el.addEventListener "mouseup", @_mouseupListener
+
+  destroy: ->
+    @el.removeEventListener "blur", @_blurListener
+    @el.removeEventListener "mousedown", @_mousedownListener
+    @el.removeEventListener "mouseup", @_mouseupListener
+    @toolbar.remove() if @toolbar
 
   use: (plugin) ->
     if Array.isArray(plugin)
