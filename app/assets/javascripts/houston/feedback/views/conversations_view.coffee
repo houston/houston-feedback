@@ -71,35 +71,37 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     @canCopy = window.ClipboardEvent and ('clipboardData' in _.keys(ClipboardEvent.prototype))
     @sortOrder = 'rank'
 
-    Mousetrap.bind "command+k command+r", (e) =>
+    Houston.shortcuts.describe "Esc", "Jump to the search box"
+
+    Houston.shortcuts.create "mod+k mod+r", "Mark selected feedback as read", (e) =>
       e.preventDefault()
       for conversation in @selectedConversations
         @markAsRead(conversation)
 
-    Mousetrap.bind "command+k command+u", (e) =>
+    Houston.shortcuts.create "mod+k mod+shift+r", "Mark selected feedback as unread", (e) =>
       e.preventDefault()
       for conversation in @selectedConversations
         @markAsUnread(conversation)
 
-    Mousetrap.bind "command+k command+e", (e) =>
+    Houston.shortcuts.create "mod+k mod+e", "Edit the selected feedback", (e) =>
       e.preventDefault()
       @editConversationText()
 
-    Mousetrap.bind "command+k command+a", (e) =>
+    Houston.shortcuts.create "mod+k mod+a", "Archive selected feedback", (e) =>
       e.preventDefault()
       @archiveConversation()
 
-    Mousetrap.bind "command+k command+shift+a", (e) =>
+    Houston.shortcuts.create "mod+k mod+shift+a", "Unarchive selected feedback", (e) =>
       e.preventDefault()
       @unarchiveConversation()
 
     _.each [1..4], (i) =>
-      Mousetrap.bind "command+k command+#{i}", (e) =>
+      Houston.shortcuts.create "mod+k mod+#{i}", "Set signal strength to #{i}", (e) =>
         e.preventDefault()
         for conversation in @selectedConversations
           @setSignalStrength conversation, i
 
-    Mousetrap.bind "command+k command+0", (e) =>
+    Houston.shortcuts.create "mod+k mod+0", "Erase signal strength", (e) =>
       e.preventDefault()
       for conversation in @selectedConversations
         @setSignalStrength conversation, null
@@ -118,7 +120,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     rangy.init()
 
     # Create a snippet
-    Mousetrap.bind "command+k command+s", (e) =>
+    Houston.shortcuts.create "mod+k mod+s", "Create snippet from selected text", (e) =>
       e.preventDefault()
       @createSnippet()
 
