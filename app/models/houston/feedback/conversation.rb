@@ -10,6 +10,8 @@ module Houston
       after_save :update_search_vector, :if => :search_vector_should_change?
       after_save :reset_snippets, :if => :text_changed?
       after_create { Houston.observer.fire "feedback:create", conversation: self }
+      after_create { Houston.observer.fire "feedback:add", conversation: self }
+      after_update(if: :project_id_changed?) { Houston.observer.fire "feedback:add", conversation: self }
 
       belongs_to :project
       belongs_to :user

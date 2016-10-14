@@ -16,7 +16,8 @@ module Houston
 
 
   register_events {{
-    "feedback:create"   => params("conversation").desc("A new Feedback was added"),
+    "feedback:create"  => params("conversation").desc("A conversation was created"),
+    "feedback:add"     => params("conversation").desc("A conversation was created or moved to a project"),
     "feedback:import"  => params("conversations").desc("Feedback was imported")
   }}
 

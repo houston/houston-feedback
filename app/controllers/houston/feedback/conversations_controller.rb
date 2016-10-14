@@ -45,7 +45,9 @@ module Houston
       def move
         authorize! :update, Conversation
         ids = conversations.pluck(:id)
-        conversations.update_all(project_id: params[:project_id])
+        conversations.each do |conversation|
+          conversation.update_attribute :project_id, params[:project_id]
+        end
         render json: {ids: ids}
       end
 
