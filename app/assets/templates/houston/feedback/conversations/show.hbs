@@ -7,6 +7,9 @@
     <span class="feedback-customer unknown">{{reporter/name}}</span>
   {{/if}}{{/if}}
   <div class="feedback-metadata">
+    <span class="feedback-conversation-word-count">
+      {{wordCount text}} words
+    </span>
     <span class="feedback-conversation-signal-strength">
       {{#if averageSignalStrength}}{{{signalStrengthImage averageSignalStrength size=16}}}{{/if}}
     </span>

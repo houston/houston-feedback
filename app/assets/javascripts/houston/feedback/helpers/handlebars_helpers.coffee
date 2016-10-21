@@ -22,6 +22,11 @@ Handlebars.registerHelper 'signalStrengthImage', (value, context) ->
   <img class="feedback-signal-strength" width="#{size}" height="#{size}" title="#{value.toFixed(2)}" src="#{App.Feedback.images[img]}" />
   """
 
+Handlebars.registerHelper 'wordCount', (value, context) ->
+  value = value.replace(/[^\w\s]/g, '') # get rid of punctuation
+  value = value.replace(/^\s+|\s+$/g, '') # trim leading and trailing space
+  value.toString().split(/\s+/).length # split on whitespace
+
 Handlebars.registerHelper 'renderFeedbackTags', (tags) ->
   spans = for tag in tags
     """
