@@ -4,13 +4,19 @@
       <div class="feedback-header">
         <%= avatar_for conversation.user %>
 
-        <% if conversation.attributed_to %>
-          <span class="feedback-customer unknown"><%= conversation.attributed_to %></span>
+        <% if conversation.customer %>
+          <span class="feedback-customer"><%= conversation.customer.name %></span>
+        <% elsif !conversation.attributed_to.blank? %>
+          <span class="feedback-customer"><%= conversation.attributed_to %></span>
+        <% elsif conversation.user %>
+          <span class="feedback-customer"><%= conversation.user.name %></span>
         <% else %>
-          <span class="feedback-customer unknown"><%= conversation.user.name %></span>
+          <span class="feedback-customer">Unknown</span>
         <% end %>
         <div class="feedback-metadata">
-          <span class="feedback-reporter"><%= conversation.user.name %></span>
+          <% if conversation.user %>
+            <span class="feedback-reporter"><%= conversation.user.name %></span>
+          <% end %>
           <span class="feedback-created date"><%= conversation.created_at.strftime("%b %-e, %Y") %></span>
         </div>
       </div>
