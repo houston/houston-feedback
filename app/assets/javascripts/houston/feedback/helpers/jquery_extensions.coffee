@@ -16,7 +16,7 @@ $.fn.extend
       .typeahead
         source: tags
         updater: (item)->
-          @$element.val().replace(/[^,]*$/, ' ').trimLeft() + item + ', '
+          @$element.val().replace(/[^,]*$/, ' ').replace(/^\s+/, '') + item + ', '
         matcher: (item)->
           tquery = extractor(@query)
           return false unless tquery
