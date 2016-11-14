@@ -587,6 +587,11 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     ids = @selectedIds()
     html = @renderChangeProjectModal(projects: @projects)
     $modal = $(html).modal()
+
+    $select = $modal.find('#conversations_new_project')
+    $select.change ->
+      $modal.find('#move_conversations_button').prop('disabled', !$select.val())
+
     $modal.on 'hidden', -> $(@).remove()
     $modal.find('#move_conversations_button').click =>
       newProjectId = $modal.find('#conversations_new_project').val()
