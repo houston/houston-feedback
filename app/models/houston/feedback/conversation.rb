@@ -125,7 +125,7 @@ module Houston
 
           results = results.where("flags.read IS TRUE") if flags.member? "read"
           results = results.where("flags.read IS FALSE OR flags.read IS NULL") if flags.member? "unread"
-          results = results.where("tags='' OR tags='converted'") if flags.member? "untagged"
+          results = results.where("concat(feedback_conversations.tags, E'\\n', feedback_snippets.tags)='' OR concat(feedback_conversations.tags, E'\\n', feedback_snippets.tags)='converted'") if flags.member? "untagged"
           results = results.where.not(import: nil) if flags.member? "imported"
           results = results.where(import: nil) if flags.member? "unimported"
 
