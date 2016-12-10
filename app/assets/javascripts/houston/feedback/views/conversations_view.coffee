@@ -10,6 +10,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
   template: HandlebarsTemplates['houston/feedback/conversations/index']
   renderFeedback: HandlebarsTemplates['houston/feedback/conversations/show']
   renderEditConversation: HandlebarsTemplates['houston/feedback/conversations/edit']
+  renderNewConversation: HandlebarsTemplates['houston/feedback/conversations/new']
   renderEditMultiple: HandlebarsTemplates['houston/feedback/conversations/edit_multiple']
   renderSearchReport: HandlebarsTemplates['houston/feedback/conversations/report']
   renderImportModal: HandlebarsTemplates['houston/feedback/conversations/import']
@@ -18,7 +19,6 @@ class Houston.Feedback.ConversationsView extends Backbone.View
   renderDeleteImportedModal: HandlebarsTemplates['houston/feedback/conversations/delete_imported']
   renderChangeProjectModal: HandlebarsTemplates['houston/feedback/conversations/change_project']
   renderIdentifyCustomerModal: HandlebarsTemplates['houston/feedback/conversations/identify_customer']
-  renderNewConversationModal: HandlebarsTemplates['houston/feedback/conversations/new']
   renderTagCloud: HandlebarsTemplates['houston/feedback/conversations/tags']
   renderFeedbackCommands: HandlebarsTemplates['houston/feedback/conversations/commands']
   renderSearchInstructions: HandlebarsTemplates['houston/feedback/search_instructions']
@@ -271,7 +271,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
 
     $('#search_feedback').removeClass('unperformed')
 
-    e.preventDefault() if e
+    e.preventDefault() if e?.preventDefault
     search = $('#search_feedback').serialize()
     url = window.location.pathname
     url = url + '?' + search
@@ -280,16 +280,18 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     $('#excel_export_button').attr('href', xlsxHref)
     start = new Date()
     $.getJSON url, (conversations)=>
-      @selectNone()
+      @selectNone() if e.selectNone ? true
       @conversations = new Houston.Feedback.Conversations(conversations, parse: true)
       @sortedConversations = @applySort(@conversations)
       @searchTime = (new Date() - start)
       @render()
+      @focusSearch() if e.selectNone ? true
 
   sort: ->
     @sortOrder = $('#sort_feedback').val()
     @sortedConversations = @applySort(@conversations)
     @render()
+    @focusSearch()
 
   applySort: (conversations) ->
     console.log("sorting #{conversations.length} conversations by #{@sortOrder}")
@@ -318,8 +320,6 @@ class Houston.Feedback.ConversationsView extends Backbone.View
       topTags: tags.slice(0, 5)
       extraTags: tags.slice(5)
 
-    @focusSearch()
-
   focusSearch: ->
     @selectNone()
     window.scrollTo(0, 0)
@@ -329,6 +329,8 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     if @toolbar
       @toolbar.destroy()
       @toolbar = null
+
+    return unless @selectedConversations
 
     if @selectedConversations.length is 1
       @editConversation @selectedConversations[0]
@@ -806,31 +808,30 @@ class Houston.Feedback.ConversationsView extends Backbone.View
 
   newFeedback: (e)->
     e.preventDefault() if e
-    $modal = $(@renderNewConversationModal()).modal()
-    $modal.on 'hidden', -> $(@).remove()
 
-    $modal.find('#new_feedback_customer').focus()
-    $modal.find('.uploader').supportImages()
+    $('#q').val "by:me added:today"
+    @search(selectNone: false)
 
-    addTags = @activateTagControls($modal)
+    $('#feedback_edit').html @renderNewConversation()
+    $('#new_feedback_customer').focus()
+    $('#new_feedback_form .uploader').supportImages()
+    @activateTagControls $('#new_feedback_form')
+    $('#new_feedback_text, #new_feedback_tags').keydown (e) =>
+      if e.keyCode is 13 and (e.metaKey or e.ctrlKey)
+        @createFeedback()
+    $('#create_feedback').click => @createFeedback()
 
-    submit = =>
-      addTags()
-      params = $modal.find('form').serialize()
-      $.post window.location.pathname, params
-        .success =>
-          $modal.modal('hide')
-          alertify.success "Conversation created"
-          @search()
-        .error ->
-          console.log 'error', arguments
-
-    $modal.find('.feedback-new-tag').keydown (e)->
-      if e.keyCode is KEY.RETURN
-        if e.metaKey or e.ctrlKey
-          submit()
-
-    $modal.find('#create_button').click => submit()
+  createFeedback: ->
+    params = $('#new_feedback_form').serializeObject()
+    params.tags = $('#new_feedback_tags').selectedTags()
+    $.post window.location.pathname, params
+      .success =>
+        @search(selectNone: false)
+        alertify.success "Comment created"
+        $('#new_feedback_tags').val('')
+        $('#new_feedback_text').val('').focus()
+      .error ->
+        console.log 'error', arguments
 
   activateTagControls: ($el)->
     $el.find('#new_feedback_tags').autocompleteTags(@tags)

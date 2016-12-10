@@ -575,11 +575,13 @@ html.tester-bar .feedback-window {
   }
 }
 
-#search_instructions {
+#search_instructions,
+#new_feedback {
   height: 100%;
   padding: 20px;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 
   h3 {
     line-height: inherit;
@@ -592,6 +594,75 @@ html.tester-bar .feedback-window {
     box-sizing: border-box;
     color: #888;
     flex-shrink: 0;
+  }
+}
+
+#new_feedback {
+
+  .buttons {
+    text-align: right;
+  }
+
+  .feedback-conversation-close {
+    position: absolute;
+    right: 20px;
+  }
+
+  // NB: copied and pasted from .feedback-conversation-edit
+  .feedback-conversation-close {
+    float: right;
+    width: 24px;
+    text-align: right;
+    font-size: 20px;
+    color: #e4e4e4;
+    text-indent: 0;
+
+    &:hover { color: #005580; }
+  }
+
+  input { height: 32px; }
+  input, textarea {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .control-label.optional::after {
+    display: block;
+    line-height: 0;
+  }
+
+  label {
+    font-weight: bold;
+    color: #777;
+    line-height: 30px;
+  }
+
+  #new_feedback_form {
+    margin: 0 -20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1
+  }
+
+  .help {
+    font-size: 0.88em;
+    line-height: 1.33em;
+    padding-left: 1.5em;
+    position: relative;
+
+    &.overlap-below { margin-bottom: -3em; }
+
+    &::before {
+      content: '〈';
+      position: absolute;
+      font-size: 1.5em;
+      font-weight: bold;
+      left: -0.4em;
+      top: 0.45em;
+      width: 1em;
+      display: block;
+      color: #777;
+    }
   }
 }
 

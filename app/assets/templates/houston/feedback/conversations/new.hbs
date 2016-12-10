@@ -1,27 +1,45 @@
-<div id="new_feedback_modal" class="modal hide">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>New Feedback</h3>
-  </div>
-  <div class="modal-body" style="overflow-y: visible;">
-    <form>
-      <label for="new_feedback_customer">Customer</label>
-      <input type="text" id="new_feedback_customer" name="attributedTo" maxlength="255" />
+<div id="new_feedback">
+  <h3>New Feedback</h3>
 
-      <label for="new_feedback_text">Text</label>
-      <div class="uploader">
-        <textarea id="new_feedback_text" name="text"></textarea>
-      </div>
+  <a href="#" class="feedback-conversation-close"><i class="fa fa-times"></i></a>
 
-      <label for="new_feedback_tags">Tags</label>
-      <div class="feedback-tags">
-        <div class="feedback-tag-list"></div>
-        <input type="text" id="new_feedback_tags" class="feedback-new-tag" placeholder="New Tag" />
+  <form id="new_feedback_form" class="container-fluid">
+    <div class="row-fluid" style="height: 44px;">
+      <label class="control-label span2" for="new_feedback_customer">Customer</label>
+      <div class="span6 controls">
+        <input type="text" id="new_feedback_customer" name="attributedTo" placeholder="houston@cphepdev.com "/>
       </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-    <button type="button" id="create_button" class="btn btn-primary">Submit</button>
-  </div>
+      <div class="span4 help overlap-below">
+        If the feedback is from <em>you</em>, leave this field blank. Otherwise, enter something that <u>uniquely</u> identifies a person like an <b>email address</b>.
+      </div>
+    </div>
+
+    <div class="row-fluid" style="flex-grow: 1; display: flex; flex-direction: row;">
+      <label class="control-label span2" for="new_feedback_text">Text</label>
+      <div class="span6 controls">
+        <div class="uploader" style="height: calc(100% - 12px); display: flex; flex-direction: column;">
+          <textarea id="new_feedback_text" name="text" style="flex-grow: 1;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-fluid">
+      <label class="control-label optional span2" for="new_feedback_tags">Tags</label>
+      <div class="span6 controls">
+        <input type="text" id="new_feedback_tags" class="feedback-new-tag" />
+      </div>
+      <div class="span4 help">
+        You can enter multiple tags by separating them with commas.
+      </div>
+    </div>
+
+    <div class="row-fluid">
+      <label class="control-label span2"></label>
+      <div class="span6 controls">
+        <div class="buttons">
+          <button type="button" id="create_feedback" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
