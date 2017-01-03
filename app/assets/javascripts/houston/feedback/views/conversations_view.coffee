@@ -300,6 +300,8 @@ class Houston.Feedback.ConversationsView extends Backbone.View
       when "added" then conversations.sortBy("createdAt").reverse()
       when "signal_strength" then conversations.sortBy("averageSignalStrength").reverse()
       when "customer" then conversations.sortBy (conversation) -> conversation.attribution().toLowerCase()
+      when "length" then conversations.sortBy((conversation) -> Handlebars.helpers.wordCount(conversation.get('text'))).reverse()
+      when "brevity" then conversations.sortBy((conversation) -> Handlebars.helpers.wordCount(conversation.get('text')))
       else
         console.log("Unknown sort order: #{@sortOrder}")
         conversations
