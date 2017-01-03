@@ -266,7 +266,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     @search(e)
     $('#search_feedback').addClass('unperformed')
 
-  search: (e)->
+  search: (e = {})->
     return unless history.pushState
 
     $('#search_feedback').removeClass('unperformed')

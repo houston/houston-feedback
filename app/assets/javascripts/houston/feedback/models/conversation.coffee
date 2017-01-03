@@ -173,6 +173,9 @@ class Houston.Feedback.Conversations extends Backbone.Collection
   countTags: ->
     countByTag = {}
     for conversation in @models
-      for tag in conversation.get('tags')
+      tags = []
+      tags = tags.concat conversation.get('tags')
+      tags = tags.concat snippet.tags for snippet in conversation.get('snippets')
+      for tag in _.uniq(tags)
         countByTag[tag] = (countByTag[tag] ? 0) + 1
     _.sortBy ({tag: tag, count: count} for tag, count of countByTag), (n)-> -n.count

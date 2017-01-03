@@ -157,7 +157,7 @@ module Houston
         end
 
         def tags
-          pluck("regexp_split_to_table(tags, '\\n')")
+          left_outer_joins(:snippets).pluck("regexp_split_to_table(concat(feedback_conversations.tags, E'\\n', feedback_snippets.tags), '\\n')")
             .reject(&:blank?)
             .each_with_object(Hash.new(0)) { |tag, counter| counter[tag] += 1 }
             .sort_by { |tag, count| -count }
