@@ -324,6 +324,8 @@ class Houston.Feedback.ConversationsView extends Backbone.View
       topTags: tags.slice(0, MAX_TAGS)
       extraTags: tags.slice(MAX_TAGS)
 
+    @editNothing()
+
   focusSearch: ->
     @selectNone()
     window.scrollTo(0, 0)
