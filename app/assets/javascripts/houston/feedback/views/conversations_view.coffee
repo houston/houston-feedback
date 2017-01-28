@@ -6,6 +6,8 @@ KEY =
   UP: 38
   DOWN: 40
 
+MAX_TAGS = 8
+
 class Houston.Feedback.ConversationsView extends Backbone.View
   template: HandlebarsTemplates['houston/feedback/conversations/index']
   renderFeedback: HandlebarsTemplates['houston/feedback/conversations/show']
@@ -319,8 +321,8 @@ class Houston.Feedback.ConversationsView extends Backbone.View
 
     tags = @conversations.countTags()
     $('#tags_report').html @renderTagCloud
-      topTags: tags.slice(0, 5)
-      extraTags: tags.slice(5)
+      topTags: tags.slice(0, MAX_TAGS)
+      extraTags: tags.slice(MAX_TAGS)
 
   focusSearch: ->
     @selectNone()
