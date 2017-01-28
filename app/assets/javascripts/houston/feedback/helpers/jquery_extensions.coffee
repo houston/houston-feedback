@@ -30,7 +30,7 @@ $.fn.extend
     tags = _.reduce text.split(/[,;]/), (tags, tag) ->
 
       # Normalize tags
-      tag = tag.trim().toLowerCase().replace(/^#/, '').replace(/[^\w\/\?]+/g, '-')
+      tag = tag.trim().toLowerCase().replace(/^#/, '').replace(/[^a-z0-9\/\?]+/g, '-')
 
       # Convert "feature/subfeature" to ["feature", "feature-subfeature"]
       tags.concat _.reduce tag.split(/\//), (tags, tag)->
