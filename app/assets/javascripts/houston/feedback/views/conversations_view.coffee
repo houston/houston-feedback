@@ -145,6 +145,8 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     $('#new_feedback_button').click =>
       @newFeedback()
 
+    $('#q').autocompleteQuery(@tags)
+
     if @options.infiniteScroll
       new InfiniteScroll
         load: ($what)=>

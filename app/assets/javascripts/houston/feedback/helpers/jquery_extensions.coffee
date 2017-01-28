@@ -25,6 +25,25 @@ $.fn.extend
           query = extractor(@query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
           item.replace /(#{query})/ig, ($1, match)-> "<strong>#{match}</strong>"
 
+  autocompleteQuery: (tags)->
+    extractor = (query)->
+      result = /(#[a-zA-Z0-9\-]*)$/.exec(query)
+      if result and result[1] then result[1].trim().replace(/^#/, '') else null
+
+    $(@)
+      .attr('autocomplete', 'off')
+      .typeahead
+        source: tags
+        updater: (item)->
+          @$element.val().replace(/#[a-zA-Z0-9\-]*$/, '#').replace(/^\s+/, '') + item + ' '
+        matcher: (item)->
+          tquery = extractor(@query)
+          return false if tquery is null
+          ~item.toLowerCase().indexOf(tquery.toLowerCase())
+        highlighter: (item)->
+          query = extractor(@query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
+          item.replace /(#{query})/ig, ($1, match)-> "<strong>#{match}</strong>"
+
   selectedTags: ->
     text = @.val()
     tags = _.reduce text.split(/[,;]/), (tags, tag) ->
