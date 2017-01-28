@@ -3,6 +3,8 @@ require "redcarpet/render_strip"
 module Houston
   module Feedback
     class Conversation < ActiveRecord::Base
+      include Houston::Props
+
       self.table_name = "feedback_conversations"
 
       before_save :update_plain_text, :if => :text_changed?
