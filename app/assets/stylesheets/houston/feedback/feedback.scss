@@ -467,6 +467,8 @@ html.tester-bar .feedback-window {
     }
   }
 
+  .extra-tags.collapsed { display: none; }
+
   .feedback-tag-count {
     background: rgba(255,255,255,0.3);
     display: inline-block;
