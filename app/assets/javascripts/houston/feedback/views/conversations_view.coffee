@@ -71,6 +71,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     @projects = @options.projects
     @customers = @options.customers
     @canCopy = window.ClipboardEvent and ('clipboardData' in _.keys(ClipboardEvent.prototype))
+    @_query = @$el.find('#q').val()
     @sortOrder = 'rank'
 
     Houston.shortcuts.describe "Esc", "Jump to the search box"
@@ -262,6 +263,9 @@ class Houston.Feedback.ConversationsView extends Backbone.View
   selectFirstResult: ->
     @select @$el.find('.feedback-search-result:first'), 'new'
 
+  selectConversation: (id)->
+    @select @$el.find("#conversation_#{id}"), 'new'
+
   submitSearch: (e)->
     @search(e)
 
@@ -276,11 +280,9 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     $('#search_feedback').removeClass('unperformed')
 
     e.preventDefault() if e?.preventDefault
-    search = $('#search_feedback').serialize()
-    url = window.location.pathname
-    url = url + '?' + search
-    xlsxHref = window.location.pathname + '.xlsx?' + search
-    history.pushState({}, '', url)
+    @_query = $('#q').val()
+    xlsxHref = window.location.pathname + '.xlsx?' + $.param(q: @_query)
+    url = @pushState {}
     $('#excel_export_button').attr('href', xlsxHref)
     start = new Date()
     $.getJSON url, (conversations)=>
@@ -293,6 +295,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
 
   sort: ->
     @sortOrder = $('#sort_feedback').val()
+    @pushState()
     @sortedConversations = @applySort(@conversations)
     @render()
     @focusSearch()
@@ -333,18 +336,29 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     window.scrollTo(0, 0)
     $('#search_feedback input').focus().select()
 
+  pushState: (params={}) ->
+    return unless history.pushState
+    params.q = @_query
+    params.sort = @sortOrder
+    url = "#{window.location.pathname}?#{$.param(params)}"
+    history.pushState({}, '', url)
+    url
+
   editSelected: ->
     if @toolbar
       @toolbar.destroy()
       @toolbar = null
 
-    return unless @selectedConversations
+    count = if @selectedConversations then @selectedConversations.length else 0
 
-    if @selectedConversations.length is 1
+    if count is 1
+      @pushState focus: @selectedConversations[0].id
       @editConversation @selectedConversations[0]
-    else if @selectedConversations.length > 1
+    else if count > 1
+      @pushState {}
       @editMultiple @selectedConversations
     else
+      @pushState {}
       @editNothing()
 
   editConversation: (conversation)->

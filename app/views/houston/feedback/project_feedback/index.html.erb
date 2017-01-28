@@ -48,14 +48,14 @@
           <a id="feedback_search_reset"><i class="fa fa-times"></i></a>
         </div>
         <div class="feedback-search-sort">
-          <select id="sort_feedback">
-            <option value="rank">Best match first</option>
-            <option value="added">Most recent first</option>
-            <option value="signal_strength">Best signal strength first</option>
-            <option value="customer">Customer name A-Z</option>
-            <option value="length">Longest first</option>
-            <option value="brevity">Shortest first</option>
-          </select>
+          <%= select_tag :sort_feedback, options_for_select([
+              ["Best match first", "rank"],
+              ["Most recent first", "added"],
+              ["Best signal strength first", "signal_strength"],
+              ["Customer name A-Z", "customer"],
+              ["Longest first", "length"],
+              ["Shortest first", "brevity"]
+            ], params.fetch(:sort, "rank")) %>
         </div>
       </form>
     </div>
@@ -93,6 +93,10 @@
 
       <% if params[:q] =~ /^id:\d+$/ %>
         conversationsView.selectFirstResult();
+      <% end %>
+
+      <% if params[:focus] =~ /^\d+$/ %>
+        conversationsView.selectConversation(<%= params[:focus] %>);
       <% end %>
     });
   </script>
