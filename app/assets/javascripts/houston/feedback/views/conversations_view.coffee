@@ -157,6 +157,8 @@ class Houston.Feedback.ConversationsView extends Backbone.View
             conversations: (conversation.toJSON() for conversation in @sortedConversations.slice(@offset, @offset + 50))
           promise
 
+    @editNothing()
+
 
 
   resultFocused: (e)->
@@ -328,8 +330,6 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     $('#tags_report').html @renderTagCloud
       topTags: tags.slice(0, MAX_TAGS)
       extraTags: tags.slice(MAX_TAGS)
-
-    @editNothing()
 
   focusSearch: ->
     @selectNone()
