@@ -49,6 +49,7 @@ PATH
       houston-core (>= 0.8.0.pre)
       pg_search
       pluck_map
+      redcarpet
 
 GEM
   remote: https://rubygems.org/

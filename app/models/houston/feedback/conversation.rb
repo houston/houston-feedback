@@ -1,3 +1,4 @@
+require "redcarpet"
 require "redcarpet/render_strip"
 
 module Houston
@@ -176,6 +177,7 @@ module Houston
       end
 
       def update_plain_text
+        # TODO: refactor this to use Kramdown
         md = Redcarpet::Markdown.new(Redcarpet::Render::StripDown, space_after_headers: true)
         self.plain_text = md.render(text)
       end
