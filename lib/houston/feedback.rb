@@ -1,5 +1,7 @@
 require "houston/feedback/engine"
 require "houston/feedback/configuration"
+require "vestal_versions"
+
 
 module Houston
   module Feedback

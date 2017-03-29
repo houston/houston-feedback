@@ -543,6 +543,26 @@ ALTER SEQUENCE feedback_user_flags_id_seq OWNED BY feedback_user_flags.id;
 
 
 --
+-- Name: feedback_versions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE feedback_versions (
+    id integer,
+    versioned_id integer,
+    versioned_type character varying(255),
+    user_id integer,
+    user_type character varying(255),
+    user_name character varying(255),
+    modifications text,
+    number integer,
+    reverted_from integer,
+    tag character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
 -- Name: measurements; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -2202,6 +2222,48 @@ CREATE UNIQUE INDEX index_feedback_user_flags_on_user_id_and_conversation_id ON 
 
 
 --
+-- Name: index_feedback_versions_on_created_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_feedback_versions_on_created_at ON feedback_versions USING btree (created_at);
+
+
+--
+-- Name: index_feedback_versions_on_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_feedback_versions_on_number ON feedback_versions USING btree (number);
+
+
+--
+-- Name: index_feedback_versions_on_tag; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_feedback_versions_on_tag ON feedback_versions USING btree (tag);
+
+
+--
+-- Name: index_feedback_versions_on_user_id_and_user_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_feedback_versions_on_user_id_and_user_type ON feedback_versions USING btree (user_id, user_type);
+
+
+--
+-- Name: index_feedback_versions_on_user_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_feedback_versions_on_user_name ON feedback_versions USING btree (user_name);
+
+
+--
+-- Name: index_feedback_versions_on_versioned_id_and_versioned_type; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_feedback_versions_on_versioned_id_and_versioned_type ON feedback_versions USING btree (versioned_id, versioned_type);
+
+
+--
 -- Name: index_measurements_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2807,6 +2869,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170116002818'),
 ('20170116210225'),
 ('20170118005958'),
-('20170128161237');
+('20170128161237'),
+('20170329162815');
 
 

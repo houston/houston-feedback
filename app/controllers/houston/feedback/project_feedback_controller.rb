@@ -171,8 +171,8 @@ module Houston
 
       def history
         @title = "Feedback History"
-        authorize! :read, VestalVersions::Version
-        @changes = VestalVersions::Version
+        authorize! :read, Houston::Feedback::Version
+        @changes = Houston::Feedback::Version
           .where(versioned_type: "Houston::Feedback::Conversation")
           .order(created_at: :desc)
           .includes(:user)

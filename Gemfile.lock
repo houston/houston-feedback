@@ -5,6 +5,7 @@ PATH
       activerecord-import
       charlock_holmes
       houston-core (>= 0.8.0.pre)
+      houston-vestal_versions
       pg_search
       pluck_map
       redcarpet

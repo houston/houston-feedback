@@ -24,7 +24,7 @@ module Houston
       has_many :comments, class_name: "Houston::Feedback::Comment"
       has_many :snippets, class_name: "Houston::Feedback::Snippet"
 
-      versioned only: [:attributed_to, :text, :tags]
+      versioned only: [:attributed_to, :text, :tags], class_name: "Houston::Feedback::Version"
 
       validates :attributed_to, length: { maximum: 255 }, allow_blank: true
 
