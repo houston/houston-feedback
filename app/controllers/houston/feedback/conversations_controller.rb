@@ -2,8 +2,8 @@ module Houston
   module Feedback
     class ConversationsController < ApplicationController
       attr_reader :conversations, :conversation
-      before_filter :find_conversation, except: [:destroy, :move]
-      before_filter :find_conversations, only: [:destroy, :move]
+      before_action :find_conversation, except: [:destroy, :move]
+      before_action :find_conversations, only: [:destroy, :move]
 
 
       def show

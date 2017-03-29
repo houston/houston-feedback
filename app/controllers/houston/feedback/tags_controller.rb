@@ -2,7 +2,7 @@ module Houston
   module Feedback
     class TagsController < ApplicationController
       attr_reader :conversations, :tags
-      before_filter :find_conversations_and_tags
+      before_action :find_conversations_and_tags
 
 
       def add

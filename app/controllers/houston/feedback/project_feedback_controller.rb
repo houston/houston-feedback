@@ -7,7 +7,7 @@ module Houston
       attr_reader :project, :conversations
 
       layout "houston/feedback/application"
-      before_filter :find_project
+      before_action :find_project
 
       COMMON_SURVEY_FIELDS_TO_IGNORE = [
         "Time Started",

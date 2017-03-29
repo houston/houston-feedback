@@ -2,8 +2,8 @@ module Houston
   module Feedback
     class ConversationSnippetsController < ApplicationController
       attr_reader :conversation, :snippet
-      before_filter :find_conversation
-      before_filter :find_snippet, only: [:update, :destroy]
+      before_action :find_conversation
+      before_action :find_snippet, only: [:update, :destroy]
 
 
       def create
