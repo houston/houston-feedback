@@ -40,6 +40,7 @@ module Houston
       def index
         authorize! :read, Conversation
 
+        @title = "Feedback • #{project.name}"
         @q = params.fetch(:q, "")
         @conversations = Conversation \
           .for_project(project)
