@@ -1,5 +1,4 @@
-<% content_for :title do %>
-<h1 class="project-banner <%= @project.color %> space-below" data-project-slug="<%= @project.slug %>" data-project-color="<%= @project.color %>">
+<% project_banner(@project) do %>
   <small>Feedback for</small>
   <%= @project.name %>
 
@@ -36,7 +35,6 @@
       </span>
     </label>
   <% end -%>
-</h1>
 <% end %>
 
 <div id="feedback" class="feedback-window">
