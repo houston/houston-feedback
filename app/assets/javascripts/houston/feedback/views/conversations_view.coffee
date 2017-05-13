@@ -241,6 +241,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     $(conversation).closest('.feedback-search-result')
 
   keydown: (e)->
+    return true if $(e.target).closest('#new_feedback').length > 0
     switch e.keyCode
       when KEY.UP then @selectPrev(@mode(e))
       when KEY.DOWN then @selectNext(@mode(e))
