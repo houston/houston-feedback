@@ -25,7 +25,7 @@ class ConversationTest < ActiveSupport::TestCase
 
     should "treat 0 as nil" do
       feedback.set_signal_strength_by! @user1, 0
-      assert_equal nil, feedback.get_signal_strength_by(@user1)
+      assert_nil feedback.get_signal_strength_by(@user1)
     end
 
     should "allow signal_strength to be 1-4" do
@@ -54,7 +54,7 @@ class ConversationTest < ActiveSupport::TestCase
       assert_equal 3, feedback.reload.average_signal_strength
 
       feedback.set_signal_strength_by! @user2, nil
-      assert_equal nil, feedback.reload.average_signal_strength
+      assert_nil feedback.reload.average_signal_strength
     end
   end
 

@@ -26,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "redcarpet"
   spec.add_dependency "houston-vestal_versions"
 
-  spec.add_development_dependency "bundler", "~> 1.11.2"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 11.2"
   spec.add_development_dependency "factory_girl_rails"
 end
