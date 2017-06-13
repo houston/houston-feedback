@@ -73,11 +73,11 @@ module Houston
               reporter_id = User.where(["lower(concat(first_name, last_name)) = ?", $1])
                 .limit(1).pluck(:id)[0] || reporter_id
               "" }
-            .gsub(/customer:([A-Za-z0-9]+)/) {
+            .gsub(/\bcustomer:([A-Za-z0-9]+)\b/) {
               customer_ids = Houston::Feedback::Customer.where(["lower(regexp_replace(name, '\\s+', '', 'g')) = ?", $1]).pluck(:id)
               customer_ids = [0] if customer_ids.none?
               "" }
-            .gsub(/added:(\d{8}?)\.\.(\d{8}?)/) {
+            .gsub(/\badded:(\d{8}?)\.\.(\d{8}?)/) {
               min, max = $1, $2
               min = "20000101" if min.blank?
               max = "20991231" if max.blank?
@@ -85,18 +85,18 @@ module Houston
               max = Date.strptime(max, "%Y%m%d").end_of_day
               created_at = min..max
               "" }
-            .gsub(/added:today/) {
+            .gsub(/\badded:today\b/) {
               min = Date.today.beginning_of_day
               max = Date.today.end_of_day
               created_at = min..max
               "" }
-            .gsub(/added:(\d{8})/) {
+            .gsub(/\badded:(\d{8})\b/) {
               date = Date.strptime($1, "%Y%m%d")
               min = date.beginning_of_day
               max = date.end_of_day
               created_at = min..max
               "" }
-            .gsub(/id:(\d+)/) {
+            .gsub(/\bid:(\d+)\b/) {
               ids << $1.to_i
               "" }
             .strip
