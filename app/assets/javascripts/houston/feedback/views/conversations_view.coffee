@@ -35,6 +35,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     'mouseup .feedback-search-result': 'resultReleased'
     'keydown': 'keydown'
     'keydown #q': 'keydownSearch'
+    'focus #q': 'onFocusSearch'
     'click .feedback-conversation-close': 'selectNone'
     'click .feedback-conversation-copy-url': 'copyUrl'
     'click .feedback-remove-tag': 'removeTag'
@@ -262,6 +263,9 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     if e.keyCode is KEY.DOWN
       e.stopImmediatePropagation()
       @selectFirstResult()
+
+  onFocusSearch: ->
+    @selectNone()
 
   selectFirstResult: ->
     @select @$el.find('.feedback-search-result:first'), 'new'
