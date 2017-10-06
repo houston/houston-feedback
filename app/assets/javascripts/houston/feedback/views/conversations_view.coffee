@@ -123,6 +123,20 @@ class Houston.Feedback.ConversationsView extends Backbone.View
     #
     rangy.init()
 
+    # IDEA: cycle through snippets with directional shortcuts
+
+    # Houston.shortcuts.create "mod+[", (e) =>
+    #   e.preventDefault()
+    #   if @selectedSnippetIndex > 0
+    #     @selectedSnippetIndex--
+    #     @redrawSnippets()
+    #
+    # Houston.shortcuts.create "mod+]", (e) =>
+    #   e.preventDefault()
+    #   if @selectedSnippetIndex < @selectedConversations[0].snippets().length - 1
+    #     @selectedSnippetIndex++
+    #     @redrawSnippets()
+
     # Create a snippet
     Houston.shortcuts.create "mod+k mod+s", "Create snippet from selected text", (e) =>
       e.preventDefault()
@@ -255,9 +269,9 @@ class Houston.Feedback.ConversationsView extends Backbone.View
       when KEY.DELETE
         return unless e.metaKey
         return unless _.all @selectedConversations, (conversation)=> conversation.get('permissions').destroy
+        return unless @selectedConversations.length > 0
         e.preventDefault()
-        ids = (conversation.id for conversation in @selectedConversations)
-        @_deleteConversations(conversation_ids: ids)
+        @deleteConversations()
 
   keydownSearch: (e)->
     if e.keyCode is KEY.DOWN
@@ -573,7 +587,7 @@ class Houston.Feedback.ConversationsView extends Backbone.View
 
 
   deleteConversations: (e)->
-    e.preventDefault()
+    e?.preventDefault()
     ids = @selectedIds()
     imports = _.uniq(@conversations.get(id).get('import') for id in ids)
     if imports.length is 1 and imports[0]
