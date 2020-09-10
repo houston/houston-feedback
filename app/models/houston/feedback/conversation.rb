@@ -20,7 +20,7 @@ module Houston
       belongs_to :user
 
       has_many :user_flags, class_name: "Houston::Feedback::ConversationUserFlags"
-      belongs_to :customer, class_name: "Houston::Feedback::Customer"
+      belongs_to :customer, class_name: "Houston::Feedback::Customer", optional: true
       has_many :comments, class_name: "Houston::Feedback::Comment"
       has_many :snippets, class_name: "Houston::Feedback::Snippet"
 

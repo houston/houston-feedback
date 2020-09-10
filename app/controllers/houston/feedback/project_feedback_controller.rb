@@ -69,7 +69,7 @@ module Houston
 
       def create
         params[:attributed_to] = params[:attributedTo] if params.key?(:attributedTo)
-        conversation = Conversation.new(params.pick(:attributed_to, :text, :tags))
+        conversation = Conversation.new(params.permit(:attributed_to, :text, :tags))
         conversation.project = project
         conversation.user = current_user
 
