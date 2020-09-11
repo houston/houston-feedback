@@ -21,12 +21,12 @@ Gem::Specification.new do |spec|
   spec.add_dependency "houston-core", ">= 0.8.0.pre"
   spec.add_dependency "pg_search"
   spec.add_dependency "activerecord-import"
-  spec.add_dependency "pluck_map"
+  spec.add_dependency "pluck_map", ">= 1.0.0"
   spec.add_dependency "charlock_holmes"
   spec.add_dependency "redcarpet"
   spec.add_dependency "houston-vestal_versions"
 
   spec.add_development_dependency "bundler"
-  spec.add_development_dependency "rake", "~> 11.2"
+  spec.add_development_dependency "rake"
   spec.add_development_dependency "factory_girl_rails"
 end

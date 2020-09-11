@@ -4,7 +4,7 @@
 
   <%= render partial: "projects/keyboard_shortcuts" %>
 
-  <%= link_to project_feedback_path(params.pick(:q).merge(format: :xlsx)), id: "excel_export_button", class: "project-banner-btn" do %>
+  <%= link_to project_feedback_path({ q: @q, format: :xlsx }), id: "excel_export_button", class: "project-banner-btn" do %>
     <i class="fa fa-file-excel-o"></i>
 
     <span>

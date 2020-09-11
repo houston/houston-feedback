@@ -1,4 +1,4 @@
-require "pluck_map/presenter"
+require "pluck_map"
 
 module Houston
   module Feedback
@@ -57,7 +57,7 @@ module Houston
 
         conversation = Houston::Feedback::Conversation.new
 
-        PluckMap::Presenter.new do |q|
+        PluckMap[Houston::Feedback::Conversation].define do |q|
           q.id
           q.createdAt select: :created_at
           q.import
@@ -92,9 +92,9 @@ module Houston
           end
 
           q.averageSignalStrength select: :average_signal_strength
-          q.signalStrength select: "flags.signal_strength"
-          q.read select: "flags.read"
-          q.rank select: rank ? rank : "NULL"
+          q.signalStrength select: Arel.sql("flags.signal_strength")
+          q.read select: Arel.sql("flags.read")
+          q.rank select: rank ? rank : Arel.sql("NULL")
           q.tags select: :tags, map: ->(tags) { tags.to_s.split("\n") }
 
           q.comments select: :id, map: ->(id) { comments[id] }
