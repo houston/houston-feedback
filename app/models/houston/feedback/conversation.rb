@@ -8,16 +8,16 @@ module Houston
 
       self.table_name = "feedback_conversations"
 
-      before_save :update_plain_text, :if => :text_changed?
-      before_save :update_customer, :if => :attributed_to_changed?
+      before_save :update_plain_text, :if => :will_save_change_to_text?
+      before_save :update_customer, :if => :will_save_change_to_attributed_to?
       after_save :update_search_vector, :if => :search_vector_should_change?
-      after_save :reset_snippets, :if => :text_changed?
+      after_save :reset_snippets, :if => :saved_change_to_text?
       after_create { Houston.observer.fire "feedback:create", conversation: self }
       after_create { Houston.observer.fire "feedback:add", conversation: self }
-      after_update(if: :project_id_changed?) { Houston.observer.fire "feedback:add", conversation: self }
+      after_update(if: :saved_change_to_project_id?) { Houston.observer.fire "feedback:add", conversation: self }
 
       belongs_to :project
-      belongs_to :user
+      belongs_to :user, optional: true
 
       has_many :user_flags, class_name: "Houston::Feedback::ConversationUserFlags"
       belongs_to :customer, class_name: "Houston::Feedback::Customer", optional: true
@@ -226,7 +226,7 @@ module Houston
       end
 
       def search_vector_should_change?
-        (changed & %w{tags plain_text attributed_to}).any?
+        (saved_changes? & %w{tags plain_text attributed_to}).any?
       end
 
       def update_search_vector

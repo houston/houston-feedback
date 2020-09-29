@@ -8,7 +8,7 @@ module Houston
 
       validates :signal_strength, inclusion: { in: [1, 2, 3, 4] }, allow_nil: true
 
-      after_save :cache_average_signal_strength, if: :signal_strength_changed?
+      after_save :cache_average_signal_strength, if: :saved_change_to_signal_strength?
 
     private
 
