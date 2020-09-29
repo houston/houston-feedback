@@ -17,7 +17,7 @@ module Houston
       after_update(if: :project_id_changed?) { Houston.observer.fire "feedback:add", conversation: self }
 
       belongs_to :project
-      belongs_to :user
+      belongs_to :user, optional: true
 
       has_many :user_flags, class_name: "Houston::Feedback::ConversationUserFlags"
       belongs_to :customer, class_name: "Houston::Feedback::Customer", optional: true
