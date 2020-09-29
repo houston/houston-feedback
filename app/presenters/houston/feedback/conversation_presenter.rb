@@ -67,7 +67,7 @@ module Houston
           q.customer select: :customer_id, map: ->(id) { customers[id] }
           q.text
           if excerpt
-            q.excerpt select: excerpt
+            q.excerpt select: Arel.sql(excerpt)
           else
             q.excerpt select: :text, map: ->(text) do
               lines = text.lines.map(&:strip).reject(&:blank?)
@@ -94,12 +94,12 @@ module Houston
           q.averageSignalStrength select: :average_signal_strength
           q.signalStrength select: Arel.sql("flags.signal_strength")
           q.read select: Arel.sql("flags.read")
-          q.rank select: rank ? rank : Arel.sql("NULL")
+          q.rank select: rank ? Arel.sql(rank) : Arel.sql("NULL")
           q.tags select: :tags, map: ->(tags) { tags.to_s.split("\n") }
 
           q.comments select: :id, map: ->(id) { comments[id] }
           q.snippets select: :id, map: ->(id) { snippets[id] }
-        end.to_h(conversations)
+        end.to_h(conversations.reorder(nil))
       end
 
       def unoptimized_present_all(conversations)
