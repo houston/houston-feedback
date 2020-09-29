@@ -20,9 +20,9 @@ module Houston
       end
 
       def identify_customers
-        return unless changed.member? "attributions"
-        attributions_removed = Array(changes["attributions"][0]) - attributions
-        attributions_added   = attributions - Array(changes["attributions"][0])
+        return unless saved_changes.keys.member? "attributions"
+        attributions_removed = Array(saved_changes["attributions"][0]) - attributions
+        attributions_added   = attributions - Array(saved_changes["attributions"][0])
 
         Conversation.where(attributed_to: attributions_removed, customer_id: id).update_all(customer_id: nil)
         Conversation.where(attributed_to: attributions_added).update_all(customer_id: id)
