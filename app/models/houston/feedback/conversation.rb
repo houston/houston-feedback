@@ -226,7 +226,7 @@ module Houston
       end
 
       def search_vector_should_change?
-        (saved_changes? & %w{tags plain_text attributed_to}).any?
+        (saved_changes.keys & %w{tags plain_text attributed_to}).any?
       end
 
       def update_search_vector

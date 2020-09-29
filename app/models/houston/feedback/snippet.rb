@@ -33,7 +33,7 @@ module Houston
     private
 
       def search_vector_should_change?
-        (saved_changes? & %w{tags text}).any?
+        (saved_changes.keys & %w{tags text}).any?
       end
 
       def update_search_vector
