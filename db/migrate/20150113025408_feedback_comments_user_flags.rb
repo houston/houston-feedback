@@ -1,4 +1,4 @@
-class FeedbackCommentsUserFlags < ActiveRecord::Migration
+class FeedbackCommentsUserFlags < ActiveRecord::Migration[4.2]
   def change
     create_table :feedback_comments_user_flags do |t|
       t.integer :user_id, null: false

@@ -1,4 +1,4 @@
-class AddArchivedToFeedbackComments < ActiveRecord::Migration
+class AddArchivedToFeedbackComments < ActiveRecord::Migration[4.2]
   def up
     add_column :feedback_comments, :archived, :boolean, default: false, null: false
 
