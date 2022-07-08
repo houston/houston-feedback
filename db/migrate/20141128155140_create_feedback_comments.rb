@@ -1,4 +1,4 @@
-class CreateFeedbackComments < ActiveRecord::Migration
+class CreateFeedbackComments < ActiveRecord::Migration[4.2]
   def up
     create_table :feedback_comments do |t|
       t.integer :project_id, null: false

@@ -1,4 +1,4 @@
-class CreateFeedbackCustomers < ActiveRecord::Migration
+class CreateFeedbackCustomers < ActiveRecord::Migration[4.2]
   def change
     create_table :feedback_customers do |t|
       t.string :name, null: false

@@ -50,7 +50,7 @@ module Houston
         respond_to do |format|
           format.json do
             hashes = ConversationPresenter.new(current_ability, conversations).as_json
-            json = Houston.benchmark("Encode JSON") { MultiJson.dump(hashes) }
+            json = Houston.benchmark("Encode JSON") { Oj.dump(hashes, mode: :compat) }
             render json: json
           end
           format.html do
