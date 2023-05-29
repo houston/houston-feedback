@@ -34,10 +34,9 @@ module Houston
         end
 
         def with_flags_for(user)
-          return all unless user.respond_to?(:id)
           joins(<<-SQL).select("feedback_conversations.*", "flags.read", "flags.signal_strength")
             LEFT OUTER JOIN feedback_user_flags \"flags\"
-            ON flags.conversation_id=feedback_conversations.id AND flags.user_id=#{user.id}
+            ON flags.conversation_id=feedback_conversations.id AND #{user.respond_to?(:id) ? "flags.user_id=#{user.id}" : "1 != 1"}
           SQL
         end
 
